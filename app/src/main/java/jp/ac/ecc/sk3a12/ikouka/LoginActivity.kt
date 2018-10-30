@@ -16,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth
 class LoginActivity : AppCompatActivity() {
     private var labelLoginTitle: TextView? = null
     private lateinit var auth: FirebaseAuth
-    private lateinit var mDrawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +27,9 @@ class LoginActivity : AppCompatActivity() {
         var btnLogin: Button = findViewById(R.id.btnLogin)
         var btnRegister: Button = findViewById(R.id.btnRegister)
         labelLoginTitle = findViewById(R.id.labelLoginTitle)
-        auth = FirebaseAuth.getInstance() //FirebasAuthenticator のインスタンス
+        auth = FirebaseAuth.getInstance() //FirebaseAuthenticator のインスタンス
 
-        btnLogin!!.setOnClickListener {
+        btnLogin.setOnClickListener {
             var email = inputEmail!!.text.toString()
             var password = inputPassword!!.text.toString()
             Log.w("info", "email:" + email)
@@ -51,29 +50,12 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        btnRegister!!.setOnClickListener {
+        btnRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java).apply {
                 //ただの画面変更です
             }
             startActivity(intent)
         }
-
-        mDrawerLayout = findViewById(R.id.drawer_layout)
-
-        val navigationView: NavigationView = findViewById(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            // set item as selected to persist highlight
-            menuItem.isChecked = true
-            // close drawer_layout when item is tapped
-            mDrawerLayout.closeDrawers()
-
-            // Add code here to update the UI based on the item selected
-            // For example, swap UI fragments here
-
-            true
-        }
-
-
     }
 
     //ビューの起動時、ログイン状態をチェック
@@ -81,5 +63,4 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = auth.currentUser
     }
-
 }
