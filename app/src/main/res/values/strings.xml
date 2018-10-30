@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Ikouka</string>
+    <!-- drawer_view -->
+    <string name="imports">Import</string>
+    <string name="gallery">Gallery</string>
+    <string name="slideshow">Slideshow</string>
+    <string name="tools">Tools</string>
+
+    <!-- activity_login -->
+    <string name="labelLogin">ログイン</string>
+    <string name="labelInputEmail">メール</string>
+    <string name="labelInputPassword">パスワード</string>
+    <string name="btnLogin">ログイン</string>
+    <string name="btnRegister">登録</string>
+
+    <!-- activity_register -->
+    <string name="labelRegister">登録</string>
 </resources>
