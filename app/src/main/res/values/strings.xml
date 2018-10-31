@@ -6,13 +6,20 @@
     <string name="slideshow">Slideshow</string>
     <string name="tools">Tools</string>
 
-    <!-- activity_login -->
-    <string name="labelLogin">ログイン</string>
+    <!-- common -->
     <string name="labelInputEmail">メール</string>
     <string name="labelInputPassword">パスワード</string>
+
+    <!-- activity_login -->
+    <string name="labelLogin">ログイン</string>
     <string name="btnLogin">ログイン</string>
-    <string name="btnRegister">登録</string>
+    <string name="btnGoRegister">登録</string>
 
     <!-- activity_register -->
     <string name="labelRegister">登録</string>
+    <string name="labelInputUsername">ユーザ名</string>
+    <string name="labelInputPasswordConfirm">パスワード確認</string>
+    <string name="btnRegister">登録</string>
+
+    <string name="title_activity_main">MainActivity</string>
 </resources>

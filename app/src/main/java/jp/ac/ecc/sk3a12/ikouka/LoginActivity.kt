@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
         var inputEmail : EditText = findViewById(R.id.inputEmail)
         var inputPassword: EditText = findViewById(R.id.inputPassword)
         var btnLogin: Button = findViewById(R.id.btnLogin)
-        var btnRegister: Button = findViewById(R.id.btnRegister)
+        var btnGoRegister: Button = findViewById(R.id.btnGoRegister)
         labelLoginTitle = findViewById(R.id.labelLoginTitle)
         auth = FirebaseAuth.getInstance() //FirebaseAuthenticator のインスタンス
 
@@ -39,8 +40,9 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     //Log.d(TAG, "signInWithEmail:success")
                     val user = auth.currentUser
-                    Toast.makeText(baseContext, user!!.email.toString() + " logged in.",
-                            Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("userEmail", user!!.email)
+                    startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
                     //Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -50,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        btnRegister.setOnClickListener {
+        btnGoRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java).apply {
                 //ただの画面変更です
             }
