@@ -8,14 +8,23 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import android.support.v7.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity: AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private var mToolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        //set toolbar
+        mToolbar = findViewById(R.id.RegisterToolbar)
+        setSupportActionBar(mToolbar)
+        supportActionBar!!.title = "登録"
+        //enable back button
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         auth = FirebaseAuth.getInstance()
 
@@ -39,8 +48,6 @@ class RegisterActivity: AppCompatActivity() {
                 doRegister(email, password, username)
             }
         }
-
-
     }
 
     fun doRegister(email: String, password: String, username: String) {
