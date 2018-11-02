@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
         } else {
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         if (item!!.itemId == R.id.signout) {
             auth.signOut()
             Toast.makeText(this, "signed out", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
         return true
