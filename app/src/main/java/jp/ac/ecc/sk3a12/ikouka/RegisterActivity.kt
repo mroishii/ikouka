@@ -9,11 +9,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
+import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity: AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var mToolbar: Toolbar? = null
+
+    //ProgressDialog
+    private lateinit var mProgress : ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +31,9 @@ class RegisterActivity: AppCompatActivity() {
         //enable back button
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        //Progressbar
+        mProgress = findViewById(R.id.pbRegister)
+
         auth = FirebaseAuth.getInstance()
 
         val btnRegister: Button = findViewById(R.id.btnRegister)
@@ -35,17 +43,28 @@ class RegisterActivity: AppCompatActivity() {
         val inputPasswordConfirm: EditText = findViewById(R.id.inputPasswordConfirm)
 
         btnRegister.setOnClickListener {
-            var email = inputEmail.getText().toString().trim()
-            var username = inputUsername.getText().toString().trim()
-            var password = inputPassword.getText().toString().trim()
-            var passwordC = inputPasswordConfirm.getText().toString().trim()
-
-            Log.d("data", email + ", " + username + ", " + password + ", " + passwordC)
-
-            if (!password.equals(passwordC)) {
-                Toast.makeText(this, "パスワード確認は一等ではない", Toast.LENGTH_SHORT).show()
+            if (TextUtils.isEmpty(inputEmail.text) || TextUtils.isEmpty(inputUsername.text) || TextUtils.isEmpty(inputPassword.text)) {
+                Toast.makeText(this, "入力を確認してください", Toast.LENGTH_SHORT).show()
             } else {
-                doRegister(email, password, username)
+                var email = inputEmail.getText().toString().trim()
+                var username = inputUsername.getText().toString().trim()
+                var password = inputPassword.getText().toString().trim()
+                var passwordC = inputPasswordConfirm.getText().toString().trim()
+
+                Log.d("data", email + ", " + username + ", " + password + ", " + passwordC)
+
+                if (!password.equals(passwordC)) {
+                    Toast.makeText(this, "パスワードは一等ではない", Toast.LENGTH_SHORT).show()
+                } else {
+                    //disable text field and input
+                    inputEmail.isEnabled = false
+                    inputUsername.isEnabled = false
+                    inputPassword.isEnabled = false
+                    inputPasswordConfirm.isEnabled = false
+                    btnRegister.isEnabled = false
+                    mProgress.visibility = ProgressBar.VISIBLE
+                    doRegister(email, password, username)
+                }
             }
         }
     }
@@ -54,10 +73,11 @@ class RegisterActivity: AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) {task ->
             if (task.isSuccessful) {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("userEmail", auth.currentUser!!.email.toString())
                 startActivity(intent)
+                finish()
             } else {
                 Toast.makeText(this, "ユーザ登録が失敗しました", Toast.LENGTH_SHORT).show()
+                mProgress.visibility = ProgressBar.INVISIBLE
             }
         }
     }

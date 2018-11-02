@@ -2,7 +2,6 @@ package jp.ac.ecc.sk3a12.ikouka
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 
