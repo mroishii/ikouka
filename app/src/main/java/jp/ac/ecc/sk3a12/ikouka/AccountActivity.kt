@@ -3,13 +3,12 @@ package jp.ac.ecc.sk3a12.ikouka
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class AccountActivity : AppCompatActivity() {
     //Firebase auth
@@ -52,9 +51,27 @@ class AccountActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        //get uid from intent
         var uid = intent.getStringExtra("uid")
-        var listener: ValueEventListener = ValueEventListener(){
+        //create data listener
+        var listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                accountName!!.text  = dataSnapshot.child("userName").value.toString()
 
+                //hide progressbar, show user info
+                mProgressBar!!.visibility = ProgressBar.INVISIBLE
+                accountName!!.visibility = TextView.VISIBLE
+                accountImage!!.visibility = ImageView.VISIBLE
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("database error", databaseError.message)
+            }
         }
+
+        //attatch listener
+        mDatabase.child(uid).addListenerForSingleValueEvent(listener)
+
     }
 }
