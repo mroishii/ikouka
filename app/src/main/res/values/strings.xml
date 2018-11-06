@@ -2,6 +2,7 @@
     <string name="app_name">Ikouka</string>
     <!-- main_menu -->
     <string name="signout">ログアウト</string>
+    <string name="account">アカウント</string>
 
     <!-- common -->
     <string name="labelInputEmail">メール</string>
@@ -24,4 +25,12 @@
     <string name="btnRegister">登録</string>
 
     <string name="title_activity_main">MainActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- main_activity -->
+    <!-- Tabs Title -->
+    <string name="tabtitle_groups">グループ</string>
+    <string name="tabtitle_request">リクエスト</string>
 </resources>

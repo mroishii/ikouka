@@ -14,16 +14,18 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : AppCompatActivity() {
-    private var labelLoginTitle: TextView? = null
+    //Firebase Auth
     private lateinit var auth: FirebaseAuth
+    //Toolbar
     private var mToolbar: Toolbar? = null
+    //Progress bar
     private lateinit var mProgress: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        //Toolbar
+        //set toolbar
         mToolbar = findViewById(R.id.loginActionBar)
         setSupportActionBar(mToolbar)
         supportActionBar!!.title = "ログイン"
@@ -31,13 +33,12 @@ class LoginActivity : AppCompatActivity() {
 
         //ProgressBar
         mProgress = findViewById(R.id.pbLogin)
-
         //アイテムのインスタンスを取得
         var inputEmail : EditText = findViewById(R.id.inputEmail)
         var inputPassword: EditText = findViewById(R.id.inputPassword)
         var btnLogin: Button = findViewById(R.id.btnLogin)
-        labelLoginTitle = findViewById(R.id.labelLoginTitle)
-        auth = FirebaseAuth.getInstance() //FirebaseAuthenticator のインスタンス
+        //FirebaseAuthenticator のインスタンス
+        auth = FirebaseAuth.getInstance()
 
         btnLogin.setOnClickListener {
             if (TextUtils.isEmpty(inputEmail.text) || TextUtils.isEmpty(inputPassword.text)) {
@@ -57,10 +58,11 @@ class LoginActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         // Sign in success
                         val intent = Intent(this, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         startActivity(intent)
                         finish()
                     } else {
-                        // If sign in fails
+                        // Sign in fails
                         Toast.makeText(this, "ログイン失敗しました", Toast.LENGTH_SHORT).show()
                         mProgress.visibility = ProgressBar.INVISIBLE
                         //Enable input

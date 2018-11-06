@@ -4,6 +4,13 @@
         <item
             android:id="@+id/signout"
             android:title="@string/signout" />
+        <item
+        android:id="@+id/account"
+        android:title="@string/account" />
+        <item
+            android:id="@+id/night"
+            android:title="Night" />
+
 
     </group>
 </menu>
