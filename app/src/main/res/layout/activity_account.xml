@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accountToolbar"
         app:layout_constraintVertical_bias="0.16000003"
-        tools:src="@android:drawable/sym_def_app_icon" />
+        tools:src="@drawable/icon_user" />
 
     <ProgressBar
         android:id="@+id/pbLoading"

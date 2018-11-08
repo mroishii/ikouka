@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import de.hdodenhof.circleimageview.CircleImageView
 
 class AccountActivity : AppCompatActivity() {
     //Firebase auth
@@ -21,7 +22,7 @@ class AccountActivity : AppCompatActivity() {
     private var mProgressBar: ProgressBar? = null
     //Other things
     private var accountName: TextView? = null
-    private var accountImage: ImageView? = null
+    private var accountImage: CircleImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class AccountActivity : AppCompatActivity() {
         //On create activity, show loading progress, hide all
         mProgressBar!!.visibility = ProgressBar.VISIBLE
         accountName!!.visibility = TextView.INVISIBLE
-        accountImage!!.visibility = ImageView.INVISIBLE
+        accountImage!!.visibility = CircleImageView.INVISIBLE
     }
 
     override fun onStart() {
@@ -61,7 +62,7 @@ class AccountActivity : AppCompatActivity() {
                 //hide progressbar, show user info
                 mProgressBar!!.visibility = ProgressBar.INVISIBLE
                 accountName!!.visibility = TextView.VISIBLE
-                accountImage!!.visibility = ImageView.VISIBLE
+                accountImage!!.visibility = CircleImageView.VISIBLE
 
             }
 

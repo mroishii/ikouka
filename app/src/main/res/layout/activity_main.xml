@@ -23,9 +23,9 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/mainPager"
         android:layout_width="match_parent"
-        android:layout_height="556dp"
+        android:layout_height="553dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="103dp">
+        android:layout_marginTop="106dp">
 
     </android.support.v4.view.ViewPager>
 
