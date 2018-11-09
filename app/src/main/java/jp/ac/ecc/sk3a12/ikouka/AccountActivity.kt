@@ -46,7 +46,7 @@ class AccountActivity : AppCompatActivity() {
         //On create activity, show loading progress, hide all
         mProgressBar!!.visibility = ProgressBar.VISIBLE
         accountName!!.visibility = TextView.INVISIBLE
-        accountImage!!.visibility = CircleImageView.INVISIBLE
+        //accountImage!!.visibility = CircleImageView.INVISIBLE
     }
 
     override fun onStart() {
@@ -62,7 +62,7 @@ class AccountActivity : AppCompatActivity() {
                 //hide progressbar, show user info
                 mProgressBar!!.visibility = ProgressBar.INVISIBLE
                 accountName!!.visibility = TextView.VISIBLE
-                accountImage!!.visibility = CircleImageView.VISIBLE
+                //accountImage!!.visibility = CircleImageView.VISIBLE
 
             }
 
