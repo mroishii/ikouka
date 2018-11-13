@@ -47,12 +47,11 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
 
     }
 
-    private int lastPosition = -1;
-
+    //private int lastPosition = -1;
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //Get item at position
-        Group group = getItem(position);
+        final Group group = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
@@ -62,9 +61,18 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.grouplist_item, parent, false);
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String gid = group.getGroupId();
+                    Intent intent = new Intent(mContext, GroupActivity.class);
+                    intent.putExtra("group", group);
+                    mContext.startActivity(intent);
+                }
+            });
             viewHolder.title = (TextView) convertView.findViewById(R.id.grouplist_item_title);
             viewHolder.description = (TextView) convertView.findViewById(R.id.grouplist_item_description);
-            viewHolder.image = (ImageView) convertView.findViewById(R.id.item_info);
+            viewHolder.image = (ImageView) convertView.findViewById(R.id.grouplist_item_image);
 
             result=convertView;
 
@@ -74,16 +82,16 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
             result = convertView;
         }
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        result.startAnimation(animation);
-        lastPosition = position;
+//        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+//        result.startAnimation(animation);
+//        lastPosition = position;
 
         viewHolder.title.setText(group.getTitle());
         viewHolder.description.setText(group.getDescription());
-        viewHolder.image.setOnClickListener(this);
 
         // Return the completed view to render on screen
         return convertView;
     }
+
 }
 

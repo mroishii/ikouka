@@ -98,6 +98,7 @@ class GroupsFragment : Fragment() {
         groupListAdapter = GroupListAdapter(groups, context)
         grouplist!!.setAdapter(groupListAdapter)
 
+
     }
 
     private fun dbUsersListenerCallback (dataSnapshot: DataSnapshot) {

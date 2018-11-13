@@ -3,6 +3,8 @@
     <!-- main_menu -->
     <string name="signout">ログアウト</string>
     <string name="account">アカウント</string>
+    <string name="newgroup">グループ作成</string>
+    <string name="allgroups">全てグループ</string>
 
     <!-- common -->
     <string name="labelInputEmail">メール</string>
@@ -33,5 +35,5 @@
     <!-- Tabs Title -->
     <string name="tabtitle_groups">グループ</string>
     <string name="tabtitle_request">リクエスト</string>
-    <string name="newgroup">グループ作成</string>
+
 </resources>

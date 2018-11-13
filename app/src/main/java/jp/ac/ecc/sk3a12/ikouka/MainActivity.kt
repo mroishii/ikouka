@@ -86,6 +86,11 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("uid", auth.currentUser!!.uid)
                 startActivity(intent)
             }
+
+            R.id.allGroups -> {
+                val intent = Intent(this, AllGroupsActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         return true

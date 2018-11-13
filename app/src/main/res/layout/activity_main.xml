@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,9 +12,13 @@
         <include layout="@layout/main_actionbar" android:id="@+id/mainToolbar"/>
 
         <android.support.design.widget.TabLayout
+            android:id="@+id/mainTabBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id ="@+id/mainTabBar">
+            android:background="@color/colorPrimaryDark"
+            app:tabIndicatorColor="#ffffff"
+            app:tabSelectedTextColor="#ffffff"
+            app:tabTextColor="@color/colorPrimary">
 
 
         </android.support.design.widget.TabLayout>

@@ -21,20 +21,24 @@
         </activity>
         <activity
             android:name=".HomeActivity"
-            android:label=".HomeActivity">
-
-        </activity>
+            android:label=".HomeActivity" />
         <activity
             android:name=".LoginActivity"
             android:parentActivityName=".HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RegisterActivity"
             android:label=".RegisterActivity"
-            android:parentActivityName=".HomeActivity">
-        </activity>
+            android:parentActivityName=".HomeActivity" />
         <activity
             android:name=".AccountActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".AllGroupsActivity"
+            android:parentActivityName=".MainActivity">
+        </activity>
+        <activity
+            android:name=".GroupActivity"
             android:parentActivityName=".MainActivity">
         </activity>
     </application>

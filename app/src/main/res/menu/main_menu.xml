@@ -6,8 +6,12 @@
             android:title="@string/account" />
 
         <item
-            android:id="@+id/newgroup"
-            android:title="@string/newgroup"/>
+        android:id="@+id/newgroup"
+        android:title="@string/newgroup"/>
+
+        <item
+            android:id="@+id/allGroups"
+            android:title="@string/allgroups"/>
 
         <item
             android:id="@+id/signout"
