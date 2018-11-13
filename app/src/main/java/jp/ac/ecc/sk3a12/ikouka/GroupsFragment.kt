@@ -8,9 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import de.hdodenhof.circleimageview.CircleImageView
@@ -29,9 +27,11 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class GroupsFragment : Fragment() {
+    //-------------GLOBAL VARIABLE---------------------------------------------
     //Group object array for adapter
     private var groups: ArrayList<Group> = ArrayList()
-
+    //groupListAdapter
+    private lateinit var groupListAdapter: GroupListAdapter
     //Firebase Auth
     private lateinit var auth: FirebaseAuth
     //Database Reference
@@ -52,10 +52,16 @@ class GroupsFragment : Fragment() {
         //for group
     var dbGroupsListener = object: ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
+            //get group title and description
+            var gid = dataSnapshot.key
             var title = dataSnapshot.child("title").value.toString()
             var description = dataSnapshot.child("description").value.toString()
-            var group : Group = Group(title, description)
+            Log.d("group", gid + "," + title + "," + description)
+            //create group object and add to arraylist
+            var group : Group = Group(gid, title, description)
             groups.add(group)
+            //update listview
+            groupListAdapter.notifyDataSetChanged()
 
         }
         override fun onCancelled(databaseError: DatabaseError) {
@@ -65,6 +71,7 @@ class GroupsFragment : Fragment() {
     }
     //GroupListView
     private var grouplist: ListView? = null
+    //-------------GLOBAL VARIABLE---------------------------------------------
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -86,24 +93,22 @@ class GroupsFragment : Fragment() {
 
         dbUsers.child(uid).addListenerForSingleValueEvent(dbUsersListener)
 
+        //create grouplist adapter and attatch
+        grouplist = view!!.findViewById(R.id.grouplist)
+        groupListAdapter = GroupListAdapter(groups, context)
+        grouplist!!.setAdapter(groupListAdapter)
+
     }
 
-
-    private var GRABBING = true
     private fun dbUsersListenerCallback (dataSnapshot: DataSnapshot) {
+        //split groups into array
         var temp = dataSnapshot.child("groups").value.toString()
         var userGroups = temp.split(",") as ArrayList<String>
-
+        //for each group id in the array, get group data from database
         for (gid in userGroups) {
             Log.d("groupId", gid)
             dbGroups.child(gid).addListenerForSingleValueEvent(dbGroupsListener)
         }
-
     }
 
-    private fun buildGroupList() {
-        grouplist = view!!.findViewById(R.id.grouplist)
-        var groupListAdapter : GroupListAdapter = GroupListAdapter(groups, context)
-        grouplist!!.setAdapter(groupListAdapter)
-    }
 }

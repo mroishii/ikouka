@@ -33,4 +33,5 @@
     <!-- Tabs Title -->
     <string name="tabtitle_groups">グループ</string>
     <string name="tabtitle_request">リクエスト</string>
+    <string name="newgroup">グループ作成</string>
 </resources>

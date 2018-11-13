@@ -1,6 +1,10 @@
 package jp.ac.ecc.sk3a12.ikouka;
 
 import android.content.Context;
+import android.content.Intent;
+import android.media.Image;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,9 +27,10 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
     private static class ViewHolder {
         TextView title;
         TextView description;
-        CircleImageView image;
+        ImageView image;
     }
 
+    //Constructor
     public GroupListAdapter(ArrayList<Group> data, Context context) {
         super(context, R.layout.grouplist_item, data);
         this.dataset = data;
@@ -37,9 +43,8 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
         Object object = getItem(position);
         Group group = (Group)object;
 
-        switch (v.getId()) {
+        Log.d("item", group.getGroupId());
 
-        }
     }
 
     private int lastPosition = -1;
@@ -59,6 +64,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
             convertView = inflater.inflate(R.layout.grouplist_item, parent, false);
             viewHolder.title = (TextView) convertView.findViewById(R.id.grouplist_item_title);
             viewHolder.description = (TextView) convertView.findViewById(R.id.grouplist_item_description);
+            viewHolder.image = (ImageView) convertView.findViewById(R.id.item_info);
 
             result=convertView;
 
@@ -74,6 +80,8 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
 
         viewHolder.title.setText(group.getTitle());
         viewHolder.description.setText(group.getDescription());
+        viewHolder.image.setOnClickListener(this);
+
         // Return the completed view to render on screen
         return convertView;
     }
