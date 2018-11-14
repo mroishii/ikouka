@@ -36,4 +36,7 @@
     <string name="tabtitle_groups">グループ</string>
     <string name="tabtitle_request">リクエスト</string>
 
+    <!-- GroupActivity -->
+    <string name="ownerMenu">管理者メニュー</string>
+
 </resources>

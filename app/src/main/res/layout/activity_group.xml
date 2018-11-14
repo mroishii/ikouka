@@ -7,22 +7,49 @@
     tools:context=".GroupActivity"
     android:background="#ffffff">
 
-    <include layout="@layout/main_actionbar" android:id="@+id/groupToolbar"/>
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/groupAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/main_actionbar" android:id="@+id/groupToolbar"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/groupTabBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            app:tabIndicatorColor="#ffffff"
+            app:tabSelectedTextColor="#ffffff"
+            app:tabTextColor="@color/colorPrimary">
+        </android.support.design.widget.TabLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/groupPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupAppBarLayout">
+
+    </android.support.v4.view.ViewPager>
 
     <TextView
         android:id="@+id/groupview_groupTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="Sample Text"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupToolbar" />
+        app:layout_constraintBottom_toBottomOf="@+id/groupPager"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="124dp" />
 
 </android.support.constraint.ConstraintLayout>
