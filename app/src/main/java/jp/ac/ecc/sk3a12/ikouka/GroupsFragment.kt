@@ -61,6 +61,22 @@ class GroupsFragment : Fragment() {
             Log.d("group", gid + "," + title + "," + description)
             //create group object and add to arraylist
             var group : Group = Group(gid, title, description, owner, image)
+
+            if (dataSnapshot.child("events") != null) {
+                for (event: DataSnapshot in dataSnapshot.child("events").children) {
+                    var eventId = event.key.toString()
+                    var title = event.child("title").value.toString()
+                    var description = event.child("description").value.toString()
+                    var owner = event.child("owner").value.toString()
+                    var start = event.child("start").value.toString()
+                    var end = event.child("end").value.toString()
+                    var mEvent: Event = Event(eventId, title, description, start, end, owner)
+
+                    group.addEvent(mEvent)
+                }
+            }
+
+
             groups.add(group)
             //update listview
             groupListAdapter.notifyDataSetChanged()

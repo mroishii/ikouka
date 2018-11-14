@@ -25,6 +25,10 @@ public class Group implements Parcelable {
         this.image = image;
     }
 
+    public void setOwner(String owner) { this.owner = owner; }
+
+    public void setImage(String image) { this.image = image; }
+
     public void setTitle(String title) {this.title = title;}
 
     public void setGroupId(String groupId) {this.groupId = groupId;}
@@ -52,6 +56,10 @@ public class Group implements Parcelable {
     public String getDescription() {
         return this.description;
     }
+
+    public String getOwner() {return this.owner;}
+
+    public String getImage() {return this.image;}
 
     protected Group(Parcel in) {
         groupId = in.readString();

@@ -43,7 +43,23 @@ class GroupActivity : AppCompatActivity() {
         super.onStart()
 
         var group: Group = intent.getParcelableExtra("group")
-        groupTitle!!.text = group.title
+        var groupString = "Group id: " + group.groupId
+        groupString += System.lineSeparator() + "Group title: " + group.title
+        groupString += System.lineSeparator() + "Group description: " +group.description
+        groupString += System.lineSeparator() + "Group owner: " +group.owner
+        groupString += System.lineSeparator() + "Group image: " +group.image
+        groupString += System.lineSeparator() + "Events: "
+        for (event in group.events) {
+            groupString += System.lineSeparator() + " Event id:" + event.eventId
+            groupString += System.lineSeparator() + "    Event title:" + event.title
+            groupString += System.lineSeparator() + "    Event owner:" + event.owner
+            groupString += System.lineSeparator() + "    Event description:" + event.description
+            groupString += System.lineSeparator() + "    Event start and end:" + event.start + "," + event.end
+            groupString += System.lineSeparator() + ""
+        }
+
+
+        groupTitle!!.text = groupString
 
     }
 
