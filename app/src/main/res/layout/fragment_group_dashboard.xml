@@ -5,10 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".GroupDashboardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <GridView
+        android:id="@+id/calendarGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:columnWidth="50dp"
+        android:gravity="center"
+        android:horizontalSpacing="1dp"
+        android:numColumns="7"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="2dp" />
 
 </FrameLayout>

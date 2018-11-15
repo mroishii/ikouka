@@ -14,7 +14,6 @@ import android.widget.Toast
 class GroupActivity : AppCompatActivity() {
     private lateinit var mToolbar: Toolbar
     private lateinit var mGroupPager: ViewPager
-    private lateinit var groupTitle: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +21,7 @@ class GroupActivity : AppCompatActivity() {
 
         mToolbar = findViewById(R.id.groupToolbar)
         setSupportActionBar(mToolbar)
-        supportActionBar!!.title = "Group Dashboard"
+        supportActionBar!!.title = "グループ掲示板"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //--------------ViewPager-------------------
@@ -36,32 +35,8 @@ class GroupActivity : AppCompatActivity() {
         groupTabBar.setupWithViewPager(mGroupPager)
         //-----------------------------------------
 
-        groupTitle = findViewById(R.id.groupview_groupTitle)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        var group: Group = intent.getParcelableExtra("group")
-        var groupString = "Group id: " + group.groupId
-        groupString += System.lineSeparator() + "Group title: " + group.title
-        groupString += System.lineSeparator() + "Group description: " +group.description
-        groupString += System.lineSeparator() + "Group owner: " +group.owner
-        groupString += System.lineSeparator() + "Group image: " +group.image
-        groupString += System.lineSeparator() + "Events: "
-        for (event in group.events) {
-            groupString += System.lineSeparator() + " Event id:" + event.eventId
-            groupString += System.lineSeparator() + "    Event title:" + event.title
-            groupString += System.lineSeparator() + "    Event owner:" + event.owner
-            groupString += System.lineSeparator() + "    Event description:" + event.description
-            groupString += System.lineSeparator() + "    Event start and end:" + event.start + "," + event.end
-            groupString += System.lineSeparator() + ""
-        }
-
-
-        groupTitle!!.text = groupString
-
-    }
 
     //up-right corner menu button
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

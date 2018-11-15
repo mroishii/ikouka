@@ -38,18 +38,4 @@
 
     </android.support.v4.view.ViewPager>
 
-    <TextView
-        android:id="@+id/groupview_groupTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Sample Text"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/groupPager"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="124dp" />
-
 </android.support.constraint.ConstraintLayout>
