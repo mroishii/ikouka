@@ -49,8 +49,8 @@ class GroupDashboardFragment : Fragment() {
         }
         Log.d("group info", groupString)
 
-        var calendarGrid: GridView = view.findViewById(R.id.calendarGrid)
-        var calendarGridAdapter: GroupCalendarGridAdapter = GroupCalendarGridAdapter(context, currentGroup.events)
+        var calendarGrid: GridView = view!!.findViewById(R.id.calendarGrid)
+        var calendarGridAdapter: GroupCalendarGridAdapter = GroupCalendarGridAdapter(context, currentGroup.events, 12)
         calendarGrid.adapter = calendarGridAdapter;
     }
 
