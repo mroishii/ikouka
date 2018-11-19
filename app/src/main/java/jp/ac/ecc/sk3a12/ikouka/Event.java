@@ -103,8 +103,8 @@ public class Event implements Parcelable {
     }
 
     private void processTimeStamp() {
-        Timestamp startTs = new Timestamp(Long.parseLong(start));
-        Timestamp endTs = new Timestamp(Long.parseLong(end));
+        Timestamp startTs = new Timestamp(Long.parseLong(start)*1000);
+        Timestamp endTs = new Timestamp(Long.parseLong(end)*1000);
 
         Calendar cal = Calendar.getInstance();
 
