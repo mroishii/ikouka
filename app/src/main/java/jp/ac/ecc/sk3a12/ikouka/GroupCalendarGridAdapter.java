@@ -2,6 +2,7 @@ package jp.ac.ecc.sk3a12.ikouka;
 
 import android.content.Context;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.google.firebase.storage.internal.Util;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -67,8 +70,23 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
         final TextView event1 = convertView.findViewById(R.id.event1);
         final TextView event2 = convertView.findViewById(R.id.event2);
         final TextView event3 = convertView.findViewById(R.id.event3);
+        final TextView[] eventTexts = {event1, event2, event3};
 
         day.setText(calendarGrid.get(position));
+
+        if (!TextUtils.isEmpty(day.getText()) && eventMap.containsKey(day.getText())) {
+            String eventsString = eventMap.get(day.getText());
+            String splitedEvents[] = eventsString.split("//");
+            for (int i = 0; i < splitedEvents.length; i++) {
+                if (i > 2) {
+                    break;
+                }
+                eventTexts[i].setText(splitedEvents[i]);
+                eventTexts[i].setVisibility(View.VISIBLE);
+            }
+        }
+
+
 
         return convertView;
     }
@@ -95,16 +113,15 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
             String eventTitle = event.getTitle();
             if (!eventMap.containsKey(eventDate)) {
                 eventMap.put(eventDate, eventTitle);
+                Log.d("eventMap", "newly created");
             } else {
                 String existedDateEvent = eventMap.get(eventDate);
                 existedDateEvent += "//"+ eventTitle;
+                eventMap.remove(eventDate);
                 eventMap.put(eventDate,existedDateEvent);
+                Log.d("eventMap", "merged");
             }
-            Log.d("event map", "event processed");
-        }
-
-        for (String key : eventMap.keySet()) {
-            Log.d("event map", key + ":" + eventMap.get(key));
+            Log.d("eventMap", eventDate + ":" + eventMap.get(eventDate));
         }
 
         //offset row
@@ -126,7 +143,7 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
         for (int i = 0; i < calendarGrid.size(); i++) {
             log += calendarGrid.get(i) + ",";
         }
-        Log.d("calendar grid", log);
+        Log.d("CalendarGrid", log);
 
 
     }

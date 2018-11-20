@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class Event implements Parcelable {
 
@@ -107,11 +109,12 @@ public class Event implements Parcelable {
         Timestamp endTs = new Timestamp(Long.parseLong(end)*1000);
 
         Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("GMT+9"));
 
         cal.setTimeInMillis(startTs.getTime());
         //Log
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
-        Log.d("event created", fmt.format(cal.getTime()));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm", Locale.JAPAN);
+        Log.d("Event.processTimeStamp", fmt.format(cal.getTime()));
         //Logend
         eventDate.add(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));
         eventMonth.add(Integer.toString(cal.get(Calendar.MONTH + 1)));
@@ -120,6 +123,7 @@ public class Event implements Parcelable {
         eventMinute.add(Integer.toString(cal.get(Calendar.MINUTE)));
 
         cal.setTimeInMillis(endTs.getTime());
+        //cal.setTimeZone(TimeZone.getTimeZone("GMT+9"));
         eventDate.add(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));
         eventMonth.add(Integer.toString(cal.get(Calendar.MONTH + 1)));
         eventYear.add(Integer.toString(cal.get(Calendar.YEAR)));

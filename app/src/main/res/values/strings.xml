@@ -38,5 +38,9 @@
 
     <!-- GroupActivity -->
     <string name="ownerMenu">管理者メニュー</string>
+    <string name="createGroup">グループ作成</string>
+    <string name="groupCreateTitleLabel">グループ名</string>
+    <string name="groupCreateDescriptionLabel">グループ概要</string>
+    <string name="groupCreateCreateButton">グループ作成</string>
 
 </resources>

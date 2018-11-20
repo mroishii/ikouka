@@ -35,10 +35,12 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AllGroupsActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
+            android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".GroupActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".CreateGroupActivity"
             android:parentActivityName=".MainActivity">
         </activity>
     </application>
