@@ -67,6 +67,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
                     String gid = group.getGroupId();
                     Intent intent = new Intent(mContext, GroupActivity.class);
                     intent.putExtra("group", group);
+                    intent.putExtra("groupTitle", group.getTitle());
                     mContext.startActivity(intent);
                 }
             });

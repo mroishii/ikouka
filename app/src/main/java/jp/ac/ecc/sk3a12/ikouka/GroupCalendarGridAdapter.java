@@ -25,6 +25,7 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
     private final Context mContext;
     private final ArrayList<Event> events;
     private final Calendar cal;
+    private int selectedMonth;
 
     private ArrayList<String> calendarGrid = new ArrayList<>();
     private HashMap<String, String> eventMap = new HashMap<>();
@@ -39,6 +40,7 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
     public GroupCalendarGridAdapter(Context context, ArrayList<Event> events, int selectedMonth) {
         this.mContext = context;
         this.events = events;
+        this.selectedMonth = selectedMonth;
         this.cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, selectedMonth - 1);
         this.prepareCalendar();
@@ -72,7 +74,11 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
         final TextView event3 = convertView.findViewById(R.id.event3);
         final TextView[] eventTexts = {event1, event2, event3};
 
-        day.setText(calendarGrid.get(position));
+        if (TextUtils.isEmpty(calendarGrid.get(position))) {
+            day.setVisibility(View.INVISIBLE);
+        } else {
+            day.setText(calendarGrid.get(position));
+        }
 
         if (!TextUtils.isEmpty(day.getText()) && eventMap.containsKey(day.getText())) {
             String eventsString = eventMap.get(day.getText());
@@ -85,8 +91,6 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
                 eventTexts[i].setVisibility(View.VISIBLE);
             }
         }
-
-
 
         return convertView;
     }
@@ -109,19 +113,26 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
 //        }
 
         for (Event event : events) {
-            String eventDate = event.getEventDate().get(0);
-            String eventTitle = event.getTitle();
-            if (!eventMap.containsKey(eventDate)) {
-                eventMap.put(eventDate, eventTitle);
-                Log.d("eventMap", "newly created");
+            String eventMonth = event.getEventMonth().get(0);
+            String eventYear = event.getEventYear().get(0);
+            if (cal.get(Calendar.YEAR) != Integer.parseInt(eventYear) || Integer.parseInt(eventMonth) != selectedMonth - 1) {
+                Log.d("eventMap", "continued, event detail: " + eventMonth + "," + eventYear + ", current cal: " + cal.get(Calendar.YEAR) + "," + selectedMonth);
+                continue;
             } else {
-                String existedDateEvent = eventMap.get(eventDate);
-                existedDateEvent += "//"+ eventTitle;
-                eventMap.remove(eventDate);
-                eventMap.put(eventDate,existedDateEvent);
-                Log.d("eventMap", "merged");
+                String eventDate = event.getEventDate().get(0);
+                String eventTitle = event.getTitle();
+                if (!eventMap.containsKey(eventDate)) {
+                    eventMap.put(eventDate, eventTitle);
+                    Log.d("eventMap", "newly created");
+                } else {
+                    String existedDateEvent = eventMap.get(eventDate);
+                    existedDateEvent += "//" + eventTitle;
+                    eventMap.remove(eventDate);
+                    eventMap.put(eventDate, existedDateEvent);
+                    Log.d("eventMap", "merged");
+                }
+                Log.d("eventMap", eventDate + ":" + eventMap.get(eventDate));
             }
-            Log.d("eventMap", eventDate + ":" + eventMap.get(eventDate));
         }
 
         //offset row

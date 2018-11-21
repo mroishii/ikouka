@@ -14,14 +14,19 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class MainActivity : AppCompatActivity() {
     //Firebase Auth
     private lateinit var auth: FirebaseAuth
+    //Database
+    private lateinit var mDatabase: DatabaseReference
     //Toolbar
     private var mToolbar: Toolbar? = null
     //ViewPager
     private var mMainPager: ViewPager? = null
+    //current user object
+    public lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +39,8 @@ class MainActivity : AppCompatActivity() {
 
         //Firebase Auth
         auth = FirebaseAuth.getInstance()
+        //Database
+        mDatabase = FirebaseDatabase.getInstance().getReference()
 
         //--------------ViewPager-------------------
         mMainPager = findViewById(R.id.mainPager)
@@ -51,13 +58,39 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val currentUser = auth.currentUser
+        //if not loged in, go back to home
         if (currentUser == null) {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
         } else {
             Toast.makeText(this, "signed in", Toast.LENGTH_SHORT).show()
+
+            //create current user object/////////////////////////////////
+                //listener
+            val listener : ValueEventListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    user = User(
+                            currentUser!!.uid,
+                            dataSnapshot.child("userName").value.toString(),
+                            currentUser!!.email,
+                            dataSnapshot.child("groups").value.toString(),
+                            dataSnapshot.child("image").value.toString(),
+                            dataSnapshot.child("thumbImage").value.toString()
+                    )
+
+                    Log.d("User", user.toString())
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("database error", databaseError.message)
+                }
+            }
+                //attatch listener
+            mDatabase.child("Users").child(currentUser.uid).addListenerForSingleValueEvent(listener)
+            //////////////////////////////////////////////////////
         }
+
     }
 
     //up-right corner menu button
@@ -89,6 +122,12 @@ class MainActivity : AppCompatActivity() {
 
             R.id.allGroups -> {
                 val intent = Intent(this, AllGroupsActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.createGroup -> {
+                val intent = Intent(this, CreateGroupActivity::class.java)
+                intent.putExtra("currentUser", user)
                 startActivity(intent)
             }
         }

@@ -122,7 +122,7 @@ class GroupsFragment : Fragment() {
     private fun dbUsersListenerCallback (dataSnapshot: DataSnapshot) {
         //split groups into array
         var temp = dataSnapshot.child("groups").value.toString()
-        var userGroups = temp.split(",") as ArrayList<String>
+        var userGroups = temp.split("//") as ArrayList<String>
         //for each group id in the array, get group data from database
         for (gid in userGroups) {
             Log.d("groupId", gid)
