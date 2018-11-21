@@ -1,6 +1,7 @@
 package jp.ac.ecc.sk3a12.ikouka;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -115,8 +116,8 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
         for (Event event : events) {
             String eventMonth = event.getEventMonth().get(0);
             String eventYear = event.getEventYear().get(0);
-            if (cal.get(Calendar.YEAR) != Integer.parseInt(eventYear) || Integer.parseInt(eventMonth) != selectedMonth - 1) {
-                Log.d("eventMap", "continued, event detail: " + eventMonth + "," + eventYear + ", current cal: " + cal.get(Calendar.YEAR) + "," + selectedMonth);
+            if (cal.get(Calendar.YEAR) != Integer.parseInt(eventYear) || Integer.parseInt(eventMonth) != selectedMonth) {
+                Log.d("eventMap", "continued, event detail: " + eventYear + "," +  eventMonth + ", current cal: " + cal.get(Calendar.YEAR) + "," + selectedMonth);
                 continue;
             } else {
                 String eventDate = event.getEventDate().get(0);
@@ -143,10 +144,6 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
         for (int i = 1; i <= daysCount; i++) {
             calendarGrid.add(Integer.toString(i));
 
-        }
-        //final offset
-        for (int i = 1; i <= 7 - firstRowOffset - 1; i++) {
-            calendarGrid.add(Integer.toString(i));
         }
 
         //log

@@ -27,6 +27,7 @@ class CreateGroupActivity : AppCompatActivity() {
         mToolBar = findViewById(R.id.createGroupActionBar)
         setSupportActionBar(mToolBar)
         supportActionBar!!.title = "グループ作成"
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //firebase
         mAuth = FirebaseAuth.getInstance()

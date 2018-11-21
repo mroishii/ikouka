@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         mToolbar = findViewById(R.id.mainToolbar)
         setSupportActionBar(mToolbar)
         supportActionBar!!.title = "ikouka"
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //Firebase Auth
         auth = FirebaseAuth.getInstance()

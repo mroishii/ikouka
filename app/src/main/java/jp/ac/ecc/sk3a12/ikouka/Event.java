@@ -117,7 +117,7 @@ public class Event implements Parcelable {
         Log.d("Event.processTimeStamp", fmt.format(cal.getTime()));
         //Logend
         eventDate.add(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));
-        eventMonth.add(Integer.toString(cal.get(Calendar.MONTH + 1)));
+        eventMonth.add(Integer.toString(cal.get(Calendar.MONTH ) + 1));
         eventYear.add(Integer.toString(cal.get(Calendar.YEAR)));
         eventHour.add(Integer.toString(cal.get(Calendar.HOUR)));
         eventMinute.add(Integer.toString(cal.get(Calendar.MINUTE)));
