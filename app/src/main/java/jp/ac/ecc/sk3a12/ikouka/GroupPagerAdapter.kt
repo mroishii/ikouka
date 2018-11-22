@@ -33,10 +33,10 @@ class GroupPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
     override fun getPageTitle(position: Int) : CharSequence {
         when (position) {
             0 -> {
-                return "掲示板"
+                return "カレンダー"
             }
             1 -> {
-                return "通知"
+                return "メニュー"
             }
         }
         return ""

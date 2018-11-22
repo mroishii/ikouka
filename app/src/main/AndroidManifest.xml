@@ -35,15 +35,16 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AllGroupsActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
+            android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".GroupActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
+            android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".CreateGroupActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".GroupChatActivity"
+            android:parentActivityName=".GroupActivity">
         </activity>
     </application>
 

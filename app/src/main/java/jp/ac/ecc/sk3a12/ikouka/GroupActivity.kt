@@ -14,6 +14,7 @@ import android.widget.Toast
 class GroupActivity : AppCompatActivity() {
     private lateinit var mToolbar: Toolbar
     private lateinit var mGroupPager: ViewPager
+    lateinit var currentGroup: Group
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,12 @@ class GroupActivity : AppCompatActivity() {
         setSupportActionBar(mToolbar)
         supportActionBar!!.title = intent.getStringExtra("groupTitle")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        if (savedInstanceState == null) {
+            currentGroup = intent.getParcelableExtra("group")
+        } else {
+            currentGroup = savedInstanceState!!.getParcelable("group")
+        }
 
         //--------------ViewPager-------------------
         mGroupPager = findViewById(R.id.groupPager)
@@ -57,5 +64,10 @@ class GroupActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("group", currentGroup)
     }
 }

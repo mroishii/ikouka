@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
-import android.widget.TextView
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -21,17 +20,19 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class GroupDashboardFragment : Fragment() {
+    lateinit var currentGroup: Group
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_group_dashboard, container, false)
+        return inflater.inflate(R.layout.fragment_group_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var currentGroup: Group = activity!!.intent.getParcelableExtra("group")
+        currentGroup = activity!!.intent.getParcelableExtra("group")
+
 
         var groupString = "Group id: " + currentGroup.groupId
         groupString += System.lineSeparator() + "Group title: " + currentGroup.title
@@ -53,6 +54,7 @@ class GroupDashboardFragment : Fragment() {
         var calendarGridAdapter: GroupCalendarGridAdapter = GroupCalendarGridAdapter(context, currentGroup.events, 12)
         calendarGrid.adapter = calendarGridAdapter;
     }
+
 
 
 }
