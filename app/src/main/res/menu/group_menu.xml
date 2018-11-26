@@ -5,5 +5,9 @@
             android:id="@+id/ownerMenu"
             android:title="@string/ownerMenu"/>
 
+        <item
+            android:id="@+id/invite"
+            android:title="招待"/>
+
     </group>
 </menu>
