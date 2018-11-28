@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class ChatMessage {
     private String sender;
-    private String timestamp;
+    private Long timestamp;
     private String message;
 
     public ChatMessage() {
@@ -15,10 +15,10 @@ public class ChatMessage {
     public ChatMessage(String from, String message) {
         this.sender = from;
         this.message = message;
-        this.timestamp = Long.toString(Calendar.getInstance().getTimeInMillis());
+        this.timestamp = Calendar.getInstance().getTimeInMillis();
     }
 
-    public ChatMessage(String sender, String message, String timestamp) {
+    public ChatMessage(String sender, String message, Long timestamp) {
         this.sender = sender;
         this.timestamp = timestamp;
         this.message = message;
@@ -29,17 +29,22 @@ public class ChatMessage {
     }
 
     public Long getTimestamp() {
-        return Long.parseLong(timestamp);
+        return timestamp;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public HashMap<String, String> toMap() {
-        HashMap<String, String> messageMap = new HashMap();
-        messageMap.put("sender", sender);
-        messageMap.put("timestamp", timestamp.toString());
-        return messageMap;
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = Long.parseLong(timestamp);
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

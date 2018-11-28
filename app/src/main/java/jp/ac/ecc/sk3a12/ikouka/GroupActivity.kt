@@ -26,7 +26,7 @@ class GroupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group)
-
+        
         // Get current group
         if (savedInstanceState == null) {
             currentGroup = intent.getParcelableExtra("group")
