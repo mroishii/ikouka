@@ -58,9 +58,10 @@ class GroupsFragment : Fragment() {
             var description = dataSnapshot.child("description").value.toString()
             var owner = dataSnapshot.child("owner").value.toString()
             var image = dataSnapshot.child("image").value.toString()
+            var users: DataSnapshot = dataSnapshot.child("users")
             Log.d("group", gid + "," + title + "," + description)
             //create group object and add to arraylist
-            var group : Group = Group(gid, title, description, owner, image)
+            var group : Group = Group(gid, title, description, owner, image, dataSnapshot.child("users"))
 
             if (dataSnapshot.child("events") != null) {
                 for (event: DataSnapshot in dataSnapshot.child("events").children) {
@@ -82,6 +83,7 @@ class GroupsFragment : Fragment() {
             groupListAdapter.notifyDataSetChanged()
 
         }
+
         override fun onCancelled(databaseError: DatabaseError) {
             Log.e("database error", databaseError.message)
         }
@@ -122,11 +124,17 @@ class GroupsFragment : Fragment() {
     private fun dbUsersListenerCallback (dataSnapshot: DataSnapshot) {
         //split groups into array
         var temp = dataSnapshot.child("groups").value.toString()
-        var userGroups = temp.split("//") as ArrayList<String>
-        //for each group id in the array, get group data from database
-        for (gid in userGroups) {
-            Log.d("groupId", gid)
-            dbGroups.child(gid).addListenerForSingleValueEvent(dbGroupsListener)
+        Log.d("GroupsFragment", "groupIdsString:$temp")
+
+        if (temp.indexOf("//") == -1) {
+            dbGroups.child(temp).addListenerForSingleValueEvent(dbGroupsListener)
+        } else {
+            var userGroups = temp.split("//") as ArrayList<String>
+            //for each group id in the array, get group data from database
+            for (gid in userGroups) {
+                Log.d("groupId", gid)
+                dbGroups.child(gid).addListenerForSingleValueEvent(dbGroupsListener)
+            }
         }
     }
 

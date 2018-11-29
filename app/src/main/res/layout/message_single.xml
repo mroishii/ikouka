@@ -36,6 +36,6 @@
         android:background="@drawable/single_message_background"
         android:padding="8dp"
         android:text="message content"
-        android:textColor="#ffffff" />
+        android:textColor="@color/md_black_1000" />
 
 </RelativeLayout>

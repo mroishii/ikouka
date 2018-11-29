@@ -22,11 +22,10 @@ class GroupChatActivity : AppCompatActivity() {
 
     //Toolbar
     private lateinit var mToolbar: Toolbar
-
+    //Input message bar
     private var sendButton: ImageButton? = null
     private var plusButton: ImageButton? = null
     private var inputMessage: EditText? = null
-
     //message list display
     private var messageRecyclerView: RecyclerView? = null
     //message list
@@ -73,7 +72,7 @@ class GroupChatActivity : AppCompatActivity() {
         messageRecyclerView!!.setHasFixedSize(true)
         messageRecyclerView!!.layoutManager = linearLayout
         //Setup Adapter
-        mMessageListAdapter = MessageListAdapter(messageList)
+        mMessageListAdapter = MessageListAdapter(messageList, mAuth.currentUser!!.uid, currentGroup.users)
         messageRecyclerView!!.adapter = mMessageListAdapter
         //Listener for database
         var messageListener: ChildEventListener = object: ChildEventListener {
@@ -126,20 +125,11 @@ class GroupChatActivity : AppCompatActivity() {
         var messageMap: HashMap<String, String> = HashMap()
         messageMap.put("sender", currentUser)
         messageMap.put("message", message)
+        messageMap.put("type", "text")
         messageMap.put("timestamp", Calendar.getInstance().timeInMillis.toString())
 
         var pushedId = dbGroupChat.push().key.toString()
         dbGroupChat.child(pushedId).updateChildren(messageMap.toMap())
-
-        //add message to database
-//        var addedMessageId = dbGroupChat.push().key.toString()
-//        dbGroupChat.child(addedMessageId).child("sender").setValue(mChatMessage.sender)
-//        Log.d("MessageAdd", "sender")
-//        dbGroupChat.child(addedMessageId).child("timestamp").setValue(mChatMessage.timestamp)
-//        Log.d("MessageAdd", "timestamp")
-//        dbGroupChat.child(addedMessageId).child("message").setValue(mChatMessage.message)
-//        Log.d("MessageAdd", "message")
-
     }
 
     private fun loadMessage(p0: DataSnapshot) {

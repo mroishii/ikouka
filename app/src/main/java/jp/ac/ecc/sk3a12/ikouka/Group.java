@@ -1,9 +1,15 @@
 package jp.ac.ecc.sk3a12.ikouka;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Group implements Parcelable {
     private String groupId;
@@ -12,9 +18,23 @@ public class Group implements Parcelable {
     private String owner;
     private String image;
     private ArrayList<Event> events = new ArrayList<Event>();
+    private HashMap<String, HashMap<String, String>> users = new HashMap();
 
     public Group() {
         //empty constructor for firebase
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "groupId='" + groupId + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", owner='" + owner + '\'' +
+                ", image='" + image + '\'' +
+                ", events=" + events +
+                ", users=" + users +
+                '}';
     }
 
     public Group(String groupId, String title, String description, String owner, String image) {
@@ -23,6 +43,15 @@ public class Group implements Parcelable {
         this.description = description;
         this.owner = owner;
         this.image = image;
+    }
+
+    public Group(String groupId, String title, String description, String owner, String image, DataSnapshot usersDs) {
+        this.groupId = groupId;
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+        this.image = image;
+        buildUsersMap(usersDs);
     }
 
     public void setOwner(String owner) { this.owner = owner; }
@@ -61,6 +90,20 @@ public class Group implements Parcelable {
 
     public String getImage() {return this.image;}
 
+    public HashMap<String, HashMap<String, String>> getUsers() {
+        return this.users;
+    }
+
+    public void buildUsersMap(DataSnapshot usersDs) {
+        for (DataSnapshot user : usersDs.getChildren()) {
+            Log.d("GroupClass", "buildUsersMap/" + user.toString());
+            HashMap<String, String> userMap = new HashMap();
+            userMap.put("roles", user.child("roles").getValue().toString());
+            userMap.put("displayName", user.child("displayName").getValue().toString());
+            users.put(user.getKey(), userMap);
+        }
+    }
+
     protected Group(Parcel in) {
         groupId = in.readString();
         title = in.readString();
@@ -73,6 +116,8 @@ public class Group implements Parcelable {
         } else {
             events = null;
         }
+        Bundle bundle = in.readBundle();
+        users = (HashMap <String, HashMap<String, String>>) bundle.getSerializable("users");
     }
 
     @Override
@@ -93,6 +138,9 @@ public class Group implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(events);
         }
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("users", users);
+        dest.writeBundle(bundle);
     }
 
     @SuppressWarnings("unused")

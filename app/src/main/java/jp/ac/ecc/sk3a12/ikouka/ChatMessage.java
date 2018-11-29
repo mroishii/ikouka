@@ -7,20 +7,23 @@ public class ChatMessage {
     private String sender;
     private Long timestamp;
     private String message;
+    private String type;
 
     public ChatMessage() {
         //Empty for Firebase
     }
 
-    public ChatMessage(String from, String message) {
+    public ChatMessage(String from, String message, String type) {
         this.sender = from;
         this.message = message;
+        this.type = type;
         this.timestamp = Calendar.getInstance().getTimeInMillis();
     }
 
-    public ChatMessage(String sender, String message, Long timestamp) {
+    public ChatMessage(String sender, String message, String type, Long timestamp) {
         this.sender = sender;
         this.timestamp = timestamp;
+        this.type = type;
         this.message = message;
     }
 
@@ -36,6 +39,8 @@ public class ChatMessage {
         return message;
     }
 
+    public String getType() { return type; }
+
     public void setSender(String sender) {
         this.sender = sender;
     }
@@ -47,4 +52,6 @@ public class ChatMessage {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public void setType(String type) {this.type = type; }
 }
