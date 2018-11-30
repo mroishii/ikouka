@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ImageButton
 import com.google.firebase.auth.FirebaseAuth
@@ -137,5 +138,17 @@ class GroupChatActivity : AppCompatActivity() {
         messageList.add(message!!)
         mMessageListAdapter.notifyDataSetChanged()
         Log.d("MessageLoad", p0.toString())
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        super.onOptionsItemSelected(item)
+
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+
+        return true
     }
 }

@@ -12,15 +12,8 @@ import android.widget.ListView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.*
 import java.util.ArrayList
-import com.google.firebase.firestore.FirebaseFirestoreSettings
-
-
-
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,7 +34,7 @@ class RequestFragment : Fragment() {
 
     //Firestore
     private lateinit var mDb: FirebaseFirestore
-    lateinit var userDocument: DocumentSnapshot
+    private var userDocument: DocumentSnapshot? = null
 
     //Groups list
     private var groupList: ListView? = null
@@ -54,7 +47,6 @@ class RequestFragment : Fragment() {
         val settings = FirebaseFirestoreSettings.Builder()
                 .setTimestampsInSnapshotsEnabled(true)
                 .build()
-        mDb.firestoreSettings = settings
 
 
         // Inflate the layout for this fragment
@@ -66,7 +58,6 @@ class RequestFragment : Fragment() {
 
         var uid = mAuth.currentUser!!.uid
 
-
         mDb.collection("Users")
                 .document(uid)
                 .get()
@@ -75,7 +66,7 @@ class RequestFragment : Fragment() {
                         val document = task.result
                         if (document != null) {
                             Log.d("Firestore", "DocumentSnapshot data: " + task.result!!.data)
-                            userDocument = task.result!!
+                            doneGetUser(document)
 
                         } else {
                             Log.d("Firestore", "No such document")
@@ -87,10 +78,48 @@ class RequestFragment : Fragment() {
 
 
 
+
+
 //        groupList = view!!.findViewById(R.id.grouplist2)
 //        mGroupListAdapter = GroupListAdapter(groups, context)
 //        groupList!!.adapter = mGroupListAdapter
     }
+
+
+    private fun doneGetUser(document: DocumentSnapshot) {
+        var userGroups: ArrayList<DocumentReference> = document!!.get("groups") as ArrayList<DocumentReference>
+
+        for (userGroup in userGroups) {
+            var groupRef: DocumentReference = userGroup
+            groupRef.get()
+                    .addOnCompleteListener {task ->
+                        if (task.isSuccessful) {
+                            val document = task.result
+                            if (document != null) {
+                                Log.d("Firestore", "DocumentSnapshot data: " + task.result!!.data)
+                                doneGetGroup(document)
+
+                            } else {
+                                Log.d("Firestore", "No such document")
+                            }
+                        } else {
+                            Log.d("Firestore", "get failed with ", task.exception)
+                        }
+                    }
+        }
+    }
+
+    private fun doneGetGroup(document: DocumentSnapshot) {
+        var groupDoc = document;
+        Log.d("Firestore", "groupDoc => " + document)
+        var title = groupDoc.get("title") as String
+        var description = groupDoc.get("description") as String
+
+    }
+    private fun doneGetEvent(document: DocumentSnapshot) {
+        var eventRef = document;
+    }
+
 
 
 }

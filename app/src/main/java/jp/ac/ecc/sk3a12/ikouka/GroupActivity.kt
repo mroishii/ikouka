@@ -95,10 +95,13 @@ class GroupActivity : AppCompatActivity() {
                         dialog.cancel()
                     }
                 })
-
                 alert.show()
 
 
+            }
+
+            android.R.id.home -> {
+                onBackPressed()
             }
         }
 
