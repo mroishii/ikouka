@@ -67,15 +67,21 @@ class RequestFragment : Fragment() {
         var uid = mAuth.currentUser!!.uid
 
 
-        mDb.collection("Users")
-                .document(uid)
+
+
+//        groupList = view!!.findViewById(R.id.grouplist2)
+//        mGroupListAdapter = GroupListAdapter(groups, context)
+//        groupList!!.adapter = mGroupListAdapter
+    }
+
+    private fun doneGetUser(userDs: DocumentSnapshot) {
+        mDb.collection("Groups")
+                .document("dummy_group_id")
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val document = task.result
                         if (document != null) {
-                            Log.d("Firestore", "DocumentSnapshot data: " + task.result!!.data)
-                            userDocument = task.result!!
 
                         } else {
                             Log.d("Firestore", "No such document")
@@ -84,12 +90,27 @@ class RequestFragment : Fragment() {
                         Log.d("Firestore", "get failed with ", task.exception)
                     }
                 }
+    }
 
+    private fun doneGetGroup(groupDs: DocumentSnapshot) {
+        val document = groupDs
 
+//       Log.d("FIRESTORE", "title:${document.get("title")} ")
+//       Log.d("FIRESTORE", "description:${document.get("description")} ")
+//       Log.d("FIRESTORE", "owner:${document.get("owner")} ")
+//       Log.d("FIRESTORE", "image:${document.get("image")} ")
+//       Log.d("FIRESTORE", "users" + document.get("users"))
+//       for (user in document.get("users") as Map<String, Object>) {
+//           Log.d("FIRESTORE", "user:${user} ")
+//       }
+        var group: Group = Group(document.id,
+                document.getString("title"),
+                document.getString("description"),
+                document.get("owner").toString(),
+                document.getString("image"))
+        group.buildUserMap(document.get("users") as Map<String, Object>)
 
-//        groupList = view!!.findViewById(R.id.grouplist2)
-//        mGroupListAdapter = GroupListAdapter(groups, context)
-//        groupList!!.adapter = mGroupListAdapter
+        Log.d("FIRESTORE", "group object created" + group)
     }
 
 

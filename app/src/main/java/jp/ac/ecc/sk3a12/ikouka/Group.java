@@ -7,9 +7,11 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Group implements Parcelable {
     private String groupId;
@@ -101,6 +103,17 @@ public class Group implements Parcelable {
             userMap.put("roles", user.child("roles").getValue().toString());
             userMap.put("displayName", user.child("displayName").getValue().toString());
             users.put(user.getKey(), userMap);
+        }
+    }
+
+    public void buildUserMap(Map<String, Object> usersMap) {
+        for (String userKey : usersMap.keySet()) {
+            Map<String, Object> user = (Map<String, Object>) usersMap.get(userKey);
+            HashMap<String, String> userMap = new HashMap<>();
+            userMap.put("displayName", (String) user.get("displayName"));
+            userMap.put("image", (String) user.get("image"));
+            userMap.put("roles", ((ArrayList<String>) user.get("roles")).toString());
+            users.put(userKey, userMap);
         }
     }
 
