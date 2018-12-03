@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.R.id.groups
 import java.nio.file.Files.find
@@ -27,115 +30,111 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class GroupsFragment : Fragment() {
-    //-------------GLOBAL VARIABLE---------------------------------------------
+    private val TAG = "GroupsFrag"
+
     //Group object array for adapter
     private var groups: ArrayList<Group> = ArrayList()
-    //groupListAdapter
-    private lateinit var groupListAdapter: GroupListAdapter
-    //Firebase Auth
-    private lateinit var auth: FirebaseAuth
-    //Database Reference
-    private lateinit var dbRoot: DatabaseReference
-    private lateinit var dbUsers: DatabaseReference
-    private lateinit var dbGroups: DatabaseReference
-    //Database Listener
-        //for user
-    var dbUsersListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            dbUsersListenerCallback(dataSnapshot)
-        }
+    private lateinit var mGroupListAdapter: GroupListAdapter
 
-        override fun onCancelled(databaseError: DatabaseError) {
-            Log.e("database error", databaseError.message)
-        }
-    }
-        //for group
-    var dbGroupsListener = object: ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            //get group title and description
-            var gid = dataSnapshot.key
-            var title = dataSnapshot.child("title").value.toString()
-            var description = dataSnapshot.child("description").value.toString()
-            var owner = dataSnapshot.child("owner").value.toString()
-            var image = dataSnapshot.child("image").value.toString()
-            var users: DataSnapshot = dataSnapshot.child("users")
-            Log.d("group", gid + "," + title + "," + description)
-            //create group object and add to arraylist
-            var group : Group = Group(gid, title, description, owner, image, dataSnapshot.child("users"))
+    //Groups listview
+    private var groupList: ListView? = null
 
-            if (dataSnapshot.child("events") != null) {
-                for (event: DataSnapshot in dataSnapshot.child("events").children) {
-                    var eventId = event.key.toString()
-                    var title = event.child("title").value.toString()
-                    var description = event.child("description").value.toString()
-                    var owner = event.child("owner").value.toString()
-                    var start = event.child("start").value.toString()
-                    var end = event.child("end").value.toString()
-                    var mEvent: Event = Event(eventId, title, description, start, end, owner)
+    //Firebase auth
+    private lateinit var mAuth: FirebaseAuth
 
-                    group.addEvent(mEvent)
-                }
-            }
-
-
-            groups.add(group)
-            //update listview
-            groupListAdapter.notifyDataSetChanged()
-
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            Log.e("database error", databaseError.message)
-        }
-
-    }
-    //GroupListView
-    private var grouplist: ListView? = null
-    //-------------GLOBAL VARIABLE---------------------------------------------
+    //Firestore
+    private lateinit var mDb: FirebaseFirestore
+    lateinit var currentUser: User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        // Initialize variable
-        auth = FirebaseAuth.getInstance()
-        dbRoot = FirebaseDatabase.getInstance().getReference()
-        dbUsers = dbRoot.child("Users")
-        dbGroups = dbRoot.child("Groups")
+        //init firebase
+        mAuth = FirebaseAuth.getInstance()
+        mDb = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
+
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_groups, container, false)
+        return inflater.inflate(R.layout.fragment_request, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var uid = auth.currentUser!!.uid
+        var currentUser = mAuth.currentUser!!.uid
 
-        dbUsers.child(uid).addListenerForSingleValueEvent(dbUsersListener)
+        //group listview
+        groupList = view!!.findViewById(R.id.grouplist)
+        mGroupListAdapter = GroupListAdapter(groups, context)
+        groupList!!.adapter = mGroupListAdapter
 
-        //create grouplist adapter and attatch
-        grouplist = view!!.findViewById(R.id.grouplist)
-        groupListAdapter = GroupListAdapter(groups, context)
-        grouplist!!.setAdapter(groupListAdapter)
+        //Get current user document
+        mDb.collection("User")
+                .document(currentUser)
+                .get()
+                .addOnCompleteListener {task ->
+                    if (task.isSuccessful) {
+                        if (task.result == null) {
+                            Log.d(TAG, "FIRESTORE -> CANNOT FIND CURRENT USER DOCUMENT")
+                        }
+                        else {
+                            Log.d(TAG, "FIRESTORE -> CURRENT USER DOCUMENT: " + task.result)
+                            doneGetUser(task.result)
+                        }
 
-
+                    } else {
+                        Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
+                    }
+                }
     }
 
-    private fun dbUsersListenerCallback (dataSnapshot: DataSnapshot) {
-        //split groups into array
-        var temp = dataSnapshot.child("groups").value.toString()
-        Log.d("GroupsFragment", "groupIdsString:$temp")
+    private fun doneGetUser(userDs: DocumentSnapshot?) {
+        currentUser = User(userDs!!.id,
+                userDs!!.getString("userName"),
+                userDs!!.getString("email"),
+                userDs!!.get("groups") as ArrayList<String>,
+                userDs!!.getString("image") ,
+                userDs!!.getString("thumbImage"))
 
-        if (temp.indexOf("//") == -1) {
-            dbGroups.child(temp).addListenerForSingleValueEvent(dbGroupsListener)
-        } else {
-            var userGroups = temp.split("//") as ArrayList<String>
-            //for each group id in the array, get group data from database
-            for (gid in userGroups) {
-                Log.d("groupId", gid)
-                dbGroups.child(gid).addListenerForSingleValueEvent(dbGroupsListener)
-            }
+        Log.d(TAG, "Current user object created -> $currentUser")
+
+        for (groupId in currentUser.userGroups) {
+            mDb.collection("Groups")
+                    .document(groupId)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            if (task.result == null) {
+                                Log.d(TAG, "FIRESTORE -> CANNOT FIND THIS GROUP DOCUMENT -> $groupId")
+                            }
+                            else {
+                                Log.d(TAG, "FIRESTORE -> CURRENT GROUP DOCUMENT: " + task.result)
+                                doneGetGroup(task.result)
+                            }
+
+                        } else {
+                            Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
+                        }
+                    }
         }
+    }
+
+    private fun doneGetGroup(groupDs: DocumentSnapshot?) {
+        val document = groupDs
+
+        var group = Group(document!!.id,
+                document!!["title"] as String,
+                document!!["description"] as String,
+                document!!["image"] as String)
+
+        Log.d(TAG, "Group object created" + group.title)
+
+        groups.add(group)
+        mGroupListAdapter.notifyDataSetChanged()
     }
 
 }

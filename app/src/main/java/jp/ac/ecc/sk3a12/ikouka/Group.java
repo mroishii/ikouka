@@ -39,6 +39,14 @@ public class Group implements Parcelable {
                 '}';
     }
 
+    public Group(String groupId, String title, String description, String image) {
+        //Constructor for grouplist adapter
+        this.groupId = groupId;
+        this.title = title;
+        this.description = description;
+        this.image = image;
+    }
+
     public Group(String groupId, String title, String description, String owner, String image) {
         this.groupId = groupId;
         this.title = title;

@@ -50,44 +50,7 @@ class CreateGroupActivity : AppCompatActivity() {
 
         //CREATE button click
         createGroupButton.setOnClickListener {
-            val groupsDatabase: DatabaseReference = mDatabase.child("Groups")
 
-            //push new node to Groups database, get key as new groupId
-            val createdGroupId = groupsDatabase.push().key
-
-            //write to database
-            groupsDatabase.child(createdGroupId!!).child("title").setValue(createGroupTitle.text.toString())
-            groupsDatabase.child(createdGroupId!!).child("description").setValue(createGroupDescription.text.toString())
-            groupsDatabase.child(createdGroupId!!).child("image").setValue("default")
-            groupsDatabase.child(createdGroupId!!).child("owner").setValue(currentUserId.toString())
-            groupsDatabase.child(createdGroupId!!).child("users").child(currentUserId).child("roles").setValue("owner")
-
-            //add newly added group id to current user groups info...........
-            var currentUserGroups = user.userGroups
-            if (currentUserGroups.equals("null")) {
-                currentUserGroups = createdGroupId
-            } else {
-                currentUserGroups += "//" + createdGroupId
-            }
-            //.......then update groups info to database................
-            mDatabase.child("Users").child(currentUserId).child("groups").setValue(currentUserGroups)
-            //........also update the current user object.............
-            user.userGroups = currentUserGroups
-            //.......then create new object for new group.............
-            val group : Group = Group(
-                    createdGroupId,
-                    createGroupTitle.text.toString(),
-                    createGroupDescription.text.toString(),
-                    currentUserId,
-                    "default"
-            )
-            //........finally, put all object to intent and start the group activity
-            val intent = Intent(this, GroupActivity::class.java)
-            intent.putExtra("group", group)
-            intent.putExtra("currentUser", user)
-            intent.putExtra("groupTitle", group.title)
-            startActivity(intent)
-            finish()
 
         }
     }

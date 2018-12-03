@@ -3,11 +3,13 @@ package jp.ac.ecc.sk3a12.ikouka;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class User implements Parcelable {
     private String userId;
     private String userName;
     private String email;
-    private String userGroups;
+    private ArrayList<String> userGroups;
     private String image;
     private String thumbImage;
 
@@ -15,7 +17,7 @@ public class User implements Parcelable {
         //empty constructor for firebase
     }
 
-    public User(String userId, String userName, String email, String userGroups, String image, String thumbImage) {
+    public User(String userId, String userName, String email, ArrayList<String> userGroups, String image, String thumbImage) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
@@ -36,11 +38,11 @@ public class User implements Parcelable {
         return email;
     }
 
-    public String getUserGroups() {
+    public ArrayList<String> getUserGroups() {
         return userGroups;
     }
 
-    public void setUserGroups(String userGroups) {
+    public void setUserGroups(ArrayList<String> userGroups) {
         this.userGroups = userGroups;
     }
 
@@ -76,7 +78,7 @@ public class User implements Parcelable {
         userId = in.readString();
         userName = in.readString();
         email = in.readString();
-        userGroups = in.readString();
+        userGroups = (ArrayList<String>) in.readSerializable();
         image = in.readString();
         thumbImage = in.readString();
     }
@@ -91,7 +93,7 @@ public class User implements Parcelable {
         dest.writeString(userId);
         dest.writeString(userName);
         dest.writeString(email);
-        dest.writeString(userGroups);
+        dest.writeSerializable(userGroups);
         dest.writeString(image);
         dest.writeString(thumbImage);
     }
