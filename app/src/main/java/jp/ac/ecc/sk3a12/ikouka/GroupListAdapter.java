@@ -64,9 +64,8 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String gid = group.getGroupId();
                     Intent intent = new Intent(mContext, GroupActivity.class);
-                    intent.putExtra("group", group);
+                    intent.putExtra("groupId", group.getGroupId());
                     intent.putExtra("groupTitle", group.getTitle());
                     mContext.startActivity(intent);
                 }

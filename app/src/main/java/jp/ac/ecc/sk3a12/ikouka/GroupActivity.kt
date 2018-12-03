@@ -19,7 +19,9 @@ import android.widget.LinearLayout
 import android.widget.Toast
 
 class GroupActivity : AppCompatActivity() {
+    //Toolbar
     private lateinit var mToolbar: Toolbar
+    //View Pager
     private lateinit var mGroupPager: ViewPager
     lateinit var currentGroup: Group
 
@@ -28,9 +30,7 @@ class GroupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_group)
 
         // Get current group
-        if (savedInstanceState == null) {
-            currentGroup = intent.getParcelableExtra("group")
-        } else {
+        if (savedInstanceState != null) {
             currentGroup = savedInstanceState!!.getParcelable("group")
         }
 
@@ -43,7 +43,7 @@ class GroupActivity : AppCompatActivity() {
         //--------------ViewPager-------------------
         mGroupPager = findViewById(R.id.groupPager)
         //initialize PagerAdapter
-        val mGroupPagerAdapter : GroupPagerAdapter = GroupPagerAdapter(supportFragmentManager)
+        val mGroupPagerAdapter = GroupPagerAdapter(supportFragmentManager)
         //set MainPager Adapter
         mGroupPager!!.adapter = mGroupPagerAdapter
         //link TabBar to MainPager
@@ -66,7 +66,12 @@ class GroupActivity : AppCompatActivity() {
         super.onOptionsItemSelected(item)
         //check itemid
         when (item!!.itemId) {
-            //signout menu item
+            //back button
+            android.R.id.home -> {
+                onBackPressed()
+            }
+
+            //owner menu
             R.id.ownerMenu -> {
                 Toast.makeText(this, "jump to owner menu", Toast.LENGTH_SHORT).show()
             }

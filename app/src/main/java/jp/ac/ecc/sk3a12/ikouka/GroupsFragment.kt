@@ -73,7 +73,7 @@ class GroupsFragment : Fragment() {
         groupList!!.adapter = mGroupListAdapter
 
         //Get current user document
-        mDb.collection("User")
+        mDb.collection("Users")
                 .document(currentUser)
                 .get()
                 .addOnCompleteListener {task ->
@@ -93,7 +93,9 @@ class GroupsFragment : Fragment() {
     }
 
     private fun doneGetUser(userDs: DocumentSnapshot?) {
-        currentUser = User(userDs!!.id,
+        Log.d(TAG, "userDs" + userDs)
+        currentUser = User(
+                userDs!!.id,
                 userDs!!.getString("userName"),
                 userDs!!.getString("email"),
                 userDs!!.get("groups") as ArrayList<String>,
