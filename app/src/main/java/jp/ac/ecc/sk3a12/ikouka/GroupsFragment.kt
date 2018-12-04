@@ -126,14 +126,15 @@ class GroupsFragment : Fragment() {
     }
 
     private fun doneGetGroup(groupDs: DocumentSnapshot?) {
-        val document = groupDs
+        Log.d(TAG, "groupDs -> " + groupDs)
 
-        var group = Group(document!!.id,
-                document!!["title"] as String,
-                document!!["description"] as String,
-                document!!["image"] as String)
+        var group = Group(groupDs!!.id,
+                groupDs.getString("title"),
+                groupDs.getString("description"),
+                groupDs.getString("owner"),
+                groupDs.getString("image"))
 
-        Log.d(TAG, "Group object created" + group.title)
+        Log.d(TAG, "Group object created -> " + group.title)
 
         groups.add(group)
         mGroupListAdapter.notifyDataSetChanged()

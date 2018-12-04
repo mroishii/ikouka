@@ -21,7 +21,7 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class GroupNotificationFragment : Fragment() {
-    private lateinit var currentGroup: Group
+//    private lateinit var currentGroup: Group
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -31,14 +31,14 @@ class GroupNotificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentGroup = activity!!.intent.getParcelableExtra("group")
-
-        val menuList: ArrayList<String> = ArrayList<String>(Arrays.asList("メンバー", "投票・アンケート", "タスク", "チャット"))
-        val menuIcon: ArrayList<Int> = ArrayList<Int>(Arrays.asList(R.drawable.menu_members, R.drawable.menu_vote, R.drawable.menu_tasks, R.drawable.menu_chat))
-
-        val groupMenuList: ListView = view.findViewById(R.id.groupMenuList)
-        val adapter: GroupMenuListAdapter = GroupMenuListAdapter(menuList, menuIcon, currentGroup, context)
-        groupMenuList.adapter = adapter
+//        currentGroup = activity!!.intent.getParcelableExtra("group")
+//
+//        val menuList: ArrayList<String> = ArrayList<String>(Arrays.asList("メンバー", "投票・アンケート", "タスク", "チャット"))
+//        val menuIcon: ArrayList<Int> = ArrayList<Int>(Arrays.asList(R.drawable.menu_members, R.drawable.menu_vote, R.drawable.menu_tasks, R.drawable.menu_chat))
+//
+//        val groupMenuList: ListView = view.findViewById(R.id.groupMenuList)
+//        val adapter: GroupMenuListAdapter = GroupMenuListAdapter(menuList, menuIcon, currentGroup, context)
+//        groupMenuList.adapter = adapter
     }
 
 

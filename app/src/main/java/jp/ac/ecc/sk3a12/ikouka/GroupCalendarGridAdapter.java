@@ -38,11 +38,12 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
         this.prepareCalendar();
     }
 
-    public GroupCalendarGridAdapter(Context context, ArrayList<Event> events, int selectedMonth) {
+    public GroupCalendarGridAdapter(Context context, ArrayList<Event> events,int selectedYear, int selectedMonth) {
         this.mContext = context;
         this.events = events;
         this.selectedMonth = selectedMonth;
         this.cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR , selectedYear);
         cal.set(Calendar.MONTH, selectedMonth - 1);
         this.prepareCalendar();
     }
@@ -155,4 +156,6 @@ public class GroupCalendarGridAdapter extends BaseAdapter {
 
 
     }
+
+
 }

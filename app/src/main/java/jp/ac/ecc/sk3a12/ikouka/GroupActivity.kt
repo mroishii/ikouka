@@ -37,7 +37,7 @@ class GroupActivity : AppCompatActivity() {
         // Setup toolbar
         mToolbar = findViewById(R.id.groupToolbar)
         setSupportActionBar(mToolbar)
-        supportActionBar!!.title = currentGroup.title
+        supportActionBar!!.title = intent.getStringExtra("groupTitle")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //--------------ViewPager-------------------

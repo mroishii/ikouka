@@ -16,8 +16,8 @@ public class Event implements Parcelable {
     private String eventId;
     private String title;
     private String description;
-    private String start;
-    private String end;
+    private Timestamp start;
+    private Timestamp end;
     private String owner;
 
     private ArrayList<String> eventDate = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Event implements Parcelable {
         //Empty Construtor
     }
 
-    public Event(String eventId, String title, String description, String start, String end, String owner) {
+    public Event(String eventId, String title, String description, Timestamp start, Timestamp end, String owner) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
@@ -60,19 +60,19 @@ public class Event implements Parcelable {
         this.description = description;
     }
 
-    public String getStart() {
+    public Timestamp getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(Timestamp start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public Timestamp getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(Timestamp end) {
         this.end = end;
     }
 
@@ -104,9 +104,26 @@ public class Event implements Parcelable {
         return eventMinute;
     }
 
+    @Override
+    public String toString() {
+        return "Event{" +
+                "eventId='" + eventId + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", owner='" + owner + '\'' +
+                ", eventDate=" + eventDate +
+                ", eventMonth=" + eventMonth +
+                ", eventYear=" + eventYear +
+                ", eventHour=" + eventHour +
+                ", eventMinute=" + eventMinute +
+                '}';
+    }
+
     private void processTimeStamp() {
-        Timestamp startTs = new Timestamp(Long.parseLong(start)*1000);
-        Timestamp endTs = new Timestamp(Long.parseLong(end)*1000);
+        Timestamp startTs = start;
+        Timestamp endTs = end;
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getTimeZone("GMT+9"));
@@ -135,8 +152,8 @@ public class Event implements Parcelable {
         eventId = in.readString();
         title = in.readString();
         description = in.readString();
-        start = in.readString();
-        end = in.readString();
+        start = new Timestamp(in.readLong());
+        end = new Timestamp(in.readLong());
         owner = in.readString();
         if (in.readByte() == 0x01) {
             eventDate = new ArrayList<String>();
@@ -180,8 +197,8 @@ public class Event implements Parcelable {
         dest.writeString(eventId);
         dest.writeString(title);
         dest.writeString(description);
-        dest.writeString(start);
-        dest.writeString(end);
+        dest.writeLong(start.getTime());
+        dest.writeLong(end.getTime());
         dest.writeString(owner);
         if (eventDate == null) {
             dest.writeByte((byte) (0x00));

@@ -20,6 +20,7 @@ public class Group implements Parcelable {
     private String owner;
     private String image;
     private ArrayList<Event> events = new ArrayList<Event>();
+    private ArrayList<String> eventsId = new ArrayList<String>();
     private HashMap<String, HashMap<String, String>> users = new HashMap();
 
     public Group() {
@@ -35,16 +36,9 @@ public class Group implements Parcelable {
                 ", owner='" + owner + '\'' +
                 ", image='" + image + '\'' +
                 ", events=" + events +
+                ", eventsId=" + eventsId +
                 ", users=" + users +
                 '}';
-    }
-
-    public Group(String groupId, String title, String description, String image) {
-        //Constructor for grouplist adapter
-        this.groupId = groupId;
-        this.title = title;
-        this.description = description;
-        this.image = image;
     }
 
     public Group(String groupId, String title, String description, String owner, String image) {
@@ -78,6 +72,8 @@ public class Group implements Parcelable {
         this.events = events;
     }
 
+    public void setEventsId (ArrayList<String> eventsId) {this.eventsId = eventsId;}
+
     public ArrayList<Event> getEvents() {
         return events;
     }
@@ -99,6 +95,8 @@ public class Group implements Parcelable {
     public String getOwner() {return this.owner;}
 
     public String getImage() {return this.image;}
+
+    public ArrayList<String> getEventsId() {return this.eventsId;}
 
     public HashMap<String, HashMap<String, String>> getUsers() {
         return this.users;
@@ -137,6 +135,7 @@ public class Group implements Parcelable {
         } else {
             events = null;
         }
+        eventsId = (ArrayList<String>) in.readSerializable();
         Bundle bundle = in.readBundle();
         users = (HashMap <String, HashMap<String, String>>) bundle.getSerializable("users");
     }
@@ -159,6 +158,7 @@ public class Group implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(events);
         }
+        dest.writeSerializable(eventsId);
         Bundle bundle = new Bundle();
         bundle.putSerializable("users", users);
         dest.writeBundle(bundle);
