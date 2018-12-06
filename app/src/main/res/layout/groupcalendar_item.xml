@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="84dp"
+    android:background="@color/md_white_1000">
 
     <TextView
         android:id="@+id/day"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:background="#D5D5D5"
         android:gravity="center_horizontal"
         android:text="day"
@@ -21,8 +21,8 @@
     <TextView
         android:id="@+id/event1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="4dp"
         android:background="#FF4500"
         android:gravity="center_horizontal"
         android:text="event1"
@@ -35,7 +35,7 @@
     <TextView
         android:id="@+id/event2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="20dp"
         android:background="#3CB371	"
         android:gravity="center_horizontal"
         android:text="event2"
@@ -48,7 +48,7 @@
     <TextView
         android:id="@+id/event3"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="20dp"
         android:background="#4169E1"
         android:gravity="center_horizontal"
         android:text="event3"

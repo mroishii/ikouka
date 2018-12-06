@@ -1,9 +1,10 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.content.res.TypedArrayUtils.getString
+import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupsFragment
+import jp.ac.ecc.sk3a12.ikouka.Fragment.RequestFragment
 
 class MainPagerAdapder(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
 

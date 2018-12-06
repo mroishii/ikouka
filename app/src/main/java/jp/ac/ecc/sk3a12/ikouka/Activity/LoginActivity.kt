@@ -1,16 +1,13 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.NavigationView
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.util.Log
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_login.*
+import jp.ac.ecc.sk3a12.ikouka.R
 
 
 class LoginActivity : AppCompatActivity() {

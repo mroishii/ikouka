@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GroupNotificationFragment">
+    tools:context=".Fragment.GroupMenuFragment">
 
 
     <LinearLayout
@@ -19,7 +19,7 @@
             android:layout_height="202dp"
             android:foreground="@drawable/image_overlay"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/backgrounds/scenic[16]" />
+            android:src="@drawable/default_group" />
 
         <ListView
             android:id="@+id/groupMenuList"

@@ -1,8 +1,7 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
@@ -14,6 +13,7 @@ import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import jp.ac.ecc.sk3a12.ikouka.R
 
 class RegisterActivity: AppCompatActivity() {
     //Firebase Auth

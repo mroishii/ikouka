@@ -1,4 +1,4 @@
-package jp.ac.ecc.sk3a12.ikouka;
+package jp.ac.ecc.sk3a12.ikouka.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,8 +1,7 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Fragment
 
 
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,13 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
-import de.hdodenhof.circleimageview.CircleImageView
-import jp.ac.ecc.sk3a12.ikouka.R.id.groups
-import java.nio.file.Files.find
+import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupListAdapter
+import jp.ac.ecc.sk3a12.ikouka.Model.Group
+import jp.ac.ecc.sk3a12.ikouka.Model.User
+import jp.ac.ecc.sk3a12.ikouka.R
 import java.util.*
 
 
@@ -99,7 +98,7 @@ class GroupsFragment : Fragment() {
                 userDs!!.getString("userName"),
                 userDs!!.getString("email"),
                 userDs!!.get("groups") as ArrayList<String>,
-                userDs!!.getString("image") ,
+                userDs!!.getString("image"),
                 userDs!!.getString("thumbImage"))
 
         Log.d(TAG, "Current user object created -> $currentUser")

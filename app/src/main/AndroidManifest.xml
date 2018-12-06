@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:label="ikouka"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -19,32 +19,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name=".Activity.HomeActivity"
             android:label=".HomeActivity" />
         <activity
-            android:name=".LoginActivity"
-            android:parentActivityName=".HomeActivity"
+            android:name=".Activity.LoginActivity"
+            android:parentActivityName=".Activity.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".Activity.RegisterActivity"
             android:label=".RegisterActivity"
-            android:parentActivityName=".HomeActivity" />
+            android:parentActivityName=".Activity.HomeActivity" />
         <activity
-            android:name=".AccountActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".Activity.AccountActivity"
+            android:parentActivityName=".Activity.MainActivity" />
         <activity
-            android:name=".AllGroupsActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:name=".Activity.AllGroupsActivity"
+            android:parentActivityName=".Activity.MainActivity" />
         <activity
-            android:name=".GroupActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:name=".Activity.GroupActivity"
+            android:parentActivityName=".Activity.MainActivity" />
         <activity
-            android:name=".CreateGroupActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:name=".Activity.CreateGroupActivity"
+            android:parentActivityName=".Activity.MainActivity" />
         <activity
-            android:name=".GroupChatActivity"
-            android:parentActivityName=".GroupActivity">
-        </activity>
+            android:name=".Activity.GroupChatActivity"
+            android:parentActivityName=".Activity.GroupActivity" />
+        <activity android:name=".Activity.AnketoListActivity" />
+        <activity android:name=".Activity.AnketoActivity"></activity>
     </application>
 
 </manifest>

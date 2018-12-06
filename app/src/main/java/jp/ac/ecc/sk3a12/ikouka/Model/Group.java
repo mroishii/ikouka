@@ -1,4 +1,4 @@
-package jp.ac.ecc.sk3a12.ikouka;
+package jp.ac.ecc.sk3a12.ikouka.Model;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;

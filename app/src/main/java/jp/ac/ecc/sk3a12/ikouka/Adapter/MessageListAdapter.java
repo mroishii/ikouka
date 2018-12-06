@@ -1,4 +1,4 @@
-package jp.ac.ecc.sk3a12.ikouka;
+package jp.ac.ecc.sk3a12.ikouka.Adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +9,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.ac.ecc.sk3a12.ikouka.Model.ChatMessage;
+import jp.ac.ecc.sk3a12.ikouka.R;
 
 public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.MessageViewHolder> {
     private ArrayList<ChatMessage> messageList;

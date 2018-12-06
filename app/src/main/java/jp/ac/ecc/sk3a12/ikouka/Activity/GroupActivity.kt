@@ -1,15 +1,11 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
-import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
-import android.widget.TextView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
@@ -17,17 +13,32 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import jp.ac.ecc.sk3a12.ikouka.Model.Event
+import jp.ac.ecc.sk3a12.ikouka.Model.Group
+import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupPagerAdapter
+import jp.ac.ecc.sk3a12.ikouka.R
 
 class GroupActivity : AppCompatActivity() {
+    private var TAG = "GroupActivity"
     //Toolbar
     private lateinit var mToolbar: Toolbar
     //View Pager
     private lateinit var mGroupPager: ViewPager
-    lateinit var currentGroup: Group
+    //Current group
+    private lateinit var currentGroup: Group
+
+    //Firestore
+    private lateinit var mDb: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group)
+
+        //Firestore
+        mDb = FirebaseFirestore.getInstance()
 
         // Get current group
         if (savedInstanceState != null) {
@@ -40,16 +51,75 @@ class GroupActivity : AppCompatActivity() {
         supportActionBar!!.title = intent.getStringExtra("groupTitle")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        //Get current group from Db
+        val groupId = intent.getStringExtra("groupId")
+        startGetGroup(groupId)
+
+
+    }
+
+    fun startGetGroup(groupId: String) {
+        mDb.collection("Groups").document(groupId)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        if (task.result == null) {
+                            Log.d(TAG, "FIRESTORE -> CANNOT FIND THIS GROUP DOCUMENT -> $groupId")
+                        } else {
+                            Log.d(TAG, "FIRESTORE -> CURRENT GROUP DOCUMENT: " + task.result)
+                            doneGetGroup(task.result)
+                        }
+                    } else {
+                        Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
+                    }
+                }
+    }
+
+    fun doneGetGroup(groupDs: DocumentSnapshot?) {
+        //--------START BUILDING CURRENT GROUP OBJECT-----------------------------------------------------------
+        currentGroup = Group(groupDs!!.id,
+                groupDs!!.getString("title"),
+                groupDs!!.getString("description"),
+                groupDs!!.getString("owner"),
+                groupDs!!.getString("image"))
+        if (groupDs!!.get("events") != null) {
+            var eventsMap: ArrayList<Map<String, Any>> = groupDs!!.get("events") as ArrayList<Map<String, Any>>
+
+            for ((index, e) in eventsMap.withIndex()) {
+                val start = java.sql.Timestamp((e.get("start") as Timestamp).seconds * 1000)
+                val end = java.sql.Timestamp((e.get("end") as Timestamp).seconds * 1000)
+                var event = Event(index.toString(),
+                        e.get("title") as String,
+                        e.get("description") as String,
+                        start,
+                        end,
+                        e.get("owner") as String)
+
+                Log.d(TAG, "Event object created -> " + event)
+                currentGroup.addEvent(event)
+            }
+        }
+        currentGroup.buildUserMap(groupDs.get("users") as Map<String, Any>)
+
+        //---------END BUILDING----------------------------------------------------------------------------------
+
         //--------------ViewPager-------------------
         mGroupPager = findViewById(R.id.groupPager)
         //initialize PagerAdapter
-        val mGroupPagerAdapter = GroupPagerAdapter(supportFragmentManager)
+        val mGroupPagerAdapter = GroupPagerAdapter(supportFragmentManager, currentGroup)
         //set MainPager Adapter
         mGroupPager!!.adapter = mGroupPagerAdapter
         //link TabBar to MainPager
         val groupTabBar : TabLayout = findViewById(R.id.groupTabBar)
         groupTabBar.setupWithViewPager(mGroupPager)
         //-----------------------------------------
+
+
+//        var bundle = Bundle()
+//        bundle.putParcelable("currentGroup", currentGroup)
+//        var frag: GroupCalendarFragment = supportFragmentManager!!.findFragmentByTag("groupCalendarFragment") as GroupCalendarFragment
+//        frag.arguments = bundle
+
 
     }
 

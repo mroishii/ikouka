@@ -1,23 +1,20 @@
-package jp.ac.ecc.sk3a12.ikouka;
+package jp.ac.ecc.sk3a12.ikouka.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity;
+import jp.ac.ecc.sk3a12.ikouka.Model.Group;
+import jp.ac.ecc.sk3a12.ikouka.R;
 
 public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClickListener {
     private ArrayList<Group> dataset;

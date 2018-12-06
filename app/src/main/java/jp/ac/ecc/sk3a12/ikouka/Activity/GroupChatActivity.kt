@@ -1,17 +1,21 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ImageButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import jp.ac.ecc.sk3a12.ikouka.Model.ChatMessage
+import jp.ac.ecc.sk3a12.ikouka.Model.Group
+import jp.ac.ecc.sk3a12.ikouka.Adapter.MessageListAdapter
+import jp.ac.ecc.sk3a12.ikouka.R
 import java.util.*
 
 class GroupChatActivity : AppCompatActivity() {
@@ -114,6 +118,16 @@ class GroupChatActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("currentGroup", currentGroup)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun sendMessage() {

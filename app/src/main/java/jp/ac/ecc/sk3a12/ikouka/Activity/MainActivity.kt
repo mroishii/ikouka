@@ -1,20 +1,17 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
-import android.app.UiModeManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import jp.ac.ecc.sk3a12.ikouka.Adapter.MainPagerAdapder
+import jp.ac.ecc.sk3a12.ikouka.R
 
 class MainActivity : AppCompatActivity() {
     //Firebase Auth

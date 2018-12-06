@@ -1,9 +1,10 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
+import jp.ac.ecc.sk3a12.ikouka.R
 
 class HomeActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

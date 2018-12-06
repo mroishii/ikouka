@@ -1,4 +1,4 @@
-package jp.ac.ecc.sk3a12.ikouka;
+package jp.ac.ecc.sk3a12.ikouka.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import jp.ac.ecc.sk3a12.ikouka.Activity.AnketoListActivity;
+import jp.ac.ecc.sk3a12.ikouka.Activity.GroupChatActivity;
+import jp.ac.ecc.sk3a12.ikouka.Model.Group;
+import jp.ac.ecc.sk3a12.ikouka.R;
 
 public class GroupMenuListAdapter extends ArrayAdapter<String> {
     private ArrayList<String> text;
@@ -51,6 +56,10 @@ public class GroupMenuListAdapter extends ArrayAdapter<String> {
 
                     case 1: {
                         Toast.makeText(mContext, item_text.getText(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(mContext, AnketoListActivity.class);
+                        intent.putExtra("groupId", currentGroup.getGroupId());
+                        intent.putExtra("groupTitle", currentGroup.getTitle());
+                        mContext.startActivity(intent);
                         break;
                     }
 

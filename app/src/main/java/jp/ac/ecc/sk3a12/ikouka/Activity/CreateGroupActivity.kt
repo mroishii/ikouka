@@ -1,6 +1,5 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
@@ -9,6 +8,8 @@ import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import jp.ac.ecc.sk3a12.ikouka.R
+import jp.ac.ecc.sk3a12.ikouka.Model.User
 
 class CreateGroupActivity : AppCompatActivity() {
     //ToolBar

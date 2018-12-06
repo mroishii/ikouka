@@ -3,17 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GroupDashboardFragment">
+    tools:context=".Fragment.GroupCalendarFragment">
 
     <GridView
         android:id="@+id/calendarGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="50dp"
+        android:background="@android:color/darker_gray"
         android:gravity="center"
-        android:horizontalSpacing="0dp"
+        android:horizontalSpacing="1dp"
         android:numColumns="7"
-        android:stretchMode="spacingWidthUniform"
         android:verticalSpacing="1dp" />
 
 </FrameLayout>

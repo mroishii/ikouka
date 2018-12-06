@@ -1,4 +1,4 @@
-package jp.ac.ecc.sk3a12.ikouka
+package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.*
+import jp.ac.ecc.sk3a12.ikouka.Model.Group
+import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.grouplist_item.view.*
 
 class AllGroupsActivity : AppCompatActivity() {
