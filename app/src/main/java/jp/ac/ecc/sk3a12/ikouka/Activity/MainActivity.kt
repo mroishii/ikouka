@@ -7,19 +7,30 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Adapter.MainPagerAdapder
+import jp.ac.ecc.sk3a12.ikouka.Model.User
 import jp.ac.ecc.sk3a12.ikouka.R
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
     //Firebase Auth
     private lateinit var auth: FirebaseAuth
+    //Firestore
+    private lateinit var mDb: FirebaseFirestore
     //Toolbar
     private var mToolbar: Toolbar? = null
     //ViewPager
     private var mMainPager: ViewPager? = null
+    //CUrrentUser Object
+    private lateinit var currentUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,31 +43,66 @@ class MainActivity : AppCompatActivity() {
 
         //Firebase Auth
         auth = FirebaseAuth.getInstance()
+        //Init firestore
+        mDb = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
 
-        //--------------ViewPager-------------------
-        mMainPager = findViewById(R.id.mainPager)
-            //initialize PagerAdapter
-        val mMainPagerAdapter: MainPagerAdapder = MainPagerAdapder(supportFragmentManager)
-            //set MainPager Adapter
-        mMainPager!!.adapter = mMainPagerAdapter
-            //link TabBar to MainPager
-        val mainTabBar : TabLayout = findViewById(R.id.mainTabBar)
-        mainTabBar.setupWithViewPager(mMainPager)
-        //-----------------------------------------
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
+        //Check if logged in
+        val currentAuthUser = auth.currentUser
         //if not loged in, go back to home
-        if (currentUser == null) {
+        if (currentAuthUser == null) {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
         } else {
-            Toast.makeText(this, "signed in", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "ようこそ！", Toast.LENGTH_SHORT).show()
+            //Get current user document
+            mDb.collection("Users")
+                    .document(currentAuthUser!!.uid)
+                    .get()
+                    .addOnCompleteListener {task ->
+                        if (task.isSuccessful) {
+                            if (task.result == null) {
+                                Log.d(TAG, "FIRESTORE -> CANNOT FIND CURRENT USER DOCUMENT")
+                            }
+                            else {
+                                Log.d(TAG, "FIRESTORE -> CURRENT USER DOCUMENT: " + task.result)
+                                doneGetUser(task.result)
+                            }
+
+                        } else {
+                            Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
+                        }
+                    }
         }
+    }
+
+    private fun doneGetUser(userDs: DocumentSnapshot?) {
+        currentUser = User(
+                userDs!!.id,
+                userDs!!.getString("userName"),
+                userDs!!.getString("email"),
+                userDs!!.get("groups") as ArrayList<String>,
+                userDs!!.getString("image"),
+                userDs!!.getString("thumbImage"))
+
+        Log.d(TAG, "Current user object created -> $currentUser")
+
+
+        //--------------ViewPager-------------------
+        mMainPager = findViewById(R.id.mainPager)
+        //initialize PagerAdapter
+        val mMainPagerAdapter: MainPagerAdapder = MainPagerAdapder(supportFragmentManager, currentUser)
+        //set MainPager Adapter
+        mMainPager!!.adapter = mMainPagerAdapter
+        //link TabBar to MainPager
+        val mainTabBar : TabLayout = findViewById(R.id.mainTabBar)
+        mainTabBar.setupWithViewPager(mMainPager)
+        //-----------------------------------------
+
     }
 
     //up-right corner menu button

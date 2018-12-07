@@ -2,22 +2,23 @@ package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.MenuItem
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
+import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class AnketoListActivity : AppCompatActivity() {
     private val TAG = "AnkLstActi"
 
     //Anketo List Map
-    private var anketoIds: ArrayList<String> = ArrayList()
-
-    //Group User Map
-
+    private var anketosList: ArrayList<Anketo> = ArrayList()
 
     //Action bar
     private lateinit var mToolbar: Toolbar
@@ -25,7 +26,13 @@ class AnketoListActivity : AppCompatActivity() {
     //Firestore
     private lateinit var mDb: FirebaseFirestore
 
-    //Current Group
+    //RecyclerView + adapter + linear layout manager
+    private var anketo_listview: RecyclerView? = null
+    private lateinit var anketoAdapter: AnketoListAdapter
+    private lateinit var linearLayout: LinearLayoutManager
+
+    //Group Users Map
+    private lateinit var usersMap: HashMap<String, HashMap<String, String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,18 @@ class AnketoListActivity : AppCompatActivity() {
 
         //Firestore
         mDb = FirebaseFirestore.getInstance()
+
+        //User Maps
+        usersMap = intent.getSerializableExtra("groupUsers") as HashMap<String, HashMap<String, String>>
+
+        //Recycler View
+        anketo_listview = findViewById(R.id.anketo_listview)
+        linearLayout = LinearLayoutManager(this)
+        anketo_listview!!.setHasFixedSize(true)
+        anketo_listview!!.layoutManager = linearLayout
+        //set adapter
+        anketoAdapter = AnketoListAdapter(this, anketosList, usersMap)
+        anketo_listview!!.adapter = anketoAdapter
 
         //Access Group Database
         var currentGroupId = intent.getStringExtra("groupId")
@@ -59,15 +78,37 @@ class AnketoListActivity : AppCompatActivity() {
                     }
                 }
 
+
+
     }
 
     fun doneGetGroup(groupDs: DocumentSnapshot?) {
-        var anketoMap: HashMap<String, Any> = groupDs!!.get("anketo") as HashMap<String, Any>
-        Log.d(TAG, "anketoMap -> $anketoMap")
-        for (id in anketoMap.keys) {
-            anketoIds.add(id)
+        var anketosMap: HashMap<String, Any> = groupDs!!.get("anketo") as HashMap<String, Any>
+        Log.d(TAG, "anketoMap -> $anketosMap")
+        for (key in anketosMap.keys) {
+            val anketoMap: HashMap<String, Any> = anketosMap.get(key)  as HashMap<String, Any>
+            val anketo = Anketo(key ,
+                    anketoMap.get("title") as String,
+                    anketoMap.get("description") as String,
+                    anketoMap.get("owner") as String )
+
+            val answersMap: HashMap<String, Any> = anketoMap.get("answers") as HashMap<String, Any>
+            for(key in answersMap.keys) {
+                val answerMap: HashMap<String, Any> = answersMap.get(key) as HashMap<String, Any>
+                val anketoAnswer = AnketoAnswer(key,
+                        answerMap.get("description") as String,
+                        answerMap.get("answered") as HashMap<String, Boolean>)
+                Log.d(TAG, "Answer Object Created -> $anketoAnswer")
+                anketo.putAnswer(anketoAnswer)
+            }
+
+            Log.d(TAG, "Anketo Object Created -> $anketo")
+            anketosList.add(anketo)
+            Log.d(TAG, "Anketo Object Added")
+            anketoAdapter.notifyDataSetChanged()
         }
-        Log.d(TAG, "anketoIds -> $anketoIds")
+
+
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

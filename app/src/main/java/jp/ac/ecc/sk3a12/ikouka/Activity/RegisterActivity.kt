@@ -13,6 +13,7 @@ import android.widget.ProgressBar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class RegisterActivity: AppCompatActivity() {
@@ -20,6 +21,8 @@ class RegisterActivity: AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     //Firebase Database
     private lateinit var mDatabase: DatabaseReference
+    //Firestore
+    private lateinit var mDb: FirebaseFirestore
     //Toolbar
     private var mToolbar: Toolbar? = null
     //ProgressDialog
@@ -46,6 +49,8 @@ class RegisterActivity: AppCompatActivity() {
         mProgress = findViewById(R.id.pbRegister)
         //Firebase Auth
         auth = FirebaseAuth.getInstance()
+        //Firestore
+        mDb = FirebaseFirestore.getInstance()
 
         btnRegister = findViewById(R.id.btnRegister)
         inputEmail = findViewById(R.id.inputEmail)
@@ -90,7 +95,7 @@ class RegisterActivity: AppCompatActivity() {
                     //create new node <root> -> Users -> uid
                 mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
                     //create user info map
-                var userMap: HashMap<String, String> = HashMap()
+                var userMap: HashMap<String, Any> = HashMap()
                 userMap.put("userName", username)
                 userMap.put("thumbImage", "default")
                 userMap.put("image", "link")

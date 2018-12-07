@@ -28,7 +28,7 @@ private const val ARG_PARAM2 = "param2"
  * A simple [Fragment] subclass.
  *
  */
-class GroupsFragment : Fragment() {
+class GroupsListFragment : Fragment() {
     private val TAG = "GroupsFrag"
 
     //Group object array for adapter
@@ -64,44 +64,12 @@ class GroupsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var currentUser = mAuth.currentUser!!.uid
+        currentUser = arguments!!.getParcelable("currentUser")
 
         //group listview
         groupList = view!!.findViewById(R.id.grouplist)
         mGroupListAdapter = GroupListAdapter(groups, context)
         groupList!!.adapter = mGroupListAdapter
-
-        //Get current user document
-        mDb.collection("Users")
-                .document(currentUser)
-                .get()
-                .addOnCompleteListener {task ->
-                    if (task.isSuccessful) {
-                        if (task.result == null) {
-                            Log.d(TAG, "FIRESTORE -> CANNOT FIND CURRENT USER DOCUMENT")
-                        }
-                        else {
-                            Log.d(TAG, "FIRESTORE -> CURRENT USER DOCUMENT: " + task.result)
-                            doneGetUser(task.result)
-                        }
-
-                    } else {
-                        Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
-                    }
-                }
-    }
-
-    private fun doneGetUser(userDs: DocumentSnapshot?) {
-        Log.d(TAG, "userDs" + userDs)
-        currentUser = User(
-                userDs!!.id,
-                userDs!!.getString("userName"),
-                userDs!!.getString("email"),
-                userDs!!.get("groups") as ArrayList<String>,
-                userDs!!.getString("image"),
-                userDs!!.getString("thumbImage"))
-
-        Log.d(TAG, "Current user object created -> $currentUser")
 
         for (groupId in currentUser.userGroups) {
             mDb.collection("Groups")
