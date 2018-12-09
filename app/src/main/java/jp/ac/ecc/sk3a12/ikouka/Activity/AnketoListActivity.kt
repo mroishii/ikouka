@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.MenuItem
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
 import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
@@ -47,6 +48,10 @@ class AnketoListActivity : AppCompatActivity() {
 
         //Firestore
         mDb = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
 
         //User Maps
         usersMap = intent.getSerializableExtra("groupUsers") as HashMap<String, HashMap<String, String>>
@@ -95,16 +100,12 @@ class AnketoListActivity : AppCompatActivity() {
             val answersMap: HashMap<String, Any> = anketoMap.get("answers") as HashMap<String, Any>
             for(key in answersMap.keys) {
                 val answerMap: HashMap<String, Any> = answersMap.get(key) as HashMap<String, Any>
-                val anketoAnswer = AnketoAnswer(key,
-                        answerMap.get("description") as String,
-                        answerMap.get("answered") as HashMap<String, Boolean>)
-                Log.d(TAG, "Answer Object Created -> $anketoAnswer")
-                anketo.putAnswer(anketoAnswer)
+                Log.d(TAG, "AnswerMap created -> $answerMap")
+                anketo.putAnswer(key, answerMap)
             }
 
             Log.d(TAG, "Anketo Object Created -> $anketo")
             anketosList.add(anketo)
-            Log.d(TAG, "Anketo Object Added")
             anketoAdapter.notifyDataSetChanged()
         }
 

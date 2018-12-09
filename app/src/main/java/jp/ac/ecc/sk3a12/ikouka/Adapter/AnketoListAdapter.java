@@ -16,6 +16,7 @@ import java.util.HashMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.ac.ecc.sk3a12.ikouka.Activity.AnketoActivity;
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo;
+import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer;
 import jp.ac.ecc.sk3a12.ikouka.R;
 
 public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.AnketoViewHolder> {
@@ -70,6 +71,7 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, AnketoActivity.class);
                 intent.putExtra("anketo", a);
+                intent.setExtrasClassLoader(Anketo.class.getClassLoader());
                 mContext.startActivity(intent);
             }
         });

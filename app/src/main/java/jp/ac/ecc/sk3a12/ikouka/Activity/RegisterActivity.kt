@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class RegisterActivity: AppCompatActivity() {
@@ -51,6 +52,10 @@ class RegisterActivity: AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         //Firestore
         mDb = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
 
         btnRegister = findViewById(R.id.btnRegister)
         inputEmail = findViewById(R.id.inputEmail)

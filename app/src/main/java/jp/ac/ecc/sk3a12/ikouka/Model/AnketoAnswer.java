@@ -1,5 +1,6 @@
 package jp.ac.ecc.sk3a12.ikouka.Model;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,7 +9,7 @@ import java.util.HashMap;
 public class AnketoAnswer implements Parcelable {
     private String id;
     private String description;
-    private HashMap<String, Boolean> answered = new HashMap();
+    private HashMap<String, Boolean> answered;
 
     public AnketoAnswer(String id, String description, HashMap<String, Boolean> answered) {
         this.id = id;
@@ -52,7 +53,9 @@ public class AnketoAnswer implements Parcelable {
     protected AnketoAnswer(Parcel in) {
         id = in.readString();
         description = in.readString();
-        answered = (HashMap) in.readValue(HashMap.class.getClassLoader());
+
+        Bundle bundle = in.readBundle();
+        answered = (HashMap<String, Boolean>) bundle.getSerializable("answered");
     }
 
     @Override
@@ -64,7 +67,10 @@ public class AnketoAnswer implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(description);
-        dest.writeValue(answered);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("answered", answered);
+        dest.writeBundle(bundle);
     }
 
     @SuppressWarnings("unused")

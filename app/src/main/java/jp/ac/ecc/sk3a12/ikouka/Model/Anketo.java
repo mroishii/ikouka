@@ -1,5 +1,6 @@
 package jp.ac.ecc.sk3a12.ikouka.Model;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,7 +11,7 @@ public class Anketo implements Parcelable {
     private String title;
     private String description;
     private String owner;
-    private HashMap<String, AnketoAnswer> answers = new HashMap();
+    private HashMap<String, Object> answers = new HashMap();
 
     public Anketo(String id, String title, String description, String owner) {
         this.id = id;
@@ -51,16 +52,19 @@ public class Anketo implements Parcelable {
         this.owner = owner;
     }
 
-    public HashMap<String, AnketoAnswer> getAnswers() {
+    public HashMap<String, Object> getAnswer(String id) {
+        if (!answers.containsKey(id)) {
+            return null;
+        }
+        return (HashMap<String, Object>) answers.get(id);
+
+    }
+
+    public HashMap<String, Object> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(HashMap<String, AnketoAnswer> answers) {
-        this.answers = answers;
-    }
-
-    public void putAnswer(AnketoAnswer answer) {
-        String key = Integer.toString(answers.size() + 1);
+    public void putAnswer(String key, HashMap<String, Object> answer) {
         answers.put(key, answer);
     }
 
@@ -80,7 +84,9 @@ public class Anketo implements Parcelable {
         title = in.readString();
         description = in.readString();
         owner = in.readString();
-        answers = (HashMap) in.readValue(HashMap.class.getClassLoader());
+
+        Bundle bundle = in.readBundle();
+        answers = (HashMap<String, Object>) bundle.getSerializable("answers");
     }
 
     @Override
@@ -94,7 +100,10 @@ public class Anketo implements Parcelable {
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(owner);
-        dest.writeValue(answers);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("answers", answers);
+        dest.writeBundle(bundle);
     }
 
     @SuppressWarnings("unused")

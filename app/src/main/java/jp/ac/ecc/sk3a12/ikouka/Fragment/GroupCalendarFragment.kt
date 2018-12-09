@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.GridView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupCalendarGridAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 import jp.ac.ecc.sk3a12.ikouka.Model.Group
@@ -43,6 +44,12 @@ class GroupCalendarFragment() : Fragment() {
                               savedInstanceState: Bundle?): View? {
         //Initiate firestore
         mDb = FirebaseFirestore.getInstance()
+        mDb = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
+
         groupsDb = mDb.collection("Groups")
         eventsDb = mDb.collection("Events")
 

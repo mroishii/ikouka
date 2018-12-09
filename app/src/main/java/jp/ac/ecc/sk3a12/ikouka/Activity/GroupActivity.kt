@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 import jp.ac.ecc.sk3a12.ikouka.Model.Group
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupPagerAdapter
@@ -39,6 +40,10 @@ class GroupActivity : AppCompatActivity() {
 
         //Firestore
         mDb = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
 
         // Get current group
         if (savedInstanceState != null) {
