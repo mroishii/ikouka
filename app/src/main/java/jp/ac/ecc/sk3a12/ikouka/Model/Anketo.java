@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 public class Anketo implements Parcelable {
@@ -11,13 +12,15 @@ public class Anketo implements Parcelable {
     private String title;
     private String description;
     private String owner;
+    private Long due;
     private HashMap<String, Object> answers = new HashMap();
 
-    public Anketo(String id, String title, String description, String owner) {
+    public Anketo(String id, String title, String description, String owner, Long due) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.owner = owner;
+        this.due = due;
     }
 
     public String getId() {
@@ -52,7 +55,15 @@ public class Anketo implements Parcelable {
         this.owner = owner;
     }
 
-    public HashMap<String, Object> getAnswer(String id) {
+    public Long getDue() {
+        return due;
+    }
+
+    public void setDue(Long due) {
+        this.due = due;
+    }
+
+    public HashMap<String, Object> getAnswerAt(String id) {
         if (!answers.containsKey(id)) {
             return null;
         }
@@ -66,6 +77,18 @@ public class Anketo implements Parcelable {
 
     public void putAnswer(String key, HashMap<String, Object> answer) {
         answers.put(key, answer);
+    }
+
+    public boolean isAnswered (String uid) {
+        for (String key : answers.keySet()) {
+            HashMap<String, Object> answer = (HashMap<String, Object>) answers.get(key);
+            HashMap<String, Boolean> answered = (HashMap<String, Boolean>) answer.get("answered");
+            if (answered.get(uid)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -84,6 +107,7 @@ public class Anketo implements Parcelable {
         title = in.readString();
         description = in.readString();
         owner = in.readString();
+        due =in.readLong();
 
         Bundle bundle = in.readBundle();
         answers = (HashMap<String, Object>) bundle.getSerializable("answers");
@@ -100,6 +124,7 @@ public class Anketo implements Parcelable {
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(owner);
+        dest.writeLong(due);
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("answers", answers);

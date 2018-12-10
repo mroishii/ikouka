@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,12 +23,14 @@ import jp.ac.ecc.sk3a12.ikouka.R;
 public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.AnketoViewHolder> {
     private ArrayList<Anketo> anketoList;
     private HashMap<String, HashMap<String, String>> users;
+    private String currentUser;
     Context mContext;
 
-    public AnketoListAdapter(Context context, ArrayList<Anketo> anketoList, HashMap<String, HashMap<String, String>> users) {
+    public AnketoListAdapter(Context context, ArrayList<Anketo> anketoList, HashMap<String, HashMap<String, String>> users, String currentUser) {
         this.mContext = context;
         this.anketoList = anketoList;
         this.users = users;
+        this.currentUser = currentUser;
     }
 
     @NonNull
@@ -46,6 +49,7 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
         public CircleImageView anketoImage;
         public TextView anketoTitle;
         public TextView anketoDescription;
+        public ImageView anketoAnswered;
         public ConstraintLayout parentLayout;
 
         public AnketoViewHolder(View view, int viewType) {
@@ -53,6 +57,7 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
                 anketoImage = (CircleImageView) view.findViewById(R.id.anketo_list_image);
                 anketoTitle = (TextView) view.findViewById(R.id.anketo_list_title);
                 anketoDescription = (TextView) view.findViewById(R.id.anketo_list_description);
+                anketoAnswered = (ImageView) view.findViewById(R.id.anketo_list_answered);
                 parentLayout = view.findViewById(R.id.anketo_list_item_parent);
 
 
@@ -66,12 +71,15 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
 
         holder.anketoTitle.setText(a.getTitle());
         holder.anketoDescription.setText(a.getDescription());
+        if (!a.isAnswered(currentUser)) {
+            holder.anketoAnswered.setVisibility(ImageView.INVISIBLE);
+        }
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, AnketoActivity.class);
                 intent.putExtra("anketo", a);
-                intent.setExtrasClassLoader(Anketo.class.getClassLoader());
+                intent.putExtra("users", users);
                 mContext.startActivity(intent);
             }
         });

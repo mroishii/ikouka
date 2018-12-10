@@ -41,6 +41,14 @@ public class AnketoAnswer implements Parcelable {
         this.answered = answered;
     }
 
+    public boolean isAnswered (String uid) {
+        if (answered.get(uid)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         return "AnketoAnswer{" +

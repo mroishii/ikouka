@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.MenuItem
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -23,6 +25,9 @@ class AnketoListActivity : AppCompatActivity() {
 
     //Action bar
     private lateinit var mToolbar: Toolbar
+
+    //FirebaseAuth
+    private lateinit var mAuth: FirebaseAuth
 
     //Firestore
     private lateinit var mDb: FirebaseFirestore
@@ -46,6 +51,9 @@ class AnketoListActivity : AppCompatActivity() {
         supportActionBar!!.subtitle = intent.getStringExtra("groupTitle")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        //Firebase Auth
+        mAuth = FirebaseAuth.getInstance()
+
         //Firestore
         mDb = FirebaseFirestore.getInstance()
         val settings = FirebaseFirestoreSettings.Builder()
@@ -62,7 +70,7 @@ class AnketoListActivity : AppCompatActivity() {
         anketo_listview!!.setHasFixedSize(true)
         anketo_listview!!.layoutManager = linearLayout
         //set adapter
-        anketoAdapter = AnketoListAdapter(this, anketosList, usersMap)
+        anketoAdapter = AnketoListAdapter(this, anketosList, usersMap, mAuth.currentUser!!.uid)
         anketo_listview!!.adapter = anketoAdapter
 
         //Access Group Database
@@ -95,7 +103,8 @@ class AnketoListActivity : AppCompatActivity() {
             val anketo = Anketo(key ,
                     anketoMap.get("title") as String,
                     anketoMap.get("description") as String,
-                    anketoMap.get("owner") as String )
+                    anketoMap.get("owner") as String,
+                    (anketoMap.get("due") as Timestamp).seconds * 1000)
 
             val answersMap: HashMap<String, Any> = anketoMap.get("answers") as HashMap<String, Any>
             for(key in answersMap.keys) {
