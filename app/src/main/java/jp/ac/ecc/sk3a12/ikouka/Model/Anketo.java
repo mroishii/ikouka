@@ -9,14 +9,22 @@ import java.util.HashMap;
 
 public class Anketo implements Parcelable {
     private String id;
+    private Long created;
+    private String type;
     private String title;
     private String description;
     private String owner;
     private Long due;
     private HashMap<String, Object> answers = new HashMap();
 
-    public Anketo(String id, String title, String description, String owner, Long due) {
+    public Anketo() {
+        //Empty constructor for firebase
+    }
+
+    public Anketo(String id, Long created, String type, String title, String description, String owner, Long due) {
         this.id = id;
+        this.created = created;
+        this.type = type;
         this.title = title;
         this.description = description;
         this.owner = owner;
@@ -30,6 +38,12 @@ public class Anketo implements Parcelable {
     public void setId(String id) {
         this.id = id;
     }
+
+    public Long getCreated() {
+        return created;
+    }
+
+    public String getType() {return type;}
 
     public String getTitle() {
         return title;
@@ -71,6 +85,10 @@ public class Anketo implements Parcelable {
 
     }
 
+    public void setAnswers(HashMap<String, Object> answers ) {
+        this.answers = answers;
+    }
+
     public HashMap<String, Object> getAnswers() {
         return answers;
     }
@@ -104,6 +122,7 @@ public class Anketo implements Parcelable {
 
     protected Anketo(Parcel in) {
         id = in.readString();
+        created = in.readLong();
         title = in.readString();
         description = in.readString();
         owner = in.readString();
@@ -121,6 +140,7 @@ public class Anketo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
+        dest.writeLong(created);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(owner);

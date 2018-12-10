@@ -19,6 +19,7 @@ public class Group implements Parcelable {
     private String image;
     private ArrayList<Event> events = new ArrayList<Event>();
     private ArrayList<String> eventsId = new ArrayList<String>();
+    private ArrayList<String> anketosId = new ArrayList<String>();
     private HashMap<String, HashMap<String, String>> users = new HashMap();
 
     public Group() {
@@ -45,15 +46,6 @@ public class Group implements Parcelable {
         this.description = description;
         this.owner = owner;
         this.image = image;
-    }
-
-    public Group(String groupId, String title, String description, String owner, String image, DataSnapshot usersDs) {
-        this.groupId = groupId;
-        this.title = title;
-        this.description = description;
-        this.owner = owner;
-        this.image = image;
-        buildUsersMap(usersDs);
     }
 
     public void setOwner(String owner) { this.owner = owner; }
@@ -100,14 +92,12 @@ public class Group implements Parcelable {
         return this.users;
     }
 
-    public void buildUsersMap(DataSnapshot usersDs) {
-        for (DataSnapshot user : usersDs.getChildren()) {
-            Log.d("GroupClass", "buildUsersMap/" + user.toString());
-            HashMap<String, String> userMap = new HashMap();
-            userMap.put("roles", user.child("roles").getValue().toString());
-            userMap.put("displayName", user.child("displayName").getValue().toString());
-            users.put(user.getKey(), userMap);
-        }
+    public ArrayList<String> getAnketosId() {
+        return anketosId;
+    }
+
+    public void setAnketosId(ArrayList<String> anketosId) {
+        this.anketosId = anketosId;
     }
 
     public void buildUserMap(Map<String, Object> usersMap) {

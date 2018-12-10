@@ -106,6 +106,8 @@ class GroupActivity : AppCompatActivity() {
         }
         currentGroup.buildUserMap(groupDs.get("users") as Map<String, Any>)
 
+        currentGroup.anketosId = groupDs.get("anketos") as ArrayList<String>
+
         //---------END BUILDING----------------------------------------------------------------------------------
 
         //--------------ViewPager-------------------

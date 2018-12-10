@@ -10,21 +10,29 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoMultipleAnswerListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
+import jp.ac.ecc.sk3a12.ikouka.Model.Anketo2
 import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
+import jp.ac.ecc.sk3a12.ikouka.Model.MyBuilder
 import jp.ac.ecc.sk3a12.ikouka.R
 import org.w3c.dom.Text
 import java.sql.Timestamp
+import java.text.DateFormat
+import java.util.*
 
 class AnketoActivity : AppCompatActivity() {
-    private val TAG = "AnketoActiv"
+    private val TAG = "AktActi"
 
     //Firebase
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDb: FirebaseFirestore
+
+    //Builder
+    private var myBuilder = MyBuilder(TAG)
 
     //Toolbar
     private var mToolbar: Toolbar? = null
@@ -55,16 +63,15 @@ class AnketoActivity : AppCompatActivity() {
         //Firebase
         mAuth = FirebaseAuth.getInstance()
         mDb = FirebaseFirestore.getInstance()
-
-        //get current anketo from intent
-        currentAnketo = intent.getParcelableExtra("anketo") as Anketo
-        usersMap = intent.getSerializableExtra("users") as HashMap<String, HashMap<String, String>>
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        mDb.firestoreSettings = settings
 
         //Toolbar
         mToolbar = findViewById(R.id.anketo_actionbar)
         setSupportActionBar(mToolbar)
         supportActionBar!!.setTitle("アンケート回答")
-        supportActionBar!!.setSubtitle(currentAnketo.title)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //Activity elements
@@ -78,28 +85,76 @@ class AnketoActivity : AppCompatActivity() {
         anketoAnswer_listview!!.setHasFixedSize(true)
         anketoAnswer_listview!!.layoutManager = linearLayout
 
-        title!!.text = currentAnketo.title
-        due!!.text = "Anketo due date here"
-        description!!.text = currentAnketo.description
+        //get usersmaps
+        usersMap = intent.getSerializableExtra("users") as HashMap<String, HashMap<String, String>>
 
-        for (key in currentAnketo.answers.keys) {
-            var answerMap = currentAnketo.answers.get(key) as HashMap<String, Any>
-            var answer = AnketoAnswer(key,
-                    answerMap.get("description") as String,
-                    answerMap.get("answered") as HashMap<String, Boolean>)
-            anketoAnswers.add(answer)
+        //get current anketo
+        var anketoId = intent.getStringExtra("anketoId")
+        mDb.collection("Anketo")
+                .document(anketoId)
+                .get()
+                .addOnCompleteListener {task ->
+                    if (task.isSuccessful()) {
+                        val anketo = task.getResult()
+                        if (anketo!!.exists()) {
+                            Log.d(TAG, "GOT ANKETO -> " + anketo!!)
+                            currentAnketo = myBuilder.buildAnketoObject(anketo)
 
-        }
+                            title!!.text = currentAnketo.title
+                            val dueDate: Date = Date(currentAnketo.due)
+                            due!!.text = dueDate.toString()
+                            description!!.text = currentAnketo.description
 
-        anketoAnswer_adapter = AnketoMultipleAnswerListAdapter(this, anketoAnswers, usersMap, mAuth.currentUser!!.uid)
-        anketoAnswer_listview!!.adapter = anketoAnswer_adapter
+                            for (key in currentAnketo.answers.keys) {
+                                var answerMap = currentAnketo.answers.get(key) as HashMap<String, Any>
+                                var answer = AnketoAnswer(key,
+                                        answerMap.get("description") as String,
+                                        answerMap.get("answered") as HashMap<String, Boolean>)
+                                anketoAnswers.add(answer)
 
+                            }
 
-
+                            anketoAnswer_adapter = AnketoMultipleAnswerListAdapter(this, anketoId,anketoAnswers, usersMap, mAuth.currentUser!!.uid)
+                            anketoAnswer_listview!!.adapter = anketoAnswer_adapter
+                        } else {
+                            Log.d(TAG, "ANKETO NOT EXISTED")
+                        }
+                    } else {
+                        Log.d(TAG, "GET FAILED AT -> " + task.getException()!!)
+                    }
+                }
 
 
 
     }
+
+//    fun moveAnketo () {
+//        var anketoMap: HashMap<String, Any> = HashMap()
+//        var answersMap: HashMap<String, Any> = HashMap()
+//        for (key in currentAnketo.answers.keys) {
+//            var answerMap = currentAnketo.answers.get(key) as HashMap<String, Any>;
+//            answersMap.put(key, answerMap)
+//        }
+//
+//        anketoMap.put("title", currentAnketo.title)
+//        anketoMap.put("type", currentAnketo.type)
+//        anketoMap.put("owner", currentAnketo.owner)
+//        anketoMap.put("created", currentAnketo.created)
+//        anketoMap.put("due", currentAnketo.due)
+//        anketoMap.put("description", currentAnketo.description)
+//        anketoMap.put("answers", answersMap)
+//
+//
+//        mDb.collection("Anketo")
+//                .add(anketoMap)
+//                .addOnCompleteListener {
+//                    if (it.isSuccessful) {
+//                        Log.d(TAG, "MOVED COMPLETE. DATA -> " + it.result)
+//                    } else {
+//                        Log.d(TAG, "MOVED FAILED -> " + it.exception)
+//                    }
+//                }
+//    }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)

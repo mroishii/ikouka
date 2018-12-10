@@ -2,6 +2,7 @@ package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -22,6 +23,9 @@ class AnketoListActivity : AppCompatActivity() {
 
     //Anketo List Map
     private var anketosList: ArrayList<Anketo> = ArrayList()
+
+    //Anketos Id List
+    private var anketosId: ArrayList<String> = ArrayList()
 
     //Action bar
     private lateinit var mToolbar: Toolbar
@@ -70,7 +74,7 @@ class AnketoListActivity : AppCompatActivity() {
         anketo_listview!!.setHasFixedSize(true)
         anketo_listview!!.layoutManager = linearLayout
         //set adapter
-        anketoAdapter = AnketoListAdapter(this, anketosList, usersMap, mAuth.currentUser!!.uid)
+        anketoAdapter = AnketoListAdapter(this, anketosId, usersMap, mAuth.currentUser!!.uid)
         anketo_listview!!.adapter = anketoAdapter
 
         //Access Group Database
@@ -84,7 +88,10 @@ class AnketoListActivity : AppCompatActivity() {
                             Log.d(TAG, "FIRESTORE -> CANNOT FIND THIS GROUP DOCUMENT -> $currentGroupId")
                         } else {
                             Log.d(TAG, "FIRESTORE -> CURRENT GROUP DOCUMENT: " + task.result)
-                            doneGetGroup(task.result)
+                            anketosId = task.result!!.get("anketos") as ArrayList<String>
+                            //set adapter
+                            anketoAdapter = AnketoListAdapter(this, anketosId, usersMap, mAuth.currentUser!!.uid)
+                            anketo_listview!!.adapter = anketoAdapter
                         }
                     } else {
                         Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
@@ -92,31 +99,43 @@ class AnketoListActivity : AppCompatActivity() {
                 }
 
 
+        //Floating Button
+        var fab = findViewById<FloatingActionButton>(R.id.anketo_list_fab)
+        fab.setOnClickListener {
+
+        }
 
     }
 
+//    fun doneGetGroup(groupDs: DocumentSnapshot?) {
+//        var anketosMap: HashMap<String, Any> = groupDs!!.get("anketo") as HashMap<String, Any>
+//        Log.d(TAG, "anketoMap -> $anketosMap")
+//        for (key in anketosMap.keys) {
+//            val anketoMap: HashMap<String, Any> = anketosMap.get(key)  as HashMap<String, Any>
+//            val anketo = Anketo(key ,
+//                    (anketoMap.get("due") as Timestamp).seconds * 1000,
+//                    anketoMap.get("type") as String,
+//                    anketoMap.get("title") as String,
+//                    anketoMap.get("description") as String,
+//                    anketoMap.get("owner") as String,
+//                    (anketoMap.get("due") as Timestamp).seconds * 1000)
+//
+//            val answersMap: HashMap<String, Any> = anketoMap.get("answers") as HashMap<String, Any>
+//            for(key in answersMap.keys) {
+//                val answerMap: HashMap<String, Any> = answersMap.get(key) as HashMap<String, Any>
+//                Log.d(TAG, "AnswerMap created -> $answerMap")
+//                anketo.putAnswer(key, answerMap)
+//            }
+//
+//            Log.d(TAG, "Anketo Object Created -> $anketo")
+//            anketosList.add(anketo)
+//            anketoAdapter.notifyDataSetChanged()
+//        }
+//
+//
+//    }
+
     fun doneGetGroup(groupDs: DocumentSnapshot?) {
-        var anketosMap: HashMap<String, Any> = groupDs!!.get("anketo") as HashMap<String, Any>
-        Log.d(TAG, "anketoMap -> $anketosMap")
-        for (key in anketosMap.keys) {
-            val anketoMap: HashMap<String, Any> = anketosMap.get(key)  as HashMap<String, Any>
-            val anketo = Anketo(key ,
-                    anketoMap.get("title") as String,
-                    anketoMap.get("description") as String,
-                    anketoMap.get("owner") as String,
-                    (anketoMap.get("due") as Timestamp).seconds * 1000)
-
-            val answersMap: HashMap<String, Any> = anketoMap.get("answers") as HashMap<String, Any>
-            for(key in answersMap.keys) {
-                val answerMap: HashMap<String, Any> = answersMap.get(key) as HashMap<String, Any>
-                Log.d(TAG, "AnswerMap created -> $answerMap")
-                anketo.putAnswer(key, answerMap)
-            }
-
-            Log.d(TAG, "Anketo Object Created -> $anketo")
-            anketosList.add(anketo)
-            anketoAdapter.notifyDataSetChanged()
-        }
 
 
     }
