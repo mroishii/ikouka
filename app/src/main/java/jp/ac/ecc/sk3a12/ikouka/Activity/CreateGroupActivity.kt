@@ -18,7 +18,7 @@ class CreateGroupActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDatabase: DatabaseReference
     //Current user object
-    private lateinit var user: User
+    private lateinit var currentUserId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +35,7 @@ class CreateGroupActivity : AppCompatActivity() {
         mDatabase = FirebaseDatabase.getInstance().getReference()
 
         //current user object
-        user = intent.getParcelableExtra("currentUser")
+        currentUserId = mAuth.currentUser!!.uid
 
     }
 

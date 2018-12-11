@@ -45,7 +45,8 @@
             android:name=".Activity.GroupChatActivity"
             android:parentActivityName=".Activity.GroupActivity" />
         <activity android:name=".Activity.AnketoListActivity" />
-        <activity android:name=".Activity.AnketoActivity"></activity>
+        <activity android:name=".Activity.AnketoActivity" />
+        <activity android:name=".Activity.AnketoCreateActivity"></activity>
     </application>
 
 </manifest>

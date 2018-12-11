@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private var mToolbar: Toolbar? = null
     //ViewPager
     private var mMainPager: ViewPager? = null
+
     //CUrrentUser Object
     private lateinit var currentUser: User
 
@@ -129,11 +130,6 @@ class MainActivity : AppCompatActivity() {
             R.id.account -> {
                 val intent = Intent(this, AccountActivity::class.java)
                 intent.putExtra("uid", auth.currentUser!!.uid)
-                startActivity(intent)
-            }
-
-            R.id.allGroups -> {
-                val intent = Intent(this, AllGroupsActivity::class.java)
                 startActivity(intent)
             }
 

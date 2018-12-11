@@ -23,6 +23,7 @@ class AllGroupsActivity : AppCompatActivity() {
     //Database Reference
     private lateinit var mDatabase: DatabaseReference
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_groups)

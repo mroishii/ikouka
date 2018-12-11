@@ -10,10 +10,6 @@
         android:title="@string/createGroup"/>
 
         <item
-            android:id="@+id/allGroups"
-            android:title="@string/allgroups"/>
-
-        <item
             android:id="@+id/signout"
             android:title="@string/signout" />
 

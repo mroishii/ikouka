@@ -10,6 +10,7 @@ import android.widget.Toast
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.widget.ProgressBar
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -18,10 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class RegisterActivity: AppCompatActivity() {
+    private val TAG: String = "RegisterActi"
     //Firebase Auth
     private lateinit var auth: FirebaseAuth
-    //Firebase Database
-    private lateinit var mDatabase: DatabaseReference
     //Firestore
     private lateinit var mDb: FirebaseFirestore
     //Toolbar
@@ -98,35 +98,49 @@ class RegisterActivity: AppCompatActivity() {
                 //------------write user data to database--------------------
                 var uid = auth.currentUser!!.uid
                     //create new node <root> -> Users -> uid
-                mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
+
                     //create user info map
                 var userMap: HashMap<String, Any> = HashMap()
+                    //email
+                userMap.put("email", auth.currentUser!!.email.toString())
+                    //userName
                 userMap.put("userName", username)
+                    //thumbImage
                 userMap.put("thumbImage", "default")
-                userMap.put("image", "link")
-                userMap.put("groups", "null")
-                    //write to node
-                mDatabase.setValue(userMap).addOnCompleteListener(this) {task ->
-                    //go to main activity after completing register
-                    if (task.isSuccessful) {
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        startActivity(intent)
-                        finish()
-                    }
-                }
+                    //image
+                userMap.put("image", "default")
+                    //groups
+                val groups: ArrayList<String> = ArrayList()
+                userMap.put("groups", groups)
+                    //joined
+                val timestamp: Timestamp = Timestamp.now()
+                userMap.put("joined", timestamp)
+
+                Log.d(TAG, "UserMap created -> $userMap")
+                    //write to users db
+                mDb.collection("Users")
+                        .document(uid)
+                        .set(userMap as Map<String, Any>)
+                        .addOnCompleteListener(this) {task ->
+                            //go to main activity after completing register
+                            if (task.isSuccessful) {
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                Toast.makeText(this, "ユーザ登録が失敗しました", Toast.LENGTH_SHORT).show()
+                                //hide progress bar
+                                mProgress.visibility = ProgressBar.INVISIBLE
+                                //enable button and textfield
+                                inputEmail!!.isEnabled = true
+                                inputUsername!!.isEnabled = true
+                                inputPassword!!.isEnabled = true
+                                inputPasswordConfirm!!.isEnabled = true
+                                btnRegister!!.isEnabled = true
+                            }
+                        }
                 //-----------------------------------------------------------
-            } else {
-                Toast.makeText(this, "ユーザ登録が失敗しました", Toast.LENGTH_SHORT).show()
-                //hide progress bar
-                mProgress.visibility = ProgressBar.INVISIBLE
-                //enable button and textfield
-                //disable text field and input
-                inputEmail!!.isEnabled = true
-                inputUsername!!.isEnabled = true
-                inputPassword!!.isEnabled = true
-                inputPasswordConfirm!!.isEnabled = true
-                btnRegister!!.isEnabled = true
             }
         }
     }

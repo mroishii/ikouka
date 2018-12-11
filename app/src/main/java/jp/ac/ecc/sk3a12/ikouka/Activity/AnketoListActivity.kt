@@ -1,5 +1,6 @@
 package jp.ac.ecc.sk3a12.ikouka.Activity
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -102,7 +103,9 @@ class AnketoListActivity : AppCompatActivity() {
         //Floating Button
         var fab = findViewById<FloatingActionButton>(R.id.anketo_list_fab)
         fab.setOnClickListener {
-
+            var intent = Intent(this, AnketoCreateActivity::class.java)
+            intent.putExtra("currentGroup", currentGroupId)
+            startActivity(intent)
         }
 
     }
