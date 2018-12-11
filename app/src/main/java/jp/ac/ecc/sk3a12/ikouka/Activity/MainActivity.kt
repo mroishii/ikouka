@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.createGroup -> {
                 val intent = Intent(this, CreateGroupActivity::class.java)
-                intent.putExtra("currentUser", auth.currentUser!!.uid)
+                intent.putExtra("username", currentUser.userName)
                 startActivity(intent)
             }
         }

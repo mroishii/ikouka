@@ -1,5 +1,6 @@
 package jp.ac.ecc.sk3a12.ikouka.Activity
 
+import android.content.Context
 import android.content.DialogInterface
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
@@ -33,6 +35,8 @@ class GroupActivity : AppCompatActivity() {
 
     //Firestore
     private lateinit var mDb: FirebaseFirestore
+
+    private val mContext: Context = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -155,20 +159,61 @@ class GroupActivity : AppCompatActivity() {
             //invite
             R.id.invite -> {
                 var alert: AlertDialog.Builder = AlertDialog.Builder(this)
-                alert.setMessage("ユーザIDを入力してください")
+                alert.setMessage("メールアドレスを入力してください")
                 alert.setTitle("ユーザ招待")
 
-                var uidInput: EditText = EditText(this)
+                var mailInput: EditText = EditText(this)
                 var lp: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT)
-                uidInput.layoutParams = lp
-                alert.setView(uidInput)
+                mailInput.layoutParams = lp
+                alert.setView(mailInput)
 
                 alert.setPositiveButton("招待", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface, which: Int) {
-                        var uid = uidInput.getText().toString()
-                        Log.d("invite", uid)
+                        var mail = mailInput.getText().toString()
+                        mDb.collection("Users")
+                                .whereEqualTo("email", mail)
+                                .get()
+                                .addOnSuccessListener {
+                                    //get invited user's id from query result
+                                    var invitedId = it.documents.get(0).id
+                                    var invitedName = it.documents.get(0).get("userName") as String
+                                    Log.d(TAG, "FOUND USER $mail -> $invitedId , $invitedName")
+
+                                    //update group users field
+                                    var userMap: HashMap<String, Any> = HashMap()
+                                    userMap.put("displayName", invitedName)
+                                    userMap.put("image", "default")
+                                    userMap.put("roles", arrayListOf("member"))
+                                    Log.d(TAG, "userMap -> $userMap")
+                                    mDb.collection("Groups")
+                                            .document(currentGroup.groupId)
+                                            .update("users", FieldValue.arrayUnion(userMap))
+                                            .addOnSuccessListener {
+                                                Log.d(TAG, "UPDATE GROUP USERS FIELD SUCCESSFULLY")
+                                                //update invited user groups
+                                                mDb.collection("Users")
+                                                        .document(invitedId)
+                                                        .update("groups", FieldValue.arrayUnion(currentGroup.groupId))
+                                                        .addOnSuccessListener {
+                                                            Log.d(TAG, "UPDATE INVITED USER's GROUPS FIELD SUCCESSFULLY")
+                                                            //Show success dialogbox
+                                                            var alert: AlertDialog.Builder = AlertDialog.Builder(mContext)
+                                                            alert.setMessage(mailInput.text.toString()+"を招待しました")
+                                                            alert.setTitle("ユーザ招待")
+                                                            alert.setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                                                                override fun onClick(dialog: DialogInterface, which: Int) {
+                                                                    dialog.cancel()
+                                                                }
+                                                            })
+                                                        }
+                                            }
+
+
+
+
+                                }
                     }
                 })
 
