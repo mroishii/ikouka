@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Activity.AnketoCreateActivity">
 
+    <include layout="@layout/main_actionbar" android:id="@+id/anketo_create_actionbar"/>
+
 </android.support.constraint.ConstraintLayout>

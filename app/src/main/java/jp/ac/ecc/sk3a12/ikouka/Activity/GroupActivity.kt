@@ -14,7 +14,9 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.google.firebase.FirebaseApiNotAvailableException
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,7 +34,8 @@ class GroupActivity : AppCompatActivity() {
     private lateinit var mGroupPager: ViewPager
     //Current group
     private lateinit var currentGroup: Group
-
+    //Auth
+    private lateinit var auth: FirebaseAuth
     //Firestore
     private lateinit var mDb: FirebaseFirestore
 
@@ -41,6 +44,8 @@ class GroupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group)
+
+        auth = FirebaseAuth.getInstance()
 
         //Firestore
         mDb = FirebaseFirestore.getInstance()
@@ -158,74 +163,74 @@ class GroupActivity : AppCompatActivity() {
             }
             //invite
             R.id.invite -> {
-                var alert: AlertDialog.Builder = AlertDialog.Builder(this)
-                alert.setMessage("メールアドレスを入力してください")
-                alert.setTitle("ユーザ招待")
+                val currentUserId = auth.currentUser!!.uid
+                if (currentGroup.owner != currentUserId) {
+                    var alert: AlertDialog.Builder = AlertDialog.Builder(this)
+                    alert.setMessage("この機能はグループの所有者のみ利用できます。")
+                    alert.setTitle("ユーザ招待")
+                    alert.show()
+                } else {
+                    var alert: AlertDialog.Builder = AlertDialog.Builder(this)
+                    alert.setMessage("メールアドレスを入力してください")
+                    alert.setTitle("ユーザ招待")
 
-                var mailInput: EditText = EditText(this)
-                var lp: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT)
-                mailInput.layoutParams = lp
-                alert.setView(mailInput)
+                    var mailInput: EditText = EditText(this)
+                    var lp: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT)
+                    mailInput.layoutParams = lp
+                    alert.setView(mailInput)
 
-                alert.setPositiveButton("招待", object: DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface, which: Int) {
-                        var mail = mailInput.getText().toString()
-                        mDb.collection("Users")
-                                .whereEqualTo("email", mail)
-                                .get()
-                                .addOnSuccessListener {
-                                    //get invited user's id from query result
-                                    var invitedId = it.documents.get(0).id
-                                    var invitedName = it.documents.get(0).get("userName") as String
-                                    Log.d(TAG, "FOUND USER $mail -> $invitedId , $invitedName")
+                    alert.setPositiveButton("招待", object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            var mail = mailInput.getText().toString()
 
-                                    //update group users field
-                                    var userMap: HashMap<String, Any> = HashMap()
-                                    userMap.put("displayName", invitedName)
-                                    userMap.put("image", "default")
-                                    userMap.put("roles", arrayListOf("member"))
-                                    Log.d(TAG, "userMap -> $userMap")
-                                    mDb.collection("Groups")
-                                            .document(currentGroup.groupId)
-                                            .update("users", FieldValue.arrayUnion(userMap))
-                                            .addOnSuccessListener {
-                                                Log.d(TAG, "UPDATE GROUP USERS FIELD SUCCESSFULLY")
-                                                //update invited user groups
-                                                mDb.collection("Users")
-                                                        .document(invitedId)
-                                                        .update("groups", FieldValue.arrayUnion(currentGroup.groupId))
-                                                        .addOnSuccessListener {
-                                                            Log.d(TAG, "UPDATE INVITED USER's GROUPS FIELD SUCCESSFULLY")
-                                                            //Show success dialogbox
-                                                            var alert: AlertDialog.Builder = AlertDialog.Builder(mContext)
-                                                            alert.setMessage(mailInput.text.toString()+"を招待しました")
-                                                            alert.setTitle("ユーザ招待")
-                                                            alert.setPositiveButton("OK", object: DialogInterface.OnClickListener {
-                                                                override fun onClick(dialog: DialogInterface, which: Int) {
-                                                                    dialog.cancel()
-                                                                }
-                                                            })
-                                                        }
-                                            }
+                            mDb.collection("Users")
+                                    .whereEqualTo("email", mail)
+                                    .get()
+                                    .addOnSuccessListener {
+                                        //get invited user's id from query result
+                                        var invitedId = it.documents.get(0).id
+                                        var invitedName = it.documents.get(0).get("userName") as String
+                                        Log.d(TAG, "FOUND USER $mail -> $invitedId , $invitedName")
 
+                                        //update group users field
+                                        var userMap: HashMap<String, Any> = HashMap()
+                                        userMap.put("displayName", invitedName)
+                                        userMap.put("image", "default")
+                                        userMap.put("roles", arrayListOf("member"))
 
-
-
-                                }
-                    }
-                })
-
-                alert.setNegativeButton("キャンセル", object: DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface, which: Int) {
-                        dialog.cancel()
-                    }
-                })
-
-                alert.show()
+                                        var usersMap: HashMap<String, Any> = currentGroup.users as HashMap<String, Any>
+                                        usersMap.put(invitedId, userMap)
+                                        Log.d(TAG, "usersMap -> $usersMap")
+                                        mDb.collection("Groups")
+                                                .document(currentGroup.groupId)
+                                                .update("users", usersMap)
+                                                .addOnSuccessListener {
+                                                    Log.d(TAG, "UPDATE GROUP USERS FIELD SUCCESSFULLY")
+                                                    //update invited user groups
+                                                    mDb.collection("Users")
+                                                            .document(invitedId)
+                                                            .update("groups", FieldValue.arrayUnion(currentGroup.groupId))
+                                                            .addOnSuccessListener {
+                                                                Log.d(TAG, "UPDATE INVITED USER's GROUPS FIELD SUCCESSFULLY")
+                                                                Toast.makeText(mContext, "招待が完了しました！", Toast.LENGTH_LONG)
+                                                            }
+                                                }
 
 
+                                    }
+                        }
+                    })
+
+                    alert.setNegativeButton("キャンセル", object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            dialog.cancel()
+                        }
+                    })
+
+                    alert.show()
+                }
             }
         }
 

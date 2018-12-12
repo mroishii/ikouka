@@ -13,7 +13,7 @@
     <!-- activity_home -->
     <string name="btnToLogin">アプリにログイン</string>
     <string name="btnToRegister">アカウント新規作成</string>
-    <string name="homeTitle">ikoukaにようこそ！</string>
+    <string name="homeTitle">ikouka！</string>
 
     <!-- activity_login -->
     <string name="labelLogin">ログイン</string>

@@ -84,7 +84,12 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
 //        lastPosition = position;
 
         viewHolder.title.setText(group.getTitle());
-        viewHolder.description.setText(group.getDescription());
+        if (group.getDescription().length() > 30) {
+            viewHolder.description.setText(group.getDescription().substring(0, 27) + "...");
+        } else {
+            viewHolder.description.setText(group.getDescription());
+        }
+
 
         // Return the completed view to render on screen
         return convertView;
