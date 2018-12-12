@@ -12,16 +12,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import de.hdodenhof.circleimageview.CircleImageView
-import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoMultipleAnswerListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
-import jp.ac.ecc.sk3a12.ikouka.Model.Anketo2
 import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
 import jp.ac.ecc.sk3a12.ikouka.Model.MyBuilder
 import jp.ac.ecc.sk3a12.ikouka.R
-import org.w3c.dom.Text
-import java.sql.Timestamp
-import java.text.DateFormat
 import java.util.*
 
 class AnketoActivity : AppCompatActivity() {
@@ -41,7 +36,7 @@ class AnketoActivity : AppCompatActivity() {
     private lateinit var currentAnketo: Anketo
 
     //Users map
-    private lateinit var usersMap: HashMap<String, HashMap<String, String>>
+    private lateinit var usersMap: HashMap<String, Any>
 
     //ACtivity elements
     private var image: CircleImageView? = null
@@ -86,7 +81,7 @@ class AnketoActivity : AppCompatActivity() {
         anketoAnswer_listview!!.layoutManager = linearLayout
 
         //get usersmaps
-        usersMap = intent.getSerializableExtra("users") as HashMap<String, HashMap<String, String>>
+        usersMap = intent.getSerializableExtra("users") as HashMap<String, Any>
 
         //get current anketo
         var anketoId = intent.getStringExtra("anketoId")
@@ -102,7 +97,7 @@ class AnketoActivity : AppCompatActivity() {
 
                             title!!.text = currentAnketo.title
                             val dueDate: Date = Date(currentAnketo.due)
-                            due!!.text = dueDate.toString()
+                            due!!.text = "締切：${dueDate.toString()}"
                             description!!.text = currentAnketo.description
 
                             for (key in currentAnketo.answers.keys) {

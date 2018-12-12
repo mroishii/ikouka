@@ -32,7 +32,7 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
 
     private ArrayList<Anketo> anketoList;
     private ArrayList<String> anketosId;
-    private HashMap<String, HashMap<String, String>> users;
+    private HashMap<String, Object> users;
     private String currentUser;
     Context mContext;
 
@@ -49,7 +49,7 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
 //        this.currentUser = currentUser;
 //    }
 
-    public AnketoListAdapter(Context context, ArrayList<String> anketosId, HashMap<String, HashMap<String, String>> users, String currentUser) {
+    public AnketoListAdapter(Context context, ArrayList<String> anketosId, HashMap<String, Object> users, String currentUser) {
         this.mContext = context;
         this.anketosId = anketosId;
         this.users = users;

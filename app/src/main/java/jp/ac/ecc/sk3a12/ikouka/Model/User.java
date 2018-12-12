@@ -12,18 +12,20 @@ public class User implements Parcelable {
     private ArrayList<String> userGroups;
     private String image;
     private String thumbImage;
+    private Long joined;
 
     public User() {
         //empty constructor for firebase
     }
 
-    public User(String userId, String userName, String email, ArrayList<String> userGroups, String image, String thumbImage) {
+    public User(String userId, String userName, String email, ArrayList<String> userGroups, String image, String thumbImage, Long joined) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
         this.userGroups = userGroups;
         this.image = image;
         this.thumbImage = thumbImage;
+        this.joined = joined;
     }
 
     public String getUserId() {
@@ -42,24 +44,16 @@ public class User implements Parcelable {
         return userGroups;
     }
 
-    public void setUserGroups(ArrayList<String> userGroups) {
-        this.userGroups = userGroups;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getThumbImage() {
         return thumbImage;
     }
 
-    public void setThumbImage(String thumbImage) {
-        this.thumbImage = thumbImage;
+    public Long getJoined() {
+        return joined;
     }
 
     @Override
@@ -81,6 +75,7 @@ public class User implements Parcelable {
         userGroups = (ArrayList<String>) in.readSerializable();
         image = in.readString();
         thumbImage = in.readString();
+        joined = in.readLong();
     }
 
     @Override
@@ -96,6 +91,7 @@ public class User implements Parcelable {
         dest.writeSerializable(userGroups);
         dest.writeString(image);
         dest.writeString(thumbImage);
+        dest.writeLong(joined);
     }
 
     @SuppressWarnings("unused")

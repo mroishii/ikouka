@@ -8,23 +8,17 @@ import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupsListFragment
 import jp.ac.ecc.sk3a12.ikouka.Fragment.RequestFragment
 import jp.ac.ecc.sk3a12.ikouka.Model.User
 
-class MainPagerAdapder(fm: FragmentManager?, var currentUser: User) : FragmentPagerAdapter(fm) {
+class MainPagerAdapder(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         when(position) {
             0 -> {
                 val groupsListFragment: GroupsListFragment = GroupsListFragment()
-                val args = Bundle()
-                args.putParcelable("currentUser", currentUser)
-                groupsListFragment.arguments = args
                 return groupsListFragment
             }
 
             1 -> {
                 val requestFragment: RequestFragment = RequestFragment()
-                val args = Bundle()
-                args.putParcelable("currentUser", currentUser)
-                requestFragment.arguments = args
                 return requestFragment
             }
 

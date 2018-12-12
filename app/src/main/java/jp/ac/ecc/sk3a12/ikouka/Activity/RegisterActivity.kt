@@ -121,24 +121,25 @@ class RegisterActivity: AppCompatActivity() {
                 mDb.collection("Users")
                         .document(uid)
                         .set(userMap as Map<String, Any>)
-                        .addOnCompleteListener(this) {task ->
-                            //go to main activity after completing register
-                            if (task.isSuccessful) {
-                                val intent = Intent(this, MainActivity::class.java)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                Toast.makeText(this, "ユーザ登録が失敗しました", Toast.LENGTH_SHORT).show()
-                                //hide progress bar
-                                mProgress.visibility = ProgressBar.INVISIBLE
-                                //enable button and textfield
-                                inputEmail!!.isEnabled = true
-                                inputUsername!!.isEnabled = true
-                                inputPassword!!.isEnabled = true
-                                inputPasswordConfirm!!.isEnabled = true
-                                btnRegister!!.isEnabled = true
-                            }
+                        .addOnSuccessListener {task ->
+                            Log.d(TAG, "WRITE USER SUCCESSFULLY")
+                            val intent = Intent(this, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            startActivity(intent)
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Log.d(TAG, "WRITE FAILED AT -> ${it.message}" )
+
+                            Toast.makeText(this, "ユーザ登録が失敗しました", Toast.LENGTH_SHORT).show()
+                            //hide progress bar
+                            mProgress.visibility = ProgressBar.INVISIBLE
+                            //enable button and textfield
+                            inputEmail!!.isEnabled = true
+                            inputUsername!!.isEnabled = true
+                            inputPassword!!.isEnabled = true
+                            inputPasswordConfirm!!.isEnabled = true
+                            btnRegister!!.isEnabled = true
                         }
                 //-----------------------------------------------------------
             }

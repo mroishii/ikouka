@@ -20,7 +20,7 @@ public class Group implements Parcelable {
     private ArrayList<Event> events = new ArrayList<Event>();
     private ArrayList<String> eventsId = new ArrayList<String>();
     private ArrayList<String> anketosId = new ArrayList<String>();
-    private HashMap<String, HashMap<String, String>> users = new HashMap();
+    private HashMap<String, Object> users = new HashMap();
 
     public Group() {
         //empty constructor for firebase
@@ -48,48 +48,41 @@ public class Group implements Parcelable {
         this.image = image;
     }
 
-    public void setOwner(String owner) { this.owner = owner; }
-
-    public void setImage(String image) { this.image = image; }
-
-    public void setTitle(String title) {this.title = title;}
-
-    public void setGroupId(String groupId) {this.groupId = groupId;}
-
-    public void setDescription(String description) {this.description = description;}
-
-    public void setEvents(ArrayList<Event> events) {
-        this.events = events;
+    public Group(String groupId, String title, String description, String owner, String image, HashMap<String, Object> users) {
+        this.groupId = groupId;
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+        this.image = image;
+        this.users = users;
     }
 
-    public void setEventsId (ArrayList<String> eventsId) {this.eventsId = eventsId;}
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public String getImage() {
+        return image;
+    }
 
     public ArrayList<Event> getEvents() {
         return events;
     }
 
-    public void addEvent(Event event) {
-        this.events.add(event);
-    }
-
-    public String getGroupId() {return this.groupId;}
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public String getOwner() {return this.owner;}
-
-    public String getImage() {return this.image;}
-
-    public ArrayList<String> getEventsId() {return this.eventsId;}
-
-    public HashMap<String, HashMap<String, String>> getUsers() {
-        return this.users;
+    public ArrayList<String> getEventsId() {
+        return eventsId;
     }
 
     public ArrayList<String> getAnketosId() {
@@ -100,15 +93,22 @@ public class Group implements Parcelable {
         this.anketosId = anketosId;
     }
 
-    public void buildUserMap(Map<String, Object> usersMap) {
-        for (String userKey : usersMap.keySet()) {
-            Map<String, Object> user = (Map<String, Object>) usersMap.get(userKey);
-            HashMap<String, String> userMap = new HashMap<>();
-            userMap.put("displayName", (String) user.get("displayName"));
-            userMap.put("image", (String) user.get("image"));
-            userMap.put("roles", ((ArrayList<String>) user.get("roles")).toString());
-            users.put(userKey, userMap);
-        }
+    public HashMap<String, Object> getUsers() {
+        return users;
+    }
+
+
+
+    public void addEventId(String eventId) {
+        this.eventsId.add(eventId);
+    }
+
+    public void putEvent(Event event) {
+        this.events.add(event);
+    }
+
+    public void addAnketoId(String anketoId) {
+        this.anketosId.add(anketoId);
     }
 
     protected Group(Parcel in) {
@@ -124,8 +124,9 @@ public class Group implements Parcelable {
             events = null;
         }
         eventsId = (ArrayList<String>) in.readSerializable();
+        anketosId = (ArrayList<String>) in.readSerializable();
         Bundle bundle = in.readBundle();
-        users = (HashMap <String, HashMap<String, String>>) bundle.getSerializable("users");
+        users = (HashMap <String, Object>) bundle.getSerializable("users");
     }
 
     @Override
@@ -147,6 +148,7 @@ public class Group implements Parcelable {
             dest.writeList(events);
         }
         dest.writeSerializable(eventsId);
+        dest.writeSerializable(anketosId);
         Bundle bundle = new Bundle();
         bundle.putSerializable("users", users);
         dest.writeBundle(bundle);

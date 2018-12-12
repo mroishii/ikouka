@@ -12,6 +12,7 @@ import android.view.MenuItem
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoListAdapter
@@ -21,9 +22,6 @@ import jp.ac.ecc.sk3a12.ikouka.R
 
 class AnketoListActivity : AppCompatActivity() {
     private val TAG = "AnkLstActi"
-
-    //Anketo List Map
-    private var anketosList: ArrayList<Anketo> = ArrayList()
 
     //Anketos Id List
     private var anketosId: ArrayList<String> = ArrayList()
@@ -43,7 +41,9 @@ class AnketoListActivity : AppCompatActivity() {
     private lateinit var linearLayout: LinearLayoutManager
 
     //Group Users Map
-    private lateinit var usersMap: HashMap<String, HashMap<String, String>>
+    private lateinit var usersMap: HashMap<String, Any>
+    //Current Group Id
+    private var currentGroupId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,7 @@ class AnketoListActivity : AppCompatActivity() {
         mDb.firestoreSettings = settings
 
         //User Maps
-        usersMap = intent.getSerializableExtra("groupUsers") as HashMap<String, HashMap<String, String>>
+        usersMap = intent.getSerializableExtra("groupUsers") as HashMap<String, Any>
 
         //Recycler View
         anketo_listview = findViewById(R.id.anketo_listview)
@@ -79,67 +79,40 @@ class AnketoListActivity : AppCompatActivity() {
         anketo_listview!!.adapter = anketoAdapter
 
         //Access Group Database
-        var currentGroupId = intent.getStringExtra("groupId")
+        currentGroupId = intent.getStringExtra("groupId")
         mDb.collection("Groups")
                 .document(currentGroupId)
-                .get()
-                .addOnCompleteListener {task ->
-                    if (task.isSuccessful) {
-                        if (task.result == null) {
-                            Log.d(TAG, "FIRESTORE -> CANNOT FIND THIS GROUP DOCUMENT -> $currentGroupId")
-                        } else {
-                            Log.d(TAG, "FIRESTORE -> CURRENT GROUP DOCUMENT: " + task.result)
-                            anketosId = task.result!!.get("anketos") as ArrayList<String>
-                            //set adapter
-                            anketoAdapter = AnketoListAdapter(this, anketosId, usersMap, mAuth.currentUser!!.uid)
-                            anketo_listview!!.adapter = anketoAdapter
+                .addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e)
+                        return@EventListener
+                    }
+
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.d(TAG, "Current data: " + snapshot.data)
+                        var groupAnketos = snapshot.get("anketos") as ArrayList<String>
+                        for (id in groupAnketos) {
+                            if (anketosId.contains(id)) {
+                                Log.d(TAG, "ANKETO ALREADY SHOWN")
+                            } else {
+                                Log.d(TAG, "NEW ANKETO FOUND")
+                                anketosId.add(id)
+                                anketoAdapter.notifyDataSetChanged()
+                            }
                         }
                     } else {
-                        Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
+                        Log.d(TAG, "Current data: null")
                     }
-                }
+                })
 
 
         //Floating Button
         var fab = findViewById<FloatingActionButton>(R.id.anketo_list_fab)
         fab.setOnClickListener {
             var intent = Intent(this, AnketoCreateActivity::class.java)
-            intent.putExtra("currentGroup", currentGroupId)
+            intent.putExtra("groupId", currentGroupId)
             startActivity(intent)
         }
-
-    }
-
-//    fun doneGetGroup(groupDs: DocumentSnapshot?) {
-//        var anketosMap: HashMap<String, Any> = groupDs!!.get("anketo") as HashMap<String, Any>
-//        Log.d(TAG, "anketoMap -> $anketosMap")
-//        for (key in anketosMap.keys) {
-//            val anketoMap: HashMap<String, Any> = anketosMap.get(key)  as HashMap<String, Any>
-//            val anketo = Anketo(key ,
-//                    (anketoMap.get("due") as Timestamp).seconds * 1000,
-//                    anketoMap.get("type") as String,
-//                    anketoMap.get("title") as String,
-//                    anketoMap.get("description") as String,
-//                    anketoMap.get("owner") as String,
-//                    (anketoMap.get("due") as Timestamp).seconds * 1000)
-//
-//            val answersMap: HashMap<String, Any> = anketoMap.get("answers") as HashMap<String, Any>
-//            for(key in answersMap.keys) {
-//                val answerMap: HashMap<String, Any> = answersMap.get(key) as HashMap<String, Any>
-//                Log.d(TAG, "AnswerMap created -> $answerMap")
-//                anketo.putAnswer(key, answerMap)
-//            }
-//
-//            Log.d(TAG, "Anketo Object Created -> $anketo")
-//            anketosList.add(anketo)
-//            anketoAdapter.notifyDataSetChanged()
-//        }
-//
-//
-//    }
-
-    fun doneGetGroup(groupDs: DocumentSnapshot?) {
-
 
     }
 

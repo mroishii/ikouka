@@ -17,9 +17,9 @@ import jp.ac.ecc.sk3a12.ikouka.R;
 public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.MessageViewHolder> {
     private ArrayList<ChatMessage> messageList;
     private String currentUser;
-    private HashMap<String, HashMap<String, String>> users;
+    private HashMap<String, Object> users;
 
-    public MessageListAdapter(ArrayList<ChatMessage> messageList, String currentUser, HashMap<String, HashMap<String, String>> users) {
+    public MessageListAdapter(ArrayList<ChatMessage> messageList, String currentUser, HashMap<String, Object> users) {
         this.messageList = messageList;
         this.currentUser = currentUser;
         this.users = users;
@@ -76,7 +76,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         ChatMessage c = messageList.get(position);
         if (holder.getItemViewType() == 0) {
             String senderId = c.getSender();
-            String senderName = users.get(senderId).get("displayName");
+            String senderName = ( (HashMap<String, String>) users.get(senderId) ).get("displayName");
             holder.messageSender.setText(senderName);
             holder.messageContent.setText(c.getMessage());
         } else {

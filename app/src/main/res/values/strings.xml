@@ -48,5 +48,10 @@
     <string name="groupCreateTitleLabel">グループ名</string>
     <string name="groupCreateDescriptionLabel">グループ概要</string>
     <string name="groupCreateCreateButton">グループ作成</string>
+    <string name="createAnketoTitleLabel">タイトル</string>
+    <string name="createAnketoDescriptionLabel">アンケート内容</string>
+    <string name="createAnketoAnswersLabel">選択肢</string>
+    <string name="createAnketoCreateBbutton">アンケート作成</string>
+    <string name="createAnketoAddAnswerButton">＋追加</string>
 
 </resources>

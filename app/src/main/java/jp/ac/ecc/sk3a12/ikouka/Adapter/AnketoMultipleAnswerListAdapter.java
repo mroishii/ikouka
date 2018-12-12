@@ -14,8 +14,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -40,12 +42,12 @@ public class AnketoMultipleAnswerListAdapter extends RecyclerView.Adapter<Anketo
     private FirebaseFirestore mDb = FirebaseFirestore.getInstance();
 
     private ArrayList<AnketoAnswer> anketoAnswerList;
-    private HashMap<String, HashMap<String, String>> users;
+    private HashMap<String, Object> users;
     private String currentUser;
     private String anketoId;
     Context mContext;
 
-    public AnketoMultipleAnswerListAdapter(Context context, String anketoId, ArrayList<AnketoAnswer> anketoList, HashMap<String, HashMap<String, String>> users, String currentUser) {
+    public AnketoMultipleAnswerListAdapter(Context context, String anketoId, ArrayList<AnketoAnswer> anketoList, HashMap<String, Object> users, String currentUser) {
         this.mContext = context;
         this.anketoId = anketoId;
         this.anketoAnswerList = anketoList;
@@ -101,13 +103,24 @@ public class AnketoMultipleAnswerListAdapter extends RecyclerView.Adapter<Anketo
 
         holder.answerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                buttonView.setEnabled(false); //disable check box until updated to database
+
+                //nested that need to be updated (ex. answers.1.answered.currentUserId)
                 final String path = "answers." + a.getId() + ".answered." + currentUser;
                 mDb.collection("Anketo")
                         .document(anketoId)
                         .update(
                                 path, isChecked
                         )
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "UPDATED " + path + " TO " + isChecked);
+                                Toast.makeText(mContext, "更新が成功した！", Toast.LENGTH_SHORT).show();
+                                buttonView.setEnabled(true);
+                            }
+                        })
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
