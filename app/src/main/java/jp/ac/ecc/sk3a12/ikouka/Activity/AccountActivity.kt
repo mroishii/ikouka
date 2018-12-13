@@ -8,14 +8,15 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class AccountActivity : AppCompatActivity() {
     //Firebase auth
-    private lateinit var auth: FirebaseAuth
+    private lateinit var mAuth: FirebaseAuth
     //Firebase Database
-    private lateinit var mDatabase: DatabaseReference
+    private lateinit var mDb: FirebaseFirestore
     //Toolbar
     private var mToolbar: Toolbar? = null
     //ProgressBar
@@ -34,9 +35,9 @@ class AccountActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //Firebase auth
-        auth = FirebaseAuth.getInstance()
+        mAuth = FirebaseAuth.getInstance()
         //Firebase database
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users")
+        mDb = FirebaseFirestore.getInstance()
         //ProgressBar
         mProgressBar = findViewById(R.id.pbLoading)
         //Other things
@@ -52,27 +53,14 @@ class AccountActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        //get uid from intent
-        var uid = intent.getStringExtra("uid")
-        //create data listener
-        var listener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                accountName!!.text  = dataSnapshot.child("userName").value.toString()
-
-                //hide progressbar, show user info
-                mProgressBar!!.visibility = ProgressBar.INVISIBLE
-                accountName!!.visibility = TextView.VISIBLE
-                //accountImage!!.visibility = CircleImageView.VISIBLE
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("database error", databaseError.message)
-            }
-        }
-
-        //attatch listener
-        mDatabase.child(uid).addListenerForSingleValueEvent(listener)
+        mDb.collection("Users")
+                .document(mAuth.currentUser!!.uid)
+                .get()
+                .addOnSuccessListener {
+                    mProgressBar!!.visibility = ProgressBar.INVISIBLE
+                    accountName!!.visibility = TextView.VISIBLE
+                    accountName!!.text = it.getString("userName")
+                }
 
     }
 }

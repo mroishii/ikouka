@@ -12,19 +12,20 @@ class GroupPagerAdapter(var fm: FragmentManager?, var currentGroup: Group?) : Fr
     override fun getItem(position: Int): Fragment {
         when(position) {
             0 -> {
-                val groupCalendarFragment: GroupCalendarFragment = GroupCalendarFragment()
-                var args = Bundle()
-                args.putParcelable("currentGroup", currentGroup)
-                groupCalendarFragment.arguments = args
-                return groupCalendarFragment
-            }
-
-            1 -> {
                 val groupMenuFragment: GroupMenuFragment = GroupMenuFragment()
                 var args = Bundle()
                 args.putParcelable("currentGroup", currentGroup)
                 groupMenuFragment.arguments = args
                 return groupMenuFragment
+            }
+
+            1 -> {
+                val groupCalendarFragment: GroupCalendarFragment = GroupCalendarFragment()
+                var args = Bundle()
+                args.putParcelable("currentGroup", currentGroup)
+                groupCalendarFragment.arguments = args
+                return groupCalendarFragment
+
             }
 
             else -> {
@@ -43,10 +44,10 @@ class GroupPagerAdapter(var fm: FragmentManager?, var currentGroup: Group?) : Fr
     override fun getPageTitle(position: Int) : CharSequence {
         when (position) {
             0 -> {
-                return "カレンダー"
+                return "メニュー"
             }
             1 -> {
-                return "メニュー"
+                return "カレンダー"
             }
         }
         return ""
