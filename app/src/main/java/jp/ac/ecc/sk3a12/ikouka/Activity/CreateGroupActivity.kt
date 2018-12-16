@@ -65,6 +65,10 @@ class CreateGroupActivity : AppCompatActivity() {
             groupMap.put("created", Timestamp.now())
             groupMap.put("anketos", object: ArrayList<String>(){})
             groupMap.put("events", object: ArrayList<Any>(){})
+            groupMap.put("image", "default")
+
+            var usersId = listOf(currentUserId)
+            groupMap.put("usersId", usersId)
 
             var usersMap: HashMap<String, Any> = HashMap()
             var userMap: HashMap<String, Any> = HashMap()

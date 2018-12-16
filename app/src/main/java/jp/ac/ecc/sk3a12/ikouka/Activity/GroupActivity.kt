@@ -216,9 +216,10 @@ class GroupActivity : AppCompatActivity() {
                                         Log.d(TAG, "usersMap -> $currentUsersMap")
                                         mDb.collection("Groups")
                                                 .document(currentGroup.groupId)
-                                                .update("users", currentUsersMap)
+                                                .update("users", currentUsersMap,
+                                                        "usersId", FieldValue.arrayUnion(invitedId))
                                                 .addOnSuccessListener {
-                                                    Log.d(TAG, "UPDATE GROUP USERS FIELD SUCCESSFULLY")
+                                                    Log.d(TAG, "UPDATE GROUP USERS SUCCESSFULLY")
                                                     //update invited user groups
                                                    updateUser(invitedId)
                                                 }
@@ -228,6 +229,7 @@ class GroupActivity : AppCompatActivity() {
                                         for (id in anketosId) {
                                             updateAnketo(id, invitedId)
                                         }
+
 
 
                                     }

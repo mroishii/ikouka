@@ -96,6 +96,11 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, CreateGroupActivity::class.java)
                 startActivity(intent)
             }
+
+            R.id.testMenu -> {
+                val intent = Intent(this, AllGroupsActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         return true

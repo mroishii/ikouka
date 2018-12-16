@@ -1,20 +1,29 @@
 package jp.ac.ecc.sk3a12.ikouka.Fragment
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.bumptech.glide.Glide
+import com.facebook.shimmer.ShimmerFrameLayout
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.firebase.ui.firestore.SnapshotParser
 import com.google.android.gms.common.util.CollectionUtils
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
+import jp.ac.ecc.sk3a12.ikouka.Activity.AllGroupsActivity
+import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Group
 import jp.ac.ecc.sk3a12.ikouka.Model.User
@@ -35,119 +44,112 @@ private const val ARG_PARAM2 = "param2"
 class GroupsListFragment : Fragment() {
     private val TAG = "GroupsListFrag"
 
-    //Group object array for adapter
-    private var groups: ArrayList<Group> = ArrayList()
-    private lateinit var mGroupListAdapter: GroupListAdapter
-
-    //Groups listview
-    private var groupList: ListView? = null
-
+    //RecycleView
+    private lateinit var  mRecyclerView: RecyclerView
+    //Database Reference
+    private lateinit var mDatabase: FirebaseFirestore
     //Firebase auth
     private lateinit var mAuth: FirebaseAuth
+    //Shimmer
+    private lateinit var shimmerContainer: ShimmerFrameLayout
 
-    //Firestore
-    private lateinit var mDb: FirebaseFirestore
-
-    private lateinit var currentUser: User
-    private var currentUserId: String = ""
-    private var oldGroupsList: ArrayList<String> = ArrayList()
+    private var mContext = this
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         //init firebase
         mAuth = FirebaseAuth.getInstance()
-        mDb = FirebaseFirestore.getInstance()
+        mDatabase = FirebaseFirestore.getInstance()
         val settings = FirebaseFirestoreSettings.Builder()
                 .setTimestampsInSnapshotsEnabled(true)
                 .build()
-        mDb.firestoreSettings = settings
-
-        currentUserId = mAuth.currentUser!!.uid
-
+        mDatabase.firestoreSettings = settings
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_request, container, false)
+        return inflater.inflate(R.layout.fragment_groups, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //group listview
-        groupList = view!!.findViewById(R.id.grouplist)
-        mGroupListAdapter = GroupListAdapter(groups, context)
-        groupList!!.adapter = mGroupListAdapter
+        //shimmer
+        shimmerContainer = view.findViewById(R.id.shimmer_view_container)
+        //RecycleView
+        mRecyclerView = view.findViewById(R.id.groupslist)
+        mRecyclerView.setHasFixedSize(true)
+//        mRecyclerView.layoutManager = GridLayoutManager(context, 2)
+        mRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        mDb.collection("Users")
-                .document(currentUserId)
-                .addSnapshotListener(EventListener<DocumentSnapshot>  { snapshot, e ->
-                    if (e != null) {
-                        Log.w(TAG, "Listen failed.", e)
-                        return@EventListener
-                    }
+        var query: Query = mDatabase.collection("Groups")
+                .whereArrayContains("usersId", mAuth.currentUser!!.uid)
 
-                    if (snapshot != null && snapshot.exists()) {
-                        Log.d(TAG, "Current data: " + snapshot.data)
-                        doneGetUser(snapshot)
-                    } else {
-                        Log.d(TAG, "Current data: null")
+        query.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                //エラーメッセ―ジを表示する
+                return@addSnapshotListener
+            }
+
+            Log.d("snapshot", snapshot!!.documents.toString())
+        }
+
+        val options = FirestoreRecyclerOptions.Builder<Group>()
+                .setQuery(query, object : SnapshotParser<Group> {
+                    override fun parseSnapshot(snapshot: DocumentSnapshot): Group {
+                        return Group(snapshot.id,
+                                snapshot.getString("title"),
+                                snapshot.getString("description"),
+                                snapshot.getString("owner"),
+                                snapshot.getString("image"))
                     }
                 })
+                .build()
 
-    }
+        val adapter: FirestoreRecyclerAdapter<Group, GroupViewHolder> = object : FirestoreRecyclerAdapter<Group, GroupViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
+                return GroupViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grouplist_item, parent, false))
+            }
 
-    private fun doneGetUser(userDs: DocumentSnapshot?) {
-        currentUser = User(
-                userDs!!.id,
-                userDs!!.getString("userName"),
-                userDs!!.getString("email"),
-                userDs!!.get("groups") as ArrayList<String>,
-                userDs!!.getString("image"),
-                userDs!!.getString("thumbImage"),
-                (userDs!!.get("joined") as Timestamp).seconds * 1000)
+            override fun onBindViewHolder(holder: GroupViewHolder, position: Int, model: Group) {
+                holder.groupTitle.text = model.title
+                holder.groupDescription.text = model.description
+                if (!model.image.equals("default")) {
+                    Glide.with(mContext)
+                            .load(model.image)
+                            .into(holder.groupImage)
+                }
 
-        Log.d(TAG, "Current user object created -> $currentUser")
+                holder.itemView.setOnClickListener {
+                    val intent = Intent(context, GroupActivity::class.java)
+                    intent.putExtra("groupId", model.getGroupId())
+                    intent.putExtra("groupTitle", model.getTitle())
+                    mContext.startActivity(intent)
+                }
 
-        for (groupId in currentUser.userGroups) {
-            if (oldGroupsList.contains(groupId)) {
-                Log.d(TAG, "GROUP ALREADY SHOWN")
-            } else {
-                mDb.collection("Groups")
-                        .document(groupId)
-                        .get()
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                if (task.result == null) {
-                                    Log.d(TAG, "FIRESTORE -> CANNOT FIND THIS GROUP DOCUMENT -> $groupId")
-                                } else {
-                                    val groupDs = task.result
-                                    Log.d(TAG, "FIRESTORE -> CURRENT GROUP DOCUMENT: " + groupDs)
-
-                                    Log.d(TAG, "NEW GROUP FOUND")
-                                    doneGetGroup(task.result)
-
-
-                                }
-
-                            } else {
-                                Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
-                            }
-                        }
+                if (shimmerContainer.visibility != View.GONE) {
+                    shimmerContainer.stopShimmer()
+                    shimmerContainer.visibility = View.GONE
+                }
             }
         }
+
+        mRecyclerView.adapter = adapter
+        adapter.startListening()
     }
 
-    private fun doneGetGroup(groupDs: DocumentSnapshot?) {
-        var group = Group(groupDs!!.id,
-                groupDs.getString("title"),
-                groupDs.getString("description"),
-                groupDs.getString("owner"),
-                groupDs.getString("image"))
+    override fun onResume() {
+        super.onResume()
+        shimmerContainer.startShimmer()
+    }
 
-        Log.d(TAG, "Group object created -> " + group.title)
+    override fun onPause() {
+        super.onPause()
+        shimmerContainer.stopShimmer()
+    }
 
-        groups.add(group)
-        oldGroupsList.add(group.groupId)
-        mGroupListAdapter.notifyDataSetChanged()
+    class GroupViewHolder(view: View, var viewType: Int? = 0): RecyclerView.ViewHolder(view) {
+        var groupImage: ImageView = view.findViewById(R.id.grouplist_item_image)
+        var groupTitle: TextView = view.findViewById(R.id.grouplist_item_title)
+        var groupDescription: TextView = view.findViewById(R.id.grouplist_item_description)
     }
 
 }

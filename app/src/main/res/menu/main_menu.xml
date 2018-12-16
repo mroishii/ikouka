@@ -13,5 +13,9 @@
             android:id="@+id/signout"
             android:title="@string/signout" />
 
+        <item
+            android:id="@+id/testMenu"
+            android:title="Test"/>
+
     </group>
 </menu>

@@ -10,9 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity;
+import jp.ac.ecc.sk3a12.ikouka.GlideApp;
 import jp.ac.ecc.sk3a12.ikouka.Model.Group;
 import jp.ac.ecc.sk3a12.ikouka.R;
 
@@ -88,6 +92,12 @@ public class GroupListAdapter extends ArrayAdapter<Group> implements View.OnClic
             viewHolder.description.setText(group.getDescription().substring(0, 27) + "...");
         } else {
             viewHolder.description.setText(group.getDescription());
+        }
+
+        if(!group.getImage().equals("default")) {
+            GlideApp.with(mContext)
+                    .load(group.getImage())
+                    .into(viewHolder.image);
         }
 
 
