@@ -1,9 +1,11 @@
 package jp.ac.ecc.sk3a12.ikouka.Activity
 
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -13,6 +15,9 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
+import com.google.common.io.Files.getFileExtension
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.*
 import com.google.firebase.database.DatabaseReference
@@ -23,8 +28,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.R
-import jp.ac.ecc.sk3a12.ikouka.R.id.inputEmail
-import jp.ac.ecc.sk3a12.ikouka.R.id.inputUsername
+import jp.ac.ecc.sk3a12.ikouka.R.id.*
+import java.io.File
 import java.lang.Exception
 import java.net.URL
 
@@ -50,6 +55,10 @@ class RegisterActivity: AppCompatActivity() {
     private lateinit var errorMessage: TextView
 
     private var imageUri = "default"
+
+    private var userMap: HashMap<String, Any> = HashMap()
+
+    private lateinit var uid: String
 
     //View for picture dialog box
     private lateinit var dialogView: View
@@ -169,9 +178,7 @@ class RegisterActivity: AppCompatActivity() {
     fun doRegister(email: String, password: String, username: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
-                var uid = auth.currentUser!!.uid
-                //create user info map
-                var userMap: HashMap<String, Any> = HashMap()
+                uid = auth.currentUser!!.uid
                 //email
                 userMap.put("email", auth.currentUser!!.email.toString())
                 //userName
@@ -186,19 +193,17 @@ class RegisterActivity: AppCompatActivity() {
                 userMap.put("joined", timestamp)
 
                 //image
-                if (imageUri == "default") {
+                if (imageUri.equals("default")) {
                     userMap.put("image", "default")
-                    updateUsersDb(userMap)
+                    Log.d(TAG, "UserMap created -> $userMap")
+                    updateUsersDb()
                 } else {
                     uploadImage()
                 }
 
-
-                Log.d(TAG, "UserMap created -> $userMap")
-
             } else {
                 if (task.exception is FirebaseAuthUserCollisionException) {
-                    showError("このメールが登録済みでした。")
+                    showError("このメールはご利用できません。")
                 } else if (task.exception is Exception) {
                     showError("エラーが発生した：${task.exception.toString()}")
                 }
@@ -213,7 +218,32 @@ class RegisterActivity: AppCompatActivity() {
 //        }
     }
 
-    fun updateUsersDb(userMap: HashMap<String, Any>) {
+    fun uploadImage() {
+        var filename = uid + "." + getFileExtension(Uri.parse(imageUri))
+        var fileRef = mStore.reference.child("UsersProfileImage/$filename")
+        var uploadTask = fileRef.putFile(Uri.parse(imageUri))
+        var urlTask = uploadTask.continueWithTask (Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            return@Continuation fileRef.downloadUrl
+        }).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "UserMap created -> $userMap")
+                userMap.put("image", task.result.toString())
+
+                updateUsersDb()
+            } else {
+                // Handle failures
+                // ...
+            }
+        }
+
+    }
+
+    fun updateUsersDb() {
         //write to users db
         mDb.collection("Users")
                 .document(auth.currentUser!!.uid)
@@ -241,12 +271,6 @@ class RegisterActivity: AppCompatActivity() {
         //-----------------------------------------------------------
     }
 
-    fun uploadImage() {
-        var fileName = "${auth.currentUser!!.uid}.${MimeTypeMap.getFileExtensionFromUrl(imageUri)}"
-        Toast.makeText(this, fileName, Toast.LENGTH_LONG).show()
-        var fileRef = mStore.reference.child("UsersProfileImage/$fileName")
-    }
-
     fun showError(error: String) {
         errorMessage.visibility = TextView.VISIBLE
         errorMessage.text = error
@@ -265,14 +289,36 @@ class RegisterActivity: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM) {
-            var imageUri = data!!.dataString
+            imageUri = data!!.dataString
             Glide.with(this)
                     .load(imageUri)
                     .into(profilePicture)
-            this.imageUri = imageUri
-
-            var fileName = "${auth.currentUser!!.uid}.${MimeTypeMap.getFileExtensionFromUrl(imageUri)}"
-            Toast.makeText(this, fileName, Toast.LENGTH_LONG).show()
         }
     }
+
+    fun getFileExtension(uri: Uri): String {
+        lateinit var filename : String
+        if (uri.getScheme().equals("content")) {
+            var cursor: Cursor = contentResolver.query(uri, null, null, null, null)
+            try {
+              if (cursor != null && cursor.moveToFirst()) {
+                  filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+              }
+            } finally {
+              cursor.close()
+            }
+          }
+
+          if (filename == null) {
+            filename = uri.getPath()
+            var cut = filename.lastIndexOf('/')
+            if (cut != -1) {
+              filename = filename.substring(cut + 1)
+            }
+          }
+
+        return filename.substring(filename.lastIndexOf('.') + 1)
+    }
+
+
 }

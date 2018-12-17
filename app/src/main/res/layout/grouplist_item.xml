@@ -6,10 +6,11 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:background="@drawable/single_message_self">
+
     <ImageView
         android:id="@+id/grouplist_item_image"
         android:layout_width="0dp"
-        android:layout_height="240dp"
+        android:layout_height="100dp"
         android:scaleType="centerCrop"
         android:src="@drawable/default_group"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:text="TextView"
         android:textColor="#ffffff"
@@ -42,7 +43,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="TextView"
         android:textColor="@color/md_blue_grey_200"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -4,8 +4,10 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -60,6 +62,11 @@ class AccountActivity : AppCompatActivity() {
                     mProgressBar!!.visibility = ProgressBar.INVISIBLE
                     accountName!!.visibility = TextView.VISIBLE
                     accountName!!.text = it.getString("userName")
+                    if (it.getString("image") != "default") {
+                        Glide.with(this)
+                                .load(it.getString("image"))
+                                .into(accountImage as ImageView)
+                    }
                 }
 
     }
