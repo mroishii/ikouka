@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <group>
-        <item
-            android:id="@+id/account"
-            android:title="@string/account" />
+<group
+    android:id="@+id/group"
+    android:checkableBehavior="single">
+    <item
+        android:id="@+id/account"
+        android:title="@string/account" />
 
-        <item
+    <item
         android:id="@+id/createGroup"
         android:title="@string/createGroup"/>
 
-        <item
-            android:id="@+id/signout"
-            android:title="@string/signout" />
+    <item
+        android:id="@+id/signout"
+        android:title="@string/signout" />
 
-        <item
-            android:id="@+id/testMenu"
-            android:title="Test"/>
+    <item
+        android:id="@+id/testMenu"
+        android:title="Test"/>
 
-    </group>
+</group>
 </menu>

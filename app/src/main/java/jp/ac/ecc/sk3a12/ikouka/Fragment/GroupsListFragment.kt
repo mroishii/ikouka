@@ -60,10 +60,6 @@ class GroupsListFragment : Fragment() {
         //init firebase
         mAuth = FirebaseAuth.getInstance()
         mDatabase = FirebaseFirestore.getInstance()
-        val settings = FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build()
-        mDatabase.firestoreSettings = settings
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_groups, container, false)
