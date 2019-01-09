@@ -54,7 +54,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
                 messageSender = (TextView) view.findViewById(R.id.chatMessageSender);
                 messageContent = (TextView) view.findViewById(R.id.chatMessageContent);
             } else {
-                messageContent = (TextView) view.findViewById(R.id.chatSelfMessageContent);
+                messageContent = (TextView) view.findViewById(R.id.chatMessageContent);
             }
 
         }

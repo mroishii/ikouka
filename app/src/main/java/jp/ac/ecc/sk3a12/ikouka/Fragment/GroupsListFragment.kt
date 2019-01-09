@@ -113,6 +113,7 @@ class GroupsListFragment : Fragment() {
                             .load(model.image)
                             .into(holder.groupImage)
                 }
+                holder.groupImage.setClipToOutline(true)
 
                 holder.itemView.setOnClickListener {
                     val intent = Intent(context, GroupActivity::class.java)

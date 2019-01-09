@@ -59,7 +59,6 @@ public class GroupMenuListAdapter extends ArrayAdapter<String> {
                         Intent intent = new Intent(mContext, AnketoListActivity.class);
                         intent.putExtra("groupId", currentGroup.getGroupId());
                         intent.putExtra("groupTitle", currentGroup.getTitle());
-                        intent.putExtra("groupUsers", currentGroup.getUsers());
                         mContext.startActivity(intent);
                         break;
                     }

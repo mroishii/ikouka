@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener {
                     drawerHeader.findViewById<TextView>(R.id.drawer_header_username).text = it.getString("userName")
+                    drawerHeader.findViewById<TextView>(R.id.drawer_header_email).text = it.getString("email")
                     if (it.getString("image") != "default") {
                         Glide.with(applicationContext)
                                 .load(it.getString("image"))
