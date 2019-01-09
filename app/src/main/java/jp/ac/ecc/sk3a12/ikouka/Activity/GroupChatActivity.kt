@@ -37,6 +37,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class GroupChatActivity : AppCompatActivity() {
+    private var TAG = "GroupChatActiv"
     //Firebase
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDb: FirebaseFirestore
@@ -128,6 +129,8 @@ class GroupChatActivity : AppCompatActivity() {
                                 .document(model.sender)
                                 .get()
                                 .addOnSuccessListener {
+                                    Log.d(TAG, "GotUser => $it")
+
                                     var userMap: HashMap<String, String?> = HashMap()
                                     userMap.put("userName", it.getString("userName"))
                                     userMap.put("image", it.getString("image"))

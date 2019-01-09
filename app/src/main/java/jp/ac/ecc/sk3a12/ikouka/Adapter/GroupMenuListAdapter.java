@@ -2,6 +2,7 @@ package jp.ac.ecc.sk3a12.ikouka.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class GroupMenuListAdapter extends ArrayAdapter<String> {
                     case 1: {
                         Toast.makeText(mContext, item_text.getText(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(mContext, AnketoListActivity.class);
+                        Log.d("GroupMenuAdapter", "currentGroup => " + currentGroup.toString());
                         intent.putExtra("groupId", currentGroup.getGroupId());
                         intent.putExtra("groupTitle", currentGroup.getTitle());
                         mContext.startActivity(intent);
@@ -70,7 +72,7 @@ public class GroupMenuListAdapter extends ArrayAdapter<String> {
 
                     case 3: {
                         Intent intent = new Intent(mContext, GroupChatActivity.class);
-                        intent.putExtra("group", currentGroup);
+                        intent.putExtra("groupId", currentGroup.getGroupId());
                         mContext.startActivity(intent);
                         break;
                     }

@@ -1,11 +1,13 @@
 package jp.ac.ecc.sk3a12.ikouka.Model;
 
+import com.google.firebase.Timestamp;
+
 import java.util.Calendar;
 import java.util.HashMap;
 
 public class ChatMessage {
     private String sender;
-    private Long timestamp;
+    private Timestamp timestamp;
     private String message;
     private String type;
 
@@ -17,10 +19,10 @@ public class ChatMessage {
         this.sender = from;
         this.message = message;
         this.type = type;
-        this.timestamp = Calendar.getInstance().getTimeInMillis();
+        this.timestamp = Timestamp.now();
     }
 
-    public ChatMessage(String sender, String message, String type, Long timestamp) {
+    public ChatMessage(String sender, String message, String type, Timestamp timestamp) {
         this.sender = sender;
         this.timestamp = timestamp;
         this.type = type;
@@ -31,7 +33,7 @@ public class ChatMessage {
         return sender;
     }
 
-    public Long getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
@@ -45,9 +47,7 @@ public class ChatMessage {
         this.sender = sender;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = Long.parseLong(timestamp);
-    }
+    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
 
     public void setMessage(String message) {
         this.message = message;
