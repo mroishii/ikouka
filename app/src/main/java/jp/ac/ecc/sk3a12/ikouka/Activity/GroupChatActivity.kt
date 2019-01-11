@@ -20,18 +20,12 @@ import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.Model.ChatMessage
-import jp.ac.ecc.sk3a12.ikouka.Model.Group
-import jp.ac.ecc.sk3a12.ikouka.Adapter.MessageListAdapter
-import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupsListFragment
 import jp.ac.ecc.sk3a12.ikouka.R
 import java.util.*
 import kotlin.collections.HashMap
@@ -104,17 +98,18 @@ class GroupChatActivity : AppCompatActivity() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupChatActivity.MessageViewHolder {
                 if (viewType == 0) {
                     return GroupChatActivity.MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_single, parent, false))
-                } else {
-                    return GroupChatActivity.MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_self, parent, false))
                 }
+
+                return GroupChatActivity.MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_self, parent, false))
 
             }
 
             override fun onBindViewHolder(holder: GroupChatActivity.MessageViewHolder, position: Int, model: ChatMessage) {
+                Log.d(TAG, "ViewHolderType => ${holder.itemViewType}")
                 holder.content!!.text = model.message
 
                 //Not self message
-                if (holder.viewType == 0) {
+                if (holder.itemViewType == 0) {
                     if (usersMap.containsKey(model.sender)) {
                         var userMap = usersMap.get(model.sender) as HashMap<String, String>
 
@@ -150,11 +145,13 @@ class GroupChatActivity : AppCompatActivity() {
 
             override fun getItemViewType(position: Int): Int {
                 var chatMessage = getItem(position)
-                if (chatMessage.sender != mAuth.currentUser!!.uid) {
-                    return 0
-                } else {
+                if (chatMessage.sender == mAuth.currentUser!!.uid) {
+                    Log.d(TAG, "$chatMessage => self")
                     return 1
                 }
+
+                Log.d(TAG, "$chatMessage => other")
+                return 0
             }
         }
 
@@ -184,7 +181,7 @@ class GroupChatActivity : AppCompatActivity() {
 
         sendButton!!.setOnClickListener{
             if (!TextUtils.isEmpty(inputMessage!!.text.toString())) {
-//                sendMessage()
+                sendMessage()
                 inputMessage!!.setText("")
             }
         }
@@ -200,19 +197,17 @@ class GroupChatActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-//    private fun sendMessage() {
-//        var message = inputMessage!!.text.toString()
-//        var currentUser = mAuth.currentUser!!.uid
-//
-//        //var mChatMessage = ChatMessage(currentUser, message)
-//
-//        var messageMap: HashMap<String, String> = HashMap()
-//        messageMap.put("sender", currentUser)
-//        messageMap.put("message", message)
-//        messageMap.put("type", "text")
-//        messageMap.put("timestamp", Calendar.getInstance().timeInMillis.toString())
-//
-//        var pushedId = dbGroupChat.push().key.toString()
-//        dbGroupChat.child(pushedId).updateChildren(messageMap.toMap())
-//    }
+    private fun sendMessage() {
+        var message = inputMessage!!.text.toString()
+        var currentUser = mAuth.currentUser!!.uid
+
+
+        var messageMap: HashMap<String, Any> = HashMap()
+        messageMap.put("sender", currentUser)
+        messageMap.put("message", message)
+        messageMap.put("type", "text")
+        messageMap.put("timestamp", Timestamp.now())
+
+        mDb.collection("Groups").document(groupId).collection("Chat").add(messageMap as Map<String, Any>)
+    }
 }

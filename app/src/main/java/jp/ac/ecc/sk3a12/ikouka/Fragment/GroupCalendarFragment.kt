@@ -32,26 +32,20 @@ class GroupCalendarFragment() : Fragment() {
     //var currentGroup: Group = arguments!!.getParcelable("currentGroup") as Group
 
     //Firestore
-    lateinit var mDb: FirebaseFirestore
-    lateinit var groupsDb: CollectionReference
-    lateinit var eventsDb: CollectionReference
+    private lateinit var mDb: FirebaseFirestore
 
     var events : ArrayList<Event> = ArrayList()
 
-    lateinit var calendarGridAdapter: GroupCalendarGridAdapter
+//    lateinit var calendarGridAdapter: GroupCalendarGridAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         //Initiate firestore
         mDb = FirebaseFirestore.getInstance()
-        mDb = FirebaseFirestore.getInstance()
         val settings = FirebaseFirestoreSettings.Builder()
                 .setTimestampsInSnapshotsEnabled(true)
                 .build()
         mDb.firestoreSettings = settings
-
-        groupsDb = mDb.collection("Groups")
-        eventsDb = mDb.collection("Events")
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_group_calendar, container, false)
@@ -63,14 +57,14 @@ class GroupCalendarFragment() : Fragment() {
 //        val groupId = activity!!.intent.getStringExtra("groupId")
 //        startGetGroup(groupId)
 
-        if (arguments!!.getParcelable("currentGroup") as Group != null) {
-            currentGroup = arguments!!.getParcelable("currentGroup") as Group
-        }
-
-
-        var calendarGrid: GridView = view!!.findViewById(R.id.calendarGrid)
-        calendarGridAdapter = GroupCalendarGridAdapter(context, currentGroup.events, 2018, 12)
-        calendarGrid.adapter = calendarGridAdapter;
+//        if (arguments!!.getParcelable("currentGroup") as Group != null) {
+//            currentGroup = arguments!!.getParcelable("currentGroup") as Group
+//        }
+//
+//
+//        var calendarGrid: GridView = view!!.findViewById(R.id.calendarGrid)
+//        calendarGridAdapter = GroupCalendarGridAdapter(context, currentGroup.events, 2018, 12)
+//        calendarGrid.adapter = calendarGridAdapter;
 
     }
 

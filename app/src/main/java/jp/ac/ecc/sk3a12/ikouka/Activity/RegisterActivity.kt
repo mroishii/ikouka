@@ -6,32 +6,25 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.View
-import android.webkit.MimeTypeMap
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
-import com.google.common.io.Files.getFileExtension
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.*
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.ac.ecc.sk3a12.ikouka.Magic
 import jp.ac.ecc.sk3a12.ikouka.R
-import jp.ac.ecc.sk3a12.ikouka.R.id.*
-import java.io.File
 import java.lang.Exception
-import java.net.URL
 
 class RegisterActivity: AppCompatActivity() {
     private val TAG: String = "RegisterActi"
@@ -219,7 +212,8 @@ class RegisterActivity: AppCompatActivity() {
     }
 
     fun uploadImage() {
-        var filename = uid + "." + getFileExtension(Uri.parse(imageUri))
+//        var filename = uid + "." + getFileExtension(Uri.parse(imageUri))
+        var filename = uid + "." + Magic.getFileExtension(this, Uri.parse(imageUri))
         var fileRef = mStore.reference.child("UsersProfileImage/$filename")
         var uploadTask = fileRef.putFile(Uri.parse(imageUri))
         var urlTask = uploadTask.continueWithTask (Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->

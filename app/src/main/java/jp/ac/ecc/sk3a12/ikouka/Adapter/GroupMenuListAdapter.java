@@ -21,14 +21,14 @@ import jp.ac.ecc.sk3a12.ikouka.R;
 public class GroupMenuListAdapter extends ArrayAdapter<String> {
     private ArrayList<String> text;
     private ArrayList<Integer> icon;
-    private Group currentGroup ;
+    private String groupId ;
     Context mContext;
 
-    public GroupMenuListAdapter(ArrayList<String> text, ArrayList<Integer> icon, Group currentGroup, Context context) {
+    public GroupMenuListAdapter(ArrayList<String> text, ArrayList<Integer> icon, String groupId, Context context) {
         super(context, R.layout.listmenu_item, text);
         this.icon = icon;
         this.text = text;
-        this.currentGroup = currentGroup;
+        this.groupId = groupId;
         this.mContext = context;
     }
 
@@ -56,11 +56,8 @@ public class GroupMenuListAdapter extends ArrayAdapter<String> {
                     }
 
                     case 1: {
-                        Toast.makeText(mContext, item_text.getText(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(mContext, AnketoListActivity.class);
-                        Log.d("GroupMenuAdapter", "currentGroup => " + currentGroup.toString());
-                        intent.putExtra("groupId", currentGroup.getGroupId());
-                        intent.putExtra("groupTitle", currentGroup.getTitle());
+                        intent.putExtra("groupId", groupId);
                         mContext.startActivity(intent);
                         break;
                     }
@@ -72,7 +69,7 @@ public class GroupMenuListAdapter extends ArrayAdapter<String> {
 
                     case 3: {
                         Intent intent = new Intent(mContext, GroupChatActivity.class);
-                        intent.putExtra("groupId", currentGroup.getGroupId());
+                        intent.putExtra("groupId", groupId);
                         mContext.startActivity(intent);
                         break;
                     }

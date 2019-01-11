@@ -8,13 +8,13 @@ import jp.ac.ecc.sk3a12.ikouka.Model.Group
 import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupCalendarFragment
 import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupMenuFragment
 
-class GroupPagerAdapter(var fm: FragmentManager?, var currentGroup: Group?) : FragmentPagerAdapter(fm) {
+class GroupPagerAdapter(var fm: FragmentManager?, var groupId: String) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         when(position) {
             0 -> {
                 val groupMenuFragment: GroupMenuFragment = GroupMenuFragment()
                 var args = Bundle()
-                args.putParcelable("currentGroup", currentGroup)
+                args.putString("groupId", groupId)
                 groupMenuFragment.arguments = args
                 return groupMenuFragment
             }
@@ -22,7 +22,7 @@ class GroupPagerAdapter(var fm: FragmentManager?, var currentGroup: Group?) : Fr
             1 -> {
                 val groupCalendarFragment: GroupCalendarFragment = GroupCalendarFragment()
                 var args = Bundle()
-                args.putParcelable("currentGroup", currentGroup)
+                args.putString("groupId", groupId)
                 groupCalendarFragment.arguments = args
                 return groupCalendarFragment
 

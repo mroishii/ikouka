@@ -17,6 +17,8 @@ public class Group implements Parcelable {
     private String description;
     private String owner;
     private String image;
+
+    private ArrayList<String> usersId = new ArrayList();
     private ArrayList<Event> events = new ArrayList<Event>();
     private ArrayList<String> eventsId = new ArrayList<String>();
     private ArrayList<String> anketosId = new ArrayList<String>();
@@ -96,7 +98,6 @@ public class Group implements Parcelable {
     public HashMap<String, Object> getUsers() {
         return users;
     }
-
 
 
     public void addEventId(String eventId) {
