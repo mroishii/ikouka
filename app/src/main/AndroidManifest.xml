@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.ac.ecc.sk3a12.ikouka">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -49,7 +49,15 @@
             android:parentActivityName=".Activity.GroupActivity" />
         <activity android:name=".Activity.AnketoListActivity" />
         <activity android:name=".Activity.AnketoActivity" />
-        <activity android:name=".Activity.AnketoCreateActivity"></activity>
+        <activity android:name=".Activity.AnketoCreateActivity" />
+        <activity
+            android:name=".Activity.TestActivity"
+            android:label="@string/title_activity_test"
+            android:parentActivityName=".Activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="jp.ac.ecc.sk3a12.ikouka.Activity.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

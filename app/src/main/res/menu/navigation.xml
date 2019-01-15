@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/group_dashboard"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="掲示板" />
+
+    <item
+        android:id="@+id/group_calendar"
+        android:icon="@drawable/ic_event_black_24dp"
+        android:title="カレンダー" />
+
+    <item
+        android:id="@+id/group_chat"
+        android:icon="@drawable/ic_chat_black_24dp"
+        android:title="チャット" />
+
+    <item
+        android:id="@+id/group_anketo"
+        android:icon="@drawable/ic_anketo_black_24dp"
+        android:title="アンケート" />
+    <item
+        android:id="@+id/group_task"
+        android:icon="@drawable/ic_task_black_24dp"
+        android:title="タスク" />
+
+
+</menu>

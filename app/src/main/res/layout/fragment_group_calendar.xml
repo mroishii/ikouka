@@ -5,14 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.GroupCalendarFragment">
 
-    <GridView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/calendarGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray"
-        android:gravity="center"
-        android:horizontalSpacing="1dp"
-        android:numColumns="7"
-        android:verticalSpacing="1dp" />
+        android:gravity="center" />
 
 </FrameLayout>

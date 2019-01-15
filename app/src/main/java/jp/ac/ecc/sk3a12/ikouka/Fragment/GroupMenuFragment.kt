@@ -32,6 +32,8 @@ class GroupMenuFragment : Fragment() {
     private var mAuth = FirebaseAuth.getInstance()
     private var mDb = FirebaseFirestore.getInstance()
 
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment

@@ -24,6 +24,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
 import jp.ac.ecc.sk3a12.ikouka.Activity.AllGroupsActivity
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
+import jp.ac.ecc.sk3a12.ikouka.Activity.TestActivity
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Group
 import jp.ac.ecc.sk3a12.ikouka.Model.User
@@ -116,7 +117,7 @@ class GroupsListFragment : Fragment() {
                 holder.groupImage.setClipToOutline(true)
 
                 holder.itemView.setOnClickListener {
-                    val intent = Intent(context, GroupActivity::class.java)
+                    val intent = Intent(context, TestActivity::class.java)
                     intent.putExtra("groupId", model.getGroupId())
                     intent.putExtra("groupTitle", model.getTitle())
                     mContext.startActivity(intent)
