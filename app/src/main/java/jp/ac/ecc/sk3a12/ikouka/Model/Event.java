@@ -30,6 +30,26 @@ public class Event {
         this.owner = owner;
     }
 
+    public String getEventId() {
+        return eventId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Timestamp getDate() {
+        return date;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
     @Override
     public String toString() {
         return "Event{" +

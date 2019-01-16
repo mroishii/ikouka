@@ -3,12 +3,14 @@ package jp.ac.ecc.sk3a12.ikouka.Adapter
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
+import android.text.format.DateUtils.isToday
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import jp.ac.ecc.sk3a12.ikouka.Model.DayItem
+import jp.ac.ecc.sk3a12.ikouka.Model.Event
 import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.groupcalendar_item.view.*
 import java.util.*
@@ -30,13 +32,43 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
 
     init {
         this.context = context
-        this.cal.set(year, month - 1, 1)
+        this.cal.set(year, month, 1)
         this.offset = cal.get(Calendar.DAY_OF_WEEK) - 1
-        Log.d(TAG, "Offset => $offset")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupCalendarRecyclerAdapter.DayItemViewHolder {
         return GroupCalendarRecyclerAdapter.DayItemViewHolder(LayoutInflater.from(context).inflate(R.layout.groupcalendar_item, parent, false))
+    }
+
+    override fun onBindViewHolder(viewholder: GroupCalendarRecyclerAdapter.DayItemViewHolder, position: Int, payloads: List<Any>) {
+        if (!payloads.isEmpty()) {
+            val event = payloads.get(0) as Event
+            viewholder.eventCount += 1
+            Log.d(TAG, "pos: ${viewholder.day.text}, eventCount:${viewholder.eventCount}")
+            when (viewholder.eventCount) {
+                1 -> {
+                    viewholder.event1.text = event.title
+                    viewholder.event1.visibility = TextView.VISIBLE
+                }
+
+                2 -> {
+                    viewholder.event2.text = event.title
+                    viewholder.event2.visibility = TextView.VISIBLE
+                }
+
+                3 -> {
+                    viewholder.event3.text = event.title
+                    viewholder.event3.visibility = TextView.VISIBLE
+                }
+
+                else -> {
+                    viewholder.event3.text = "後${viewholder.eventCount - 2}個..."
+                    viewholder.event3.visibility = TextView.VISIBLE
+                }
+            }
+        } else {
+            super.onBindViewHolder(viewholder, position, payloads)
+        }
     }
 
     override fun onBindViewHolder(viewholder: GroupCalendarRecyclerAdapter.DayItemViewHolder, position: Int) {
@@ -68,17 +100,18 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
 
         if (isToday(cal)) {
             viewholder.container.background = context.resources.getDrawable(R.drawable.layout_border)
-            viewholder.event1.visibility = TextView.VISIBLE
         }
 
     }
 
     override fun getItemCount(): Int {
-        return cal.getMaximum(Calendar.DAY_OF_MONTH) + offset
+        var count = cal.getActualMaximum(Calendar.DAY_OF_MONTH) + offset
+        var lastOffset = 7 - (count % 7)
+        return  count + lastOffset
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position < offset) {
+        if (position < offset || position > cal.getActualMaximum(Calendar.DAY_OF_MONTH) + offset - 1) {
             return HIDDEN
         } else {
             var cal = this.cal.clone() as Calendar
@@ -118,5 +151,6 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
         val event2: TextView = view.findViewById(R.id.event2)
         val event3: TextView = view.findViewById(R.id.event3)
         val container: ConstraintLayout = view.findViewById(R.id.container)
+        var eventCount = 0
     }
 }

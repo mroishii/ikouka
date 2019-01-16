@@ -117,7 +117,7 @@ class GroupsListFragment : Fragment() {
                 holder.groupImage.setClipToOutline(true)
 
                 holder.itemView.setOnClickListener {
-                    val intent = Intent(context, TestActivity::class.java)
+                    val intent = Intent(context, GroupActivity::class.java)
                     intent.putExtra("groupId", model.getGroupId())
                     intent.putExtra("groupTitle", model.getTitle())
                     mContext.startActivity(intent)

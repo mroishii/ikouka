@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="92dp"
+    android:layout_height="88dp"
     android:background="@color/md_white_1000">
 
     <TextView
@@ -23,7 +23,9 @@
         android:id="@+id/event1"
         android:layout_width="match_parent"
         android:layout_height="20dp"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
         android:background="#FF4500"
         android:gravity="center_horizontal"
         android:text="event1"
@@ -37,6 +39,8 @@
         android:id="@+id/event2"
         android:layout_width="match_parent"
         android:layout_height="20dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:background="#3CB371	"
         android:gravity="center_horizontal"
         android:text="event2"
@@ -50,7 +54,9 @@
         android:id="@+id/event3"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
         android:background="#4169E1"
         android:gravity="center_horizontal"
         android:text="event3"
