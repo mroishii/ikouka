@@ -77,9 +77,6 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
                     viewholder.event3.setBackgroundColor(context.resources.getColor(R.color.md_white_1000))
                 }
             }
-            viewholder.itemView.setOnClickListener {
-                Toast.makeText(context, "events: ${viewholder.events}", Toast.LENGTH_LONG )
-            }
 
         } else {
             super.onBindViewHolder(viewholder, position, payloads)
@@ -115,10 +112,6 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
 
         if (isToday(cal)) {
             viewholder.container.background = context.resources.getDrawable(R.drawable.layout_border)
-        }
-
-        viewholder.itemView.setOnClickListener {
-            Toast.makeText(context, "events: ${viewholder.events}", Toast.LENGTH_LONG )
         }
 
     }
@@ -171,5 +164,12 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
         val event3: TextView = view.findViewById(R.id.event3)
         val container: ConstraintLayout = view.findViewById(R.id.container)
         var events = ArrayList<Event>()
+
+        init {
+            view.setOnClickListener {
+                Toast.makeText(view.context, "events: $events", Toast.LENGTH_LONG ).show()
+                Log.d(TAG, "clicked")
+            }
+        }
     }
 }
