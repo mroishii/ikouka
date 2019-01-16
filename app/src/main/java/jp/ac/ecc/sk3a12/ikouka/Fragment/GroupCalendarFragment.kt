@@ -114,6 +114,7 @@ class GroupCalendarFragment : Fragment() {
 
     private fun getEvents() {
         val cal = Calendar.getInstance()
+        //Create date range to use in query
         cal.set(this.cal.get(Calendar.YEAR), this.cal.get(Calendar.MONTH), 1)
         val startDate = Date(cal.timeInMillis)
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE))
@@ -126,18 +127,33 @@ class GroupCalendarFragment : Fragment() {
                 .whereLessThanOrEqualTo("date", endDate)
                 .get()
                 .addOnSuccessListener {
+                    var monthEvents: HashMap<Int, ArrayList<Event>> = HashMap()
+                    //Build a hashmap of this month event
                     for (document in it) {
                         val event = Event(document.id,
                                 document.getString("title"),
                                 document.getString("description"),
                                 document.get("date") as Timestamp,
                                 document.getString("owner"))
-
                         cal.timeInMillis = event.date.seconds * 1000
                         Log.d(TAG, "EventDate: ${cal.get(Calendar.YEAR)}/${cal.get(Calendar.MONTH)}/${cal.get(Calendar.DATE)}")
 
-                        calendarGridAdapter.notifyItemChanged(cal.get(Calendar.DATE) + calendarGridAdapter.offset - 1, event)
+                        //If the date already in the hashmap, just add the event to array,
+                        //else, create a new key and add the event into array
+                        if (monthEvents.containsKey(cal.get(Calendar.DATE))) {
+                            monthEvents.get(cal.get(Calendar.DATE))!!.add(event)
+                        } else {
+                            var events: ArrayList<Event> = ArrayList()
+                            events.add(event)
+                            monthEvents.put(cal.get(Calendar.DATE), events)
+                        }
+                    }
 
+                    Log.d(TAG, "eventsMap => $monthEvents")
+                    //For each key(as event date) in the hashmap, notify adapter to show event title on selected date
+                    for (date in monthEvents.keys) {
+                        var events = monthEvents.get(date)
+                        calendarGridAdapter.notifyItemChanged(date + calendarGridAdapter.offset - 1, events)
                     }
                 }
                 .addOnFailureListener() {
