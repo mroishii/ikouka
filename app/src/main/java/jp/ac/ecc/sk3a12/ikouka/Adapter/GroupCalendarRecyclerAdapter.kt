@@ -2,6 +2,7 @@ package jp.ac.ecc.sk3a12.ikouka.Adapter
 
 import android.content.Context
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils.isToday
 import android.util.Log
@@ -10,13 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import jp.ac.ecc.sk3a12.ikouka.Fragment.CalendarItem
 import jp.ac.ecc.sk3a12.ikouka.Model.DayItem
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.groupcalendar_item.view.*
 import java.util.*
 
-class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): RecyclerView.Adapter<GroupCalendarRecyclerAdapter.DayItemViewHolder>() {
+class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: Int, month: Int ): RecyclerView.Adapter<GroupCalendarRecyclerAdapter.DayItemViewHolder>() {
     companion object {
         val TAG = "GrpCalenAdapter"
         val HIDDEN = 0
@@ -28,11 +30,13 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
     }
 
     var context: Context
+    var fragmentManager: FragmentManager
     var cal: Calendar = Calendar.getInstance()
     var offset: Int = 0
 
     init {
         this.context = context
+        this.fragmentManager = fm
         this.cal.set(year, month, 1)
         this.offset = cal.get(Calendar.DAY_OF_WEEK) - 1
     }
@@ -114,6 +118,11 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
             viewholder.container.background = context.resources.getDrawable(R.drawable.layout_border)
         }
 
+        viewholder.itemView.setOnClickListener {
+            var calendarItemFrag = CalendarItem.getInstance(viewholder.events)
+            calendarItemFrag.showNow(fragmentManager, "DATE_ITEM")
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -164,12 +173,5 @@ class GroupCalendarRecyclerAdapter(context: Context, year: Int, month: Int ): Re
         val event3: TextView = view.findViewById(R.id.event3)
         val container: ConstraintLayout = view.findViewById(R.id.container)
         var events = ArrayList<Event>()
-
-        init {
-            view.setOnClickListener {
-                Toast.makeText(view.context, "events: $events", Toast.LENGTH_LONG ).show()
-                Log.d(TAG, "clicked")
-            }
-        }
     }
 }

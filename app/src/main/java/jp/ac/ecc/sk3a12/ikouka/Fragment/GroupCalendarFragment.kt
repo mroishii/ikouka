@@ -3,6 +3,7 @@ package jp.ac.ecc.sk3a12.ikouka.Fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -33,7 +34,7 @@ import java.util.*
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class GroupCalendarFragment : Fragment() {
+open class GroupCalendarFragment : Fragment() {
     private val TAG = "GrpCalFrag"
 
     lateinit var groupId: String
@@ -106,7 +107,7 @@ class GroupCalendarFragment : Fragment() {
     }
 
     private fun setCalendar() {
-        calendarGridAdapter = GroupCalendarRecyclerAdapter(this.context!!, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
+        calendarGridAdapter = GroupCalendarRecyclerAdapter(this.context!!, activity!!.supportFragmentManager,  cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
         calendarGrid.adapter = calendarGridAdapter
         var mDateFormat = SimpleDateFormat("yyyy年MM月")
         setMonthBtn.text = mDateFormat.format(Date(cal.timeInMillis))
@@ -159,6 +160,10 @@ class GroupCalendarFragment : Fragment() {
                 .addOnFailureListener() {
                         Log.w(TAG, "Get Error: ${it.message}")
                 }
+
+    }
+
+    open fun passDialogFragmentToActivity (dialog: DialogFragment) {
 
     }
 }

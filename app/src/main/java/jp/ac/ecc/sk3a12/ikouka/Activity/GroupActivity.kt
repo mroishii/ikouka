@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.TabLayout
+import android.support.v4.app.DialogFragment
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
@@ -31,7 +32,7 @@ import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupMenuFragment
 import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.activity_test.*
 
-class GroupActivity : AppCompatActivity() {
+open class GroupActivity : AppCompatActivity() {
     private var TAG = "GroupActivity"
     //Toolbar
     private lateinit var mToolbar: Toolbar
@@ -155,6 +156,10 @@ class GroupActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    open fun showDialogFragment(dialog: DialogFragment) {
+
     }
 
 }

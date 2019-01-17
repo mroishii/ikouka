@@ -198,5 +198,7 @@ class GroupChatFragment : Fragment() {
         messageMap.put("timestamp", Timestamp.now())
 
         mDb.collection("Groups").document(groupId).collection("Chat").add(messageMap as Map<String, Any>)
+        messageRecyclerView!!.scrollToPosition(messageRecyclerView!!.adapter!!.itemCount - 1)
+
     }
 }
