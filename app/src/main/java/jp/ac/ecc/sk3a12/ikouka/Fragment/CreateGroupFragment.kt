@@ -165,12 +165,14 @@ class CreateGroupFragment : DialogFragment() {
             progressBar.visibility = ProgressBar.VISIBLE
             groupImageChangeButton.visibility = ImageButton.INVISIBLE
             groupCreateButton.visibility = Button.INVISIBLE
+            this.dialog.setCanceledOnTouchOutside(false)
         } else {
             groupTitle.isEnabled = true
             groupDescription.isEnabled = true
             progressBar.visibility = ProgressBar.INVISIBLE
             groupImageChangeButton.visibility = ImageButton.VISIBLE
             groupCreateButton.visibility = Button.VISIBLE
+            this.dialog.setCanceledOnTouchOutside(true)
         }
     }
 

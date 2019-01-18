@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.GridView
 import android.widget.ImageButton
 import com.google.firebase.Timestamp
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupCalendarGridAdapter
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupCalendarRecyclerAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
@@ -28,16 +30,12 @@ import kotlinx.android.synthetic.main.fragment_group_calendar.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 open class GroupCalendarFragment : Fragment() {
     private val TAG = "GrpCalFrag"
 
     lateinit var groupId: String
+
+    private lateinit var calendarItemFrame: FrameLayout
 
     //Firebase
     private var mAuth = FirebaseAuth.getInstance()
@@ -69,6 +67,9 @@ open class GroupCalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        calendarItemFrame = view.findViewById(R.id.calendarItem)
+
         //calendar button
         nextMonthBtn = view.findViewById(R.id.calendarNextMonth)
         prevMonthBtn = view.findViewById(R.id.calendarPrevMonth)
@@ -77,18 +78,21 @@ open class GroupCalendarFragment : Fragment() {
 
         prevMonthBtn.setOnClickListener {
             cal.add(Calendar.MONTH, -1)
+            calendarItemFrame.removeAllViews()
             setCalendar()
             getEvents()
         }
 
         nextMonthBtn.setOnClickListener {
             cal.add(Calendar.MONTH, 1)
+            calendarItemFrame.removeAllViews()
             setCalendar()
             getEvents()
         }
 
         todayBtn.setOnClickListener {
             cal = Calendar.getInstance()
+            calendarItemFrame.removeAllViews()
             setCalendar()
             getEvents()
         }
@@ -102,12 +106,10 @@ open class GroupCalendarFragment : Fragment() {
         setCalendar()
         getEvents()
 
-
-
     }
 
     private fun setCalendar() {
-        calendarGridAdapter = GroupCalendarRecyclerAdapter(this.context!!, activity!!.supportFragmentManager,  cal.get(Calendar.YEAR), cal.get(Calendar.MONTH))
+        calendarGridAdapter = GroupCalendarRecyclerAdapter(this.context!!,this.activity as GroupActivity , calendarItemFrame,  cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), groupId)
         calendarGrid.adapter = calendarGridAdapter
         var mDateFormat = SimpleDateFormat("yyyy年MM月")
         setMonthBtn.text = mDateFormat.format(Date(cal.timeInMillis))
@@ -126,18 +128,21 @@ open class GroupCalendarFragment : Fragment() {
                 .collection("Events")
                 .whereGreaterThanOrEqualTo("date", startDate)
                 .whereLessThanOrEqualTo("date", endDate)
-                .get()
-                .addOnSuccessListener {
+                .addSnapshotListener { snapshot, exception ->
+                    if (exception != null) {
+                        Log.d(TAG, "LISTENING TO EVENTS FAIL => ${exception.message}")
+                        return@addSnapshotListener
+                    }
+
                     var monthEvents: HashMap<Int, ArrayList<Event>> = HashMap()
                     //Build a hashmap of this month event
-                    for (document in it) {
+                    for (document in snapshot!!.documents) {
                         val event = Event(document.id,
                                 document.getString("title"),
                                 document.getString("description"),
                                 document.get("date") as Timestamp,
                                 document.getString("owner"))
                         cal.timeInMillis = event.date.seconds * 1000
-                        Log.d(TAG, "EventDate: ${cal.get(Calendar.YEAR)}/${cal.get(Calendar.MONTH)}/${cal.get(Calendar.DATE)}")
 
                         //If the date already in the hashmap, just add the event to array,
                         //else, create a new key and add the event into array
@@ -157,13 +162,6 @@ open class GroupCalendarFragment : Fragment() {
                         calendarGridAdapter.notifyItemChanged(date + calendarGridAdapter.offset - 1, events)
                     }
                 }
-                .addOnFailureListener() {
-                        Log.w(TAG, "Get Error: ${it.message}")
-                }
-
-    }
-
-    open fun passDialogFragmentToActivity (dialog: DialogFragment) {
 
     }
 }

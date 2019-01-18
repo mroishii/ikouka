@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.TabLayout
 import android.support.v4.app.DialogFragment
+import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
@@ -33,6 +34,7 @@ import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.activity_test.*
 
 open class GroupActivity : AppCompatActivity() {
+
     private var TAG = "GroupActivity"
     //Toolbar
     private lateinit var mToolbar: Toolbar
@@ -91,7 +93,7 @@ open class GroupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
+        setContentView(R.layout.activity_group)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
@@ -126,6 +128,9 @@ open class GroupActivity : AppCompatActivity() {
 //        val groupTabBar : TabLayout = findViewById(R.id.groupTabBar)
 //        groupTabBar.setupWithViewPager(mGroupPager)
 //        //-----------------------------------------
+
+        var contentFrame: FrameLayout = findViewById(R.id.content)
+
     }
 
     //up-right corner menu button
@@ -158,8 +163,8 @@ open class GroupActivity : AppCompatActivity() {
         return true
     }
 
-    open fun showDialogFragment(dialog: DialogFragment) {
-
+    open fun getGroupId(): String {
+        return this.groupId
     }
 
 }

@@ -1,7 +1,10 @@
 package jp.ac.ecc.sk3a12.ikouka.Adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateUtils.isToday
@@ -9,8 +12,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
+import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
 import jp.ac.ecc.sk3a12.ikouka.Fragment.CalendarItem
 import jp.ac.ecc.sk3a12.ikouka.Model.DayItem
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
@@ -18,7 +23,7 @@ import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.groupcalendar_item.view.*
 import java.util.*
 
-class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: Int, month: Int ): RecyclerView.Adapter<GroupCalendarRecyclerAdapter.DayItemViewHolder>() {
+class GroupCalendarRecyclerAdapter(context: Context,parentActivity: GroupActivity, calendarItemFrame: FrameLayout, year: Int, month: Int, groupId: String ): RecyclerView.Adapter<GroupCalendarRecyclerAdapter.DayItemViewHolder>() {
     companion object {
         val TAG = "GrpCalenAdapter"
         val HIDDEN = 0
@@ -30,15 +35,30 @@ class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: I
     }
 
     var context: Context
-    var fragmentManager: FragmentManager
+    var parentActivity: GroupActivity
+    var calendarItemFrame: FrameLayout
     var cal: Calendar = Calendar.getInstance()
     var offset: Int = 0
+    var rect: Array<Drawable>
+    var lastClicked: DayItemViewHolder?
+    var groupId = ""
+
 
     init {
         this.context = context
-        this.fragmentManager = fm
+        this.parentActivity = parentActivity
+        this.calendarItemFrame = calendarItemFrame
         this.cal.set(year, month, 1)
         this.offset = cal.get(Calendar.DAY_OF_WEEK) - 1
+
+        rect = arrayOf(parentActivity.applicationContext.resources.getDrawable(R.drawable.rounded_rect1),
+                parentActivity.applicationContext.resources.getDrawable(R.drawable.rounded_rect2),
+                parentActivity.applicationContext.resources.getDrawable(R.drawable.rounded_rect3),
+                parentActivity.applicationContext.resources.getDrawable(R.drawable.rounded_rect4),
+                parentActivity.applicationContext.resources.getDrawable(R.drawable.rounded_rect5))
+
+        lastClicked = null
+        this.groupId = groupId
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupCalendarRecyclerAdapter.DayItemViewHolder {
@@ -46,7 +66,6 @@ class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: I
     }
 
     override fun onBindViewHolder(viewholder: GroupCalendarRecyclerAdapter.DayItemViewHolder, position: Int, payloads: List<Any>) {
-        Log.d(TAG, "payloads => ${payloads}")
         if (!payloads.isEmpty()) {
             viewholder.events = payloads.get(0) as ArrayList<Event>
             Log.d(TAG, "eventsMap => ${viewholder.events}")
@@ -88,8 +107,8 @@ class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: I
     }
 
     override fun onBindViewHolder(viewholder: GroupCalendarRecyclerAdapter.DayItemViewHolder, position: Int) {
-        var cal = this.cal.clone() as Calendar
-        cal.set(Calendar.DATE, position - offset)
+        viewholder.cal = this.cal.clone() as Calendar
+        viewholder.cal.set(Calendar.DATE, position - offset + 1)
 
         when (viewholder.itemViewType) {
             HIDDEN -> {
@@ -100,27 +119,38 @@ class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: I
             }
 
             NORMAL -> {
-                viewholder.day.text = "${position - offset + 1} (${YOUBI[cal.get(Calendar.DAY_OF_WEEK) - 1]} )"
+                viewholder.day.text = "${viewholder.cal.get(Calendar.DATE)} (${YOUBI[viewholder.cal.get(Calendar.DAY_OF_WEEK) - 1]} )"
             }
 
             SATURDAY -> {
-                viewholder.day.text = "${position - offset + 1} (${YOUBI[cal.get(Calendar.DAY_OF_WEEK) - 1]} )"
+                viewholder.day.text = "${viewholder.cal.get(Calendar.DATE)} (${YOUBI[viewholder.cal.get(Calendar.DAY_OF_WEEK) - 1]} )"
                 viewholder.day.setBackgroundColor(context.resources.getColor(R.color.md_blue_400))
             }
 
             SUNDAY -> {
-                viewholder.day.text = "${position - offset + 1} (${YOUBI[cal.get(Calendar.DAY_OF_WEEK) - 1]} )"
+                viewholder.day.text = "${viewholder.cal.get(Calendar.DATE)} (${YOUBI[viewholder.cal.get(Calendar.DAY_OF_WEEK) - 1]} )"
                 viewholder.day.setBackgroundColor(context.resources.getColor(R.color.md_red_200))
             }
         }
 
         if (isToday(cal)) {
-            viewholder.container.background = context.resources.getDrawable(R.drawable.layout_border)
+            viewholder.day.background = context.resources.getDrawable(R.drawable.layout_border)
         }
 
         viewholder.itemView.setOnClickListener {
-            var calendarItemFrag = CalendarItem.getInstance(viewholder.events)
-            calendarItemFrag.showNow(fragmentManager, "DATE_ITEM")
+            if (viewholder.itemViewType != HIDDEN) {
+                if (lastClicked != null) {
+                    lastClicked!!.container.setBackgroundColor(Color.WHITE)
+                }
+                viewholder.container.setBackgroundColor(context.resources.getColor(R.color.md_yellow_300))
+
+                val calendarItemFragment = CalendarItem.getInstance(viewholder.events, rect, viewholder.cal.timeInMillis, groupId)
+                parentActivity.supportFragmentManager.beginTransaction()
+                        .replace(calendarItemFrame.id, calendarItemFragment)
+                        .commit()
+
+                lastClicked = viewholder
+            }
         }
 
     }
@@ -173,5 +203,6 @@ class GroupCalendarRecyclerAdapter(context: Context,fm: FragmentManager, year: I
         val event3: TextView = view.findViewById(R.id.event3)
         val container: ConstraintLayout = view.findViewById(R.id.container)
         var events = ArrayList<Event>()
+        var cal = Calendar.getInstance()
     }
 }
