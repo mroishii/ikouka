@@ -31,7 +31,7 @@ class GroupCalendarRecyclerAdapter(context: Context,parentActivity: GroupActivit
         val SATURDAY = 2
         val SUNDAY = 3
         val TODAY = 4
-        val YOUBI = arrayOf("月", "火", "水", "木", "金", "土", "日")
+        val YOUBI = arrayOf("日","月", "火", "水", "木", "金", "土")
     }
 
     var context: Context
@@ -145,9 +145,10 @@ class GroupCalendarRecyclerAdapter(context: Context,parentActivity: GroupActivit
                 viewholder.container.setBackgroundColor(context.resources.getColor(R.color.md_yellow_300))
 
                 val calendarItemFragment = CalendarItem.getInstance(viewholder.events, rect, viewholder.cal.timeInMillis, groupId)
-                parentActivity.supportFragmentManager.beginTransaction()
-                        .replace(calendarItemFrame.id, calendarItemFragment)
-                        .commit()
+//                parentActivity.supportFragmentManager.beginTransaction()
+//                        .replace(calendarItemFrame.id, calendarItemFragment)
+//                        .commit()
+                calendarItemFragment.showNow(parentActivity.supportFragmentManager, "CALENDAR_ITEM")
 
                 lastClicked = viewholder
             }

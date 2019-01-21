@@ -4,6 +4,7 @@ package jp.ac.ecc.sk3a12.ikouka.Fragment
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.util.Log
@@ -24,7 +25,7 @@ import java.util.*
  * A simple [Fragment] subclass.
  *
  */
-class CalendarItem : Fragment() {
+class CalendarItem : DialogFragment() {
     companion object {
         fun getInstance(events: ArrayList<Event>, rect: Array<Drawable>, time: Long, groupId: String): CalendarItem {
             var args = Bundle()
@@ -120,6 +121,18 @@ class CalendarItem : Fragment() {
             val alertDialog = alertDialogBuilder.create()
             alertDialog.show()
         }
+
+        view.findViewById<Button>(R.id.header_exit).setOnClickListener {
+            this.dismiss()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val params = dialog.window!!.attributes
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT
+        dialog.window!!.attributes = params as android.view.WindowManager.LayoutParams
     }
 
 
