@@ -55,69 +55,69 @@ class AnketoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_anketo)
 
-        //Firebase
-        mAuth = FirebaseAuth.getInstance()
-        mDb = FirebaseFirestore.getInstance()
-        val settings = FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build()
-        mDb.firestoreSettings = settings
-
-        //Toolbar
-        mToolbar = findViewById(R.id.anketo_actionbar)
-        setSupportActionBar(mToolbar)
-        supportActionBar!!.setTitle("アンケート回答")
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        //Activity elements
-        image = findViewById(R.id.anketo_owner_image)
-        title = findViewById(R.id.anketo_title)
-        due = findViewById(R.id.anketo_due)
-        description = findViewById(R.id.anketo_description)
-        //RecyclerVIew
-        anketoAnswer_listview = findViewById(R.id.anketo_answers)
-        linearLayout = LinearLayoutManager(this)
-        anketoAnswer_listview!!.setHasFixedSize(true)
-        anketoAnswer_listview!!.layoutManager = linearLayout
-
-        //get usersmaps
-        usersMap = intent.getSerializableExtra("users") as HashMap<String, Any>
-
-        //get current anketo
-        var anketoId = intent.getStringExtra("anketoId")
-        mDb.collection("Anketo")
-                .document(anketoId)
-                .get()
-                .addOnCompleteListener {task ->
-                    if (task.isSuccessful()) {
-                        val anketo = task.getResult()
-                        if (anketo!!.exists()) {
-                            Log.d(TAG, "GOT ANKETO -> " + anketo!!)
-                            currentAnketo = myBuilder.buildAnketoObject(anketo)
-
-                            title!!.text = currentAnketo.title
-                            val dueDate: Date = Date(currentAnketo.due)
-                            due!!.text = "締切：${dueDate.toString()}"
-                            description!!.text = currentAnketo.description
-
-                            for (key in currentAnketo.answers.keys) {
-                                var answerMap = currentAnketo.answers.get(key) as HashMap<String, Any>
-                                var answer = AnketoAnswer(key,
-                                        answerMap.get("description") as String,
-                                        answerMap.get("answered") as HashMap<String, Boolean>)
-                                anketoAnswers.add(answer)
-
-                            }
-
-                            anketoAnswer_adapter = AnketoMultipleAnswerListAdapter(this, anketoId,anketoAnswers, usersMap, mAuth.currentUser!!.uid)
-                            anketoAnswer_listview!!.adapter = anketoAnswer_adapter
-                        } else {
-                            Log.d(TAG, "ANKETO NOT EXISTED")
-                        }
-                    } else {
-                        Log.d(TAG, "GET FAILED AT -> " + task.getException()!!)
-                    }
-                }
+//        //Firebase
+//        mAuth = FirebaseAuth.getInstance()
+//        mDb = FirebaseFirestore.getInstance()
+//        val settings = FirebaseFirestoreSettings.Builder()
+//                .setTimestampsInSnapshotsEnabled(true)
+//                .build()
+//        mDb.firestoreSettings = settings
+//
+//        //Toolbar
+//        mToolbar = findViewById(R.id.anketo_actionbar)
+//        setSupportActionBar(mToolbar)
+//        supportActionBar!!.setTitle("アンケート回答")
+//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//
+//        //Activity elements
+//        image = findViewById(R.id.anketo_owner_image)
+//        title = findViewById(R.id.anketo_title)
+//        due = findViewById(R.id.anketo_due)
+//        description = findViewById(R.id.anketo_description)
+//        //RecyclerVIew
+//        anketoAnswer_listview = findViewById(R.id.anketo_answers)
+//        linearLayout = LinearLayoutManager(this)
+//        anketoAnswer_listview!!.setHasFixedSize(true)
+//        anketoAnswer_listview!!.layoutManager = linearLayout
+//
+//        //get usersmaps
+//        usersMap = intent.getSerializableExtra("users") as HashMap<String, Any>
+//
+//        //get current anketo
+//        var anketoId = intent.getStringExtra("anketoId")
+//        mDb.collection("Anketo")
+//                .document(anketoId)
+//                .get()
+//                .addOnCompleteListener {task ->
+//                    if (task.isSuccessful()) {
+//                        val anketo = task.getResult()
+//                        if (anketo!!.exists()) {
+//                            Log.d(TAG, "GOT ANKETO -> " + anketo!!)
+//                            currentAnketo = myBuilder.buildAnketoObject(anketo)
+//
+//                            title!!.text = currentAnketo.title
+//                            val dueDate: Date = Date(currentAnketo.due)
+//                            due!!.text = "締切：${dueDate.toString()}"
+//                            description!!.text = currentAnketo.description
+//
+//                            for (key in currentAnketo.answers.keys) {
+//                                var answerMap = currentAnketo.answers.get(key) as HashMap<String, Any>
+//                                var answer = AnketoAnswer(key,
+//                                        answerMap.get("description") as String,
+//                                        answerMap.get("answered") as HashMap<String, Boolean>)
+//                                anketoAnswers.add(answer)
+//
+//                            }
+//
+//                            anketoAnswer_adapter = AnketoMultipleAnswerListAdapter(this, anketoId,anketoAnswers, usersMap, mAuth.currentUser!!.uid)
+//                            anketoAnswer_listview!!.adapter = anketoAnswer_adapter
+//                        } else {
+//                            Log.d(TAG, "ANKETO NOT EXISTED")
+//                        }
+//                    } else {
+//                        Log.d(TAG, "GET FAILED AT -> " + task.getException()!!)
+//                    }
+//                }
 
 
 

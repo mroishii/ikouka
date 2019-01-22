@@ -4,6 +4,8 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 
 class Magic {
     companion object {
@@ -29,6 +31,15 @@ class Magic {
             }
 
             return filename.substring(filename.lastIndexOf('.') + 1)
+        }
+
+        fun getDbInstance(): FirebaseFirestore {
+            return FirebaseFirestore.getInstance().apply {
+                val settings = FirebaseFirestoreSettings.Builder()
+                        .setTimestampsInSnapshotsEnabled(true)
+                        .build()
+                this.firestoreSettings = settings
+            }
         }
     }
 }

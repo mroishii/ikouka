@@ -4,19 +4,18 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import jp.ac.ecc.sk3a12.ikouka.Model.Group
 import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupCalendarFragment
-import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupMenuFragment
+import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupDashboardFragment
 
 class GroupPagerAdapter(var fm: FragmentManager?, var groupId: String) : FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
         when(position) {
             0 -> {
-                val groupMenuFragment: GroupMenuFragment = GroupMenuFragment()
+                val groupDashboardFragment: GroupDashboardFragment = GroupDashboardFragment()
                 var args = Bundle()
                 args.putString("groupId", groupId)
-                groupMenuFragment.arguments = args
-                return groupMenuFragment
+                groupDashboardFragment.arguments = args
+                return groupDashboardFragment
             }
 
             1 -> {

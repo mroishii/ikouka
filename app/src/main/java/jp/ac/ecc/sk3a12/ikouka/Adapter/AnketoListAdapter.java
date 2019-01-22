@@ -83,7 +83,7 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
                 anketoDue = (TextView) view.findViewById(R.id.anketo_list_due);
                 anketoDescription = (TextView) view.findViewById(R.id.anketo_list_description);
                 anketoAnswered = (ImageView) view.findViewById(R.id.anketo_list_answered);
-                parentLayout = view.findViewById(R.id.anketo_list_item_parent);
+                parentLayout = view.findViewById(R.id.container);
 
 
         }
@@ -131,11 +131,8 @@ public class AnketoListAdapter extends RecyclerView.Adapter<AnketoListAdapter.An
                                 holder.anketoTitle.setText(mAnketo.getTitle());
                                 holder.anketoDescription.setText(mAnketo.getDescription());
 
-                                Date dueDate = new Date(mAnketo.getDue());
-                                holder.anketoDue.setText("締切：" + dueDate.toString());
-                                if (!mAnketo.isAnswered(currentUser)) {
-                                    holder.anketoAnswered.setVisibility(ImageView.INVISIBLE);
-                                }
+
+
                                 holder.parentLayout.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

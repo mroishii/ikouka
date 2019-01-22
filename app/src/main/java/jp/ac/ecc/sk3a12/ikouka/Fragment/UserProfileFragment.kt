@@ -85,6 +85,7 @@ class UserProfileFragment : DialogFragment() {
                                 .into(image as ImageView)
                     }
 
+                    //generate qr code
                     val multiFormatWriter = MultiFormatWriter()
                     try {
                         val bitMatrix = multiFormatWriter.encode(userId, BarcodeFormat.QR_CODE, 200, 200)

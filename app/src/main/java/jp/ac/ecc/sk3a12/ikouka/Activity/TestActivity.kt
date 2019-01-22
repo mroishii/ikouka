@@ -3,7 +3,6 @@ package jp.ac.ecc.sk3a12.ikouka.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -14,7 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupCalendarFragment
 import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupChatFragment
-import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupMenuFragment
+import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupDashboardFragment
 import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.activity_test.*
 
@@ -36,7 +35,7 @@ class TestActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.group_dashboard -> {
-                val fragment = GroupMenuFragment()
+                val fragment = GroupDashboardFragment()
                 fragment.arguments = args
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.content, fragment)
