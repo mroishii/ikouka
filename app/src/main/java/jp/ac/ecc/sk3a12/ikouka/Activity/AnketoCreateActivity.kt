@@ -179,11 +179,6 @@ class AnketoCreateActivity : AppCompatActivity() {
                             .update("anketos", FieldValue.arrayUnion(createdId))
                             .addOnSuccessListener {
                                 Log.d(TAG, "CREATED ANKETO ADDED TO GROUP")
-                                var intent = Intent(this, AnketoActivity::class.java)
-                                intent.putExtra("anketoId", createdId)
-                                intent.putExtra("users", usersMap)
-                                startActivity(intent)
-                                finish()
                             }
                 }
      }

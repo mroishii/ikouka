@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.GridView
 import android.widget.ImageButton
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
-import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupCalendarGridAdapter
 import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupCalendarRecyclerAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 import jp.ac.ecc.sk3a12.ikouka.Model.Group

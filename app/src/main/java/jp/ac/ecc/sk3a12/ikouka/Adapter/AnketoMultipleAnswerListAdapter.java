@@ -30,7 +30,6 @@ import java.util.HashMap;
 import javax.annotation.Nullable;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import jp.ac.ecc.sk3a12.ikouka.Activity.AnketoActivity;
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo;
 import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer;
 import jp.ac.ecc.sk3a12.ikouka.R;
@@ -82,55 +81,55 @@ public class AnketoMultipleAnswerListAdapter extends RecyclerView.Adapter<Anketo
 
     @Override
     public void onBindViewHolder(final AnketoMultipleAnswerListAdapter.AnketoAnswerViewHolder holder, final int position) {
-        final AnketoAnswer a = anketoAnswerList.get(position);
-
-        holder.answerCheckbox.setText(a.getDescription());
-        if (a.isAnswered(currentUser)) {
-            holder.answerCheckbox.setChecked(true);
-        } else {
-            holder.answerCheckbox.setChecked(false);
-        }
-
-        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        inputParams.weight = 1;
-        for (String uid : users.keySet()) {
-            if (a.isAnswered(uid)) {
-                CircleImageView img = new CircleImageView(mContext);
-                img.setImageResource(R.mipmap.ic_launcher);
-                holder.answered.addView(img, inputParams);
-            }
-        }
-
-        holder.answerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                buttonView.setEnabled(false); //disable check box until updated to database
-
-                //nested that need to be updated (ex. answers.1.answered.currentUserId)
-                final String path = "answers." + a.getId() + ".answered." + currentUser;
-                mDb.collection("Anketo")
-                        .document(anketoId)
-                        .update(
-                                path, isChecked
-                        )
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "UPDATED " + path + " TO " + isChecked);
-                                Toast.makeText(mContext, "更新が成功した！", Toast.LENGTH_SHORT).show();
-                                buttonView.setEnabled(true);
-                            }
-                        })
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "UPDATED " + path + " TO " + isChecked);
-                                }
-                            }
-                        });
-            }
-        });
+//        final AnketoAnswer a = anketoAnswerList.get(position);
+//
+//        holder.answerCheckbox.setText(a.getDescription());
+//        if (a.isAnswered(currentUser)) {
+//            holder.answerCheckbox.setChecked(true);
+//        } else {
+//            holder.answerCheckbox.setChecked(false);
+//        }
+//
+//        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+//        inputParams.weight = 1;
+//        for (String uid : users.keySet()) {
+//            if (a.isAnswered(uid)) {
+//                CircleImageView img = new CircleImageView(mContext);
+//                img.setImageResource(R.mipmap.ic_launcher);
+//                holder.answered.addView(img, inputParams);
+//            }
+//        }
+//
+//        holder.answerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+//                buttonView.setEnabled(false); //disable check box until updated to database
+//
+//                //nested that need to be updated (ex. answers.1.answered.currentUserId)
+//                final String path = "answers." + a.getId() + ".answered." + currentUser;
+//                mDb.collection("Anketo")
+//                        .document(anketoId)
+//                        .update(
+//                                path, isChecked
+//                        )
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d(TAG, "UPDATED " + path + " TO " + isChecked);
+//                                Toast.makeText(mContext, "更新が成功した！", Toast.LENGTH_SHORT).show();
+//                                buttonView.setEnabled(true);
+//                            }
+//                        })
+//                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                if (task.isSuccessful()) {
+//                                    Log.d(TAG, "UPDATED " + path + " TO " + isChecked);
+//                                }
+//                            }
+//                        });
+//            }
+//        });
 
     }
 

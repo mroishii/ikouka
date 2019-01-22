@@ -4,18 +4,19 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AnketoAnswer{
     private String id;
     private String description;
-    private String[] answered;
+    private ArrayList<String> answered;
 
     public AnketoAnswer() {
 
     }
 
-    public AnketoAnswer(String id, String description, String[] answered) {
+    public AnketoAnswer(String id, String description, ArrayList<String> answered) {
         this.id = id;
         this.description = description;
         this.answered = answered;
@@ -37,11 +38,11 @@ public class AnketoAnswer{
         this.description = description;
     }
 
-    public String[] getAnswered() {
+    public ArrayList<String> getAnswered() {
         return answered;
     }
 
-    public void setAnswered(String[] answered) {
+    public void setAnswered(ArrayList<String> answered) {
         this.answered = answered;
     }
 }

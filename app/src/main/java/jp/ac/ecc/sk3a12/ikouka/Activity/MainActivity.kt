@@ -161,11 +161,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     //up-right corner menu button
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        super.onCreateOptionsMenu(menu)
+//        menuInflater.inflate(R.menu.main_menu, menu)
+//        return true
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
@@ -173,12 +173,6 @@ class MainActivity : AppCompatActivity() {
         when (item!!.itemId) {
             android.R.id.home -> {
                 mDrawerLayout.openDrawer(GravityCompat.START)
-            }
-
-            R.id.createGroup -> {
-                val createGroupFragment = CreateGroupFragment.newInstance(this)
-                createGroupFragment.showNow(supportFragmentManager, "CREATE_GROUP")
-
             }
         }
 

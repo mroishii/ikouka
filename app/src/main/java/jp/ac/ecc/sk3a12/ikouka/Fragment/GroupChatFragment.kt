@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
-import jp.ac.ecc.sk3a12.ikouka.Activity.GroupChatActivity
 import jp.ac.ecc.sk3a12.ikouka.Model.ChatMessage
 
 import jp.ac.ecc.sk3a12.ikouka.R
@@ -94,17 +93,17 @@ class GroupChatFragment : Fragment() {
                 .build()
 
         //Setup Adapter
-        val adapter: FirestoreRecyclerAdapter<ChatMessage, GroupChatActivity.MessageViewHolder> = object : FirestoreRecyclerAdapter<ChatMessage, GroupChatActivity.MessageViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupChatActivity.MessageViewHolder {
+        val adapter: FirestoreRecyclerAdapter<ChatMessage, MessageViewHolder> = object : FirestoreRecyclerAdapter<ChatMessage, MessageViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
                 if (viewType == 0) {
-                    return GroupChatActivity.MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_single, parent, false))
+                    return MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_single, parent, false))
                 }
 
-                return GroupChatActivity.MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_self, parent, false))
+                return MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_self, parent, false))
 
             }
 
-            override fun onBindViewHolder(holder: GroupChatActivity.MessageViewHolder, position: Int, model: ChatMessage) {
+            override fun onBindViewHolder(holder: MessageViewHolder, position: Int, model: ChatMessage) {
                 Log.d(TAG, "ViewHolderType => ${holder.itemViewType}")
                 holder.content!!.text = model.message
 

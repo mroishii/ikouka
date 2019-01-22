@@ -10,9 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.WindowManager
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -20,10 +19,13 @@ import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoMultipleAnswerListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Magic
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
+import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
 
 import jp.ac.ecc.sk3a12.ikouka.R
 import java.util.*
@@ -39,6 +41,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class AnketoDetailFragment : DialogFragment() {
     private val TAG = "AnketoDetailFrag"
+
+    private var usersMap: HashMap<String, String> = HashMap()
 
     private var groupId: String? = null
     private var anketoId: String? = null
@@ -102,6 +106,7 @@ class AnketoDetailFragment : DialogFragment() {
                 .get()
                 .addOnSuccessListener {
                     if (it.getString("image") != "default") {
+                        usersMap.put(anketoOwner!!, it.getString("image")!!)
                         Glide.with(this.context!!)
                                 .load(it.getString("image"))
                                 .into(owner as ImageView)
@@ -111,7 +116,8 @@ class AnketoDetailFragment : DialogFragment() {
         answers.setHasFixedSize(true)
         answers.layoutManager = LinearLayoutManager(context)
 
-        val query = mDb.collection("Groups/$groupId/Anketos/$anketoId/Answers")
+        val path = "Groups/$groupId/Anketos/$anketoId/Answers"
+        val query = mDb.collection(path)
 
         query.addSnapshotListener { snapshot, exception ->
             if (exception != null) {
@@ -120,60 +126,101 @@ class AnketoDetailFragment : DialogFragment() {
             }
         }
 
-        val options = FirestoreRecyclerOptions.Builder<Anketo>()
-                .setQuery(query, object : SnapshotParser<Anketo> {
-                    override fun parseSnapshot(snapshot: DocumentSnapshot): Anketo {
-                        return Anketo(snapshot.id,
-                                Date((snapshot.get("created") as Timestamp).seconds * 1000),
-                                snapshot.getString("type"),
-                                snapshot.getString("title"),
-                                snapshot.getString("description"),
-                                snapshot.getString("owner"),
-                                Date((snapshot.get("due") as Timestamp).seconds * 1000))
+        val options = FirestoreRecyclerOptions.Builder<AnketoAnswer>()
+                .setQuery(query, object: SnapshotParser<AnketoAnswer> {
+                    override fun parseSnapshot(snapshot: DocumentSnapshot): AnketoAnswer {
+                        Log.d(TAG, snapshot.toString())
+                        return AnketoAnswer(snapshot.id, snapshot.getString("description"), snapshot.get("answered") as ArrayList<String>)
                     }
                 })
                 .build()
 
-        val adapter: FirestoreRecyclerAdapter<Anketo, AnketoViewHolder> = object : FirestoreRecyclerAdapter<Anketo, AnketoViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnketoViewHolder {
-                return AnketoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.anketo_list_item, parent, false))
+        val adapter: FirestoreRecyclerAdapter<AnketoAnswer, AnketoAnswerViewHolder> = object : FirestoreRecyclerAdapter<AnketoAnswer, AnketoAnswerViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnketoAnswerViewHolder {
+                return AnketoAnswerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.anketo_multiple_answer_item, parent, false))
             }
 
-            override fun onBindViewHolder(holder: AnketoViewHolder, position: Int, model: Anketo) {
-                Log.d(TAG, model.toString())
-                holder.title.text = model.title
-                holder.description.text = model.description
-                holder.due.text = "締切：" + model.due.toLocaleString()
+            override fun onBindViewHolder(holder: AnketoAnswerViewHolder, position: Int, model: AnketoAnswer) {
+                holder.answer.text = model.description
+                holder.answer.isChecked = model.answered.contains(mAuth.currentUser!!.uid)
 
-                mDb.collection("Users")
-                        .document(model.owner)
-                        .get()
-                        .addOnSuccessListener {
-                            if (it.getString("image") != "default") {
-                                Glide.with(this@GroupAnketoFragment)
-                                        .load(it.getString("image"))
-                                        .into(holder.owner as ImageView)
-                            }
-                        }
+                holder.answered.removeAllViews()
+                for (uid in model.answered) {
+                    if (!usersMap.containsKey(uid)) {
+                        Log.d(TAG, "USER IMG NOT FOUND")
+                        mDb.collection("Users").document(uid).get()
+                                .addOnSuccessListener {
+                                    usersMap.put(uid, it.getString("image")!!)
+                                    showAnswered(holder.answered, uid)
+                                }
+                    } else {
+                        Log.d(TAG, "USER IMG FOUND => ${usersMap.get(uid)}")
+                        showAnswered(holder.answered, uid)
+                    }
+                }
 
-                holder.itemView.setOnClickListener {
-                    val detailFragment = AnketoDetailFragment()
-                    var arguments = Bundle()
-
-                    arguments.putString("groupId", groupId)
-                    arguments.putString("id", model.id)
-                    arguments.putString("title", model.title)
-                    arguments.putString("description", model.description)
-                    arguments.putString("owner", model.owner)
-                    arguments.putLong("due", model.due.time)
-                    detailFragment.arguments = arguments
-
-                    detailFragment.showNow(activity!!.supportFragmentManager, "ANKETO_DETAIL")
+                holder.answer.setOnCheckedChangeListener { buttonView, isChecked ->
+                    holder.answer.isEnabled = false
+                    if (isChecked) {
+                        mDb.collection(path)
+                                .document(model.id)
+                                .update("answered", FieldValue.arrayUnion(mAuth.currentUser!!.uid))
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "更新されました。", Toast.LENGTH_SHORT).show()
+                                    holder.answer.isEnabled = true
+                                }
+                                .addOnFailureListener {
+                                    holder.answer.isChecked = !isChecked
+                                    holder.answer.isEnabled = true
+                                }
+                    } else {
+                        mDb.collection(path)
+                                .document(model.id)
+                                .update("answered", FieldValue.arrayRemove(mAuth.currentUser!!.uid))
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "更新されました。", Toast.LENGTH_SHORT).show()
+                                    holder.answer.isEnabled = true
+                                }
+                                .addOnFailureListener {
+                                    holder.answer.isChecked = !isChecked
+                                    holder.answer.isEnabled = true
+                                }
+                    }
                 }
             }
         }
 
+        answers.adapter = adapter
+        adapter.startListening()
 
+    }
+    private fun showAnswered(layout: LinearLayout, uid:String) {
+        val inputParams = LinearLayout.LayoutParams(32, LinearLayout.LayoutParams.MATCH_PARENT)
+
+        val userImage = CircleImageView(this.context)
+        layout.addView(userImage, inputParams)
+        if (usersMap.get(uid) != "default") {
+            Log.d(TAG, "USER IMG: ${usersMap.get(uid)}")
+            Glide.with(this.context!!)
+                    .load(usersMap.get(uid))
+                    .into(userImage)
+        } else {
+            Glide.with(this.context!!)
+                    .load(resources.getDrawable(R.drawable.default_avatar))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val params = dialog.window!!.attributes
+        params.width = WindowManager.LayoutParams.MATCH_PARENT
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window!!.attributes = params
+    }
+
+    class AnketoAnswerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        var answer = view.findViewById<CheckBox>(R.id.anketo_answer_checkbox)
+        var answered = view.findViewById<LinearLayout>(R.id.anketo_answered)
     }
 
 

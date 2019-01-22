@@ -17,7 +17,6 @@ import android.widget.TextView
 import android.widget.Toast
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
 import jp.ac.ecc.sk3a12.ikouka.Fragment.CalendarItem
-import jp.ac.ecc.sk3a12.ikouka.Model.DayItem
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.groupcalendar_item.view.*

@@ -3,6 +3,7 @@ package jp.ac.ecc.sk3a12.ikouka.Fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -22,10 +23,8 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
-import jp.ac.ecc.sk3a12.ikouka.Activity.AllGroupsActivity
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
 import jp.ac.ecc.sk3a12.ikouka.Activity.TestActivity
-import jp.ac.ecc.sk3a12.ikouka.Adapter.GroupListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Model.Group
 import jp.ac.ecc.sk3a12.ikouka.Model.User
 import jp.ac.ecc.sk3a12.ikouka.R
@@ -68,6 +67,11 @@ class GroupsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //create group button
+        view.findViewById<FloatingActionButton>(R.id.createGroup).setOnClickListener {
+            val fragment = CreateGroupFragment.newInstance(context!!)
+            fragment.showNow(activity!!.supportFragmentManager, "CREATE_GROUP")
+        }
 
         //shimmer
         shimmerContainer = view.findViewById(R.id.shimmer_view_container)

@@ -26,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
-import jp.ac.ecc.sk3a12.ikouka.Adapter.AnketoListAdapter
 import jp.ac.ecc.sk3a12.ikouka.Magic
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
