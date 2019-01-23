@@ -41,10 +41,6 @@ class AnketoCreateActivity : AppCompatActivity() {
     //Answers view array
     private var answersViews: ArrayList<View> = ArrayList()
 
-    //Users Map
-    private var usersMap = HashMap<String, Any>()
-    //Answered Map
-    private var answeredMap: HashMap<String, Boolean> = HashMap()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,35 +90,6 @@ class AnketoCreateActivity : AppCompatActivity() {
         answerAddButton.performClick()
         answerAddButton.performClick()
 
-        //Access Group Database
-        mDb.collection("Groups")
-                .document(currentGroupId)
-                .get()
-                .addOnCompleteListener {task ->
-                    if (task.isSuccessful) {
-                        if (task.result == null) {
-                            Log.d(TAG, "FIRESTORE -> CANNOT FIND THIS GROUP DOCUMENT -> $currentGroupId")
-                        } else {
-                            Log.d(TAG, "FIRESTORE -> CURRENT GROUP DOCUMENT: " + task.result)
-                            doneGetGroup(task.result)
-
-                        }
-                    } else {
-                        Log.d(TAG, "FIRESTORE -> GET FAILED WITH ", task.exception)
-                    }
-                }
-    }
-
-    fun doneGetGroup(groupDs: DocumentSnapshot?) {
-        usersMap = groupDs!!.get("users") as HashMap<String, Any>
-        var usersId = ArrayList<String>()
-        for (key in usersMap.keys) {
-            usersId.add(key)
-        }
-        for (id in usersId) {
-            answeredMap.put(id, false)
-        }
-        Log.d(TAG, "USERSMAP CREATED -> $answeredMap")
     }
 
     fun isInputOk(): Boolean {
@@ -149,14 +116,6 @@ class AnketoCreateActivity : AppCompatActivity() {
         var anketoCreated = Timestamp.now()
         var anketoDue = Timestamp(anketoCreated.seconds + 60*24*10, 0)
         var anketoType = "multiple"
-        var anketoAnswers = HashMap<String, Any>()
-
-        for((index, value) in answersViews.withIndex()) {
-            var answerMap = HashMap<String, Any>()
-            answerMap.put("description", value.findViewById<EditText>(R.id.answer_input).text.toString())
-            answerMap.put("answered", answeredMap)
-            anketoAnswers.put((index + 1).toString(), answerMap)
-        }
 
         var anketoMap = HashMap<String, Any>()
         anketoMap.put("title", anketoTitle)
@@ -165,22 +124,33 @@ class AnketoCreateActivity : AppCompatActivity() {
         anketoMap.put("description", anketoDescription)
         anketoMap.put("owner", anketoOwner)
         anketoMap.put("type", anketoType)
-        anketoMap.put("answers", anketoAnswers)
 
-        Log.d(TAG, "ANKETOMAP CREATED -> $anketoMap")
-
-        mDb.collection("Anketo")
+        mDb.collection("Groups/$currentGroupId/Anketos")
                 .add(anketoMap as Map<String, Any>)
                 .addOnSuccessListener {
                     Log.d(TAG, "ANKETO SUCCESSFULLY CREATED")
                     var createdId = it.id
-                    mDb.collection("Groups")
-                            .document(currentGroupId)
-                            .update("anketos", FieldValue.arrayUnion(createdId))
+
+                    var batch = mDb.batch()
+                    for((index, value) in answersViews.withIndex()) {
+                        var answerMap = HashMap<String, Any>()
+                        answerMap.put("description", value.findViewById<EditText>(R.id.answer_input).text.toString())
+                        answerMap.put("answered", object: ArrayList<String>() {})
+
+                        val docRef = mDb.document("Groups/$currentGroupId/Anketos/$createdId/Answers/$index")
+                        batch.set(docRef, answerMap)
+                    }
+
+
+                    batch.commit()
                             .addOnSuccessListener {
-                                Log.d(TAG, "CREATED ANKETO ADDED TO GROUP")
+                                Toast.makeText(this, "SUCCESS", Toast.LENGTH_SHORT)
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
                             }
                 }
+
      }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

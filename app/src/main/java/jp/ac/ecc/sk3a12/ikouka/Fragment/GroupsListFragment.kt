@@ -50,8 +50,6 @@ class GroupsListFragment : Fragment() {
     private lateinit var mDatabase: FirebaseFirestore
     //Firebase auth
     private lateinit var mAuth: FirebaseAuth
-    //Shimmer
-    private lateinit var shimmerContainer: ShimmerFrameLayout
 
     private var mContext = this
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -73,8 +71,6 @@ class GroupsListFragment : Fragment() {
             fragment.showNow(activity!!.supportFragmentManager, "CREATE_GROUP")
         }
 
-        //shimmer
-        shimmerContainer = view.findViewById(R.id.shimmer_view_container)
         //RecycleView
         mRecyclerView = view.findViewById(R.id.groupslist)
         mRecyclerView.setHasFixedSize(true)
@@ -126,11 +122,6 @@ class GroupsListFragment : Fragment() {
                     intent.putExtra("groupTitle", model.getTitle())
                     mContext.startActivity(intent)
                 }
-
-                if (shimmerContainer.visibility != View.GONE) {
-                    shimmerContainer.stopShimmer()
-                    shimmerContainer.visibility = View.GONE
-                }
             }
         }
 
@@ -138,15 +129,6 @@ class GroupsListFragment : Fragment() {
         adapter.startListening()
     }
 
-    override fun onResume() {
-        super.onResume()
-        shimmerContainer.startShimmer()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        shimmerContainer.stopShimmer()
-    }
 
     class GroupViewHolder(view: View, var viewType: Int? = 0): RecyclerView.ViewHolder(view) {
         var groupImage: ImageView = view.findViewById(R.id.grouplist_item_image)

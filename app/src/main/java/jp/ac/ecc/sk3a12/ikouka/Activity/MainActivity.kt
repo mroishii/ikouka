@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import jp.ac.ecc.sk3a12.ikouka.Fragment.CreateGroupFragment
 import jp.ac.ecc.sk3a12.ikouka.Fragment.GroupsListFragment
+import jp.ac.ecc.sk3a12.ikouka.Fragment.RequestFragment
 import jp.ac.ecc.sk3a12.ikouka.Fragment.UserProfileFragment
 import jp.ac.ecc.sk3a12.ikouka.R
 
@@ -130,7 +131,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.requestlist -> {
-
+                val requestsListFragment: RequestFragment = RequestFragment()
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, requestsListFragment)
+                        .addToBackStack(null)
+                        .commit()
             }
 
             R.id.setting -> {

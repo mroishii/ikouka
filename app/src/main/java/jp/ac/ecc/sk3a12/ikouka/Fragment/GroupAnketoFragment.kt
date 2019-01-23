@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.ac.ecc.sk3a12.ikouka.Activity.AnketoCreateActivity
 import jp.ac.ecc.sk3a12.ikouka.Activity.GroupActivity
 import jp.ac.ecc.sk3a12.ikouka.Magic
 import jp.ac.ecc.sk3a12.ikouka.Model.Anketo
@@ -74,6 +75,12 @@ class GroupAnketoFragment : Fragment() {
         anketoList.layoutManager = LinearLayoutManager(this@GroupAnketoFragment.context)
 
         createButton = view.findViewById(R.id.anketo_list_fab)
+        createButton.setOnClickListener {
+            val intent = Intent(context, AnketoCreateActivity::class.java)
+            intent.putExtra("groupId", groupId)
+            startActivity(intent)
+
+        }
 
         val query = mDb.collection("Groups/$groupId/Anketos")
                 .orderBy("created", Query.Direction.DESCENDING)
