@@ -13,9 +13,22 @@ public class User implements Parcelable {
     private String image;
     private String thumbImage;
     private Long joined;
+    private String roles;
+    private String status;
 
     public User() {
         //empty constructor for firebase
+    }
+
+    public User(String userId, String roles) {
+        this.userId = userId;
+        this.roles = roles;
+    }
+
+    public User(String userId, String userName, String image) {
+        this.userId = userId;
+        this.userName = userName;
+        this.image = image;
     }
 
     public User(String userId, String userName, String email, ArrayList<String> userGroups, String image, String thumbImage, Long joined) {
@@ -54,6 +67,14 @@ public class User implements Parcelable {
 
     public Long getJoined() {
         return joined;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 
     @Override

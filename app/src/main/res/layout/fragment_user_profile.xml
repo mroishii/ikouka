@@ -6,15 +6,12 @@
     android:layout_height="wrap_content"
     tools:context=".Fragment.UserProfileFragment">
 
-    <FrameLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/userProfileHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
+        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,19 +21,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:text="ユーザプロフィール"
+            android:layout_marginStart="8dp"
+            android:text="プロフィール"
             android:textColor="#ffffff"
             android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/header_exit"
+        <Button
+            android:id="@+id/header_editimage"
+            style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/fragment_exit" />
+            android:layout_height="40dp"
+            android:text="画像変更"
+            app:layout_constraintBaseline_toBaselineOf="@+id/header_exit"
+            app:layout_constraintEnd_toStartOf="@+id/header_exit" />
 
-    </FrameLayout>
+        <Button
+            android:id="@+id/header_editname"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="名前変更"
+            app:layout_constraintBaseline_toBaselineOf="@+id/header_editimage"
+            app:layout_constraintEnd_toStartOf="@+id/header_editimage"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/header_title" />
+
+        <Button
+            android:id="@+id/header_exit"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/md_red_100"
+            android:text="終了"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/userProfileImageArea"

@@ -1,34 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_grey_300"
     tools:context=".Fragment.GroupDashboardFragment">
 
 
-    <LinearLayout
-        android:id="@+id/groupMenuLinearLayout"
+    <ImageView
+        android:id="@+id/groupMenuImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/md_grey_300"
-        android:orientation="vertical">
+        android:layout_height="202dp"
+        android:foreground="@drawable/image_overlay"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/groupMenuImage"
-            android:layout_width="match_parent"
-            android:layout_height="202dp"
-            android:foreground="@drawable/image_overlay"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_group" />
+    <TextView
+        android:id="@+id/groupDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="description"
+        android:textColor="@color/md_white_1000"
+        app:layout_constraintBottom_toBottomOf="@+id/groupMenuImage"
+        app:layout_constraintEnd_toEndOf="@+id/groupMenuImage"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/groupMenuImage"
+        app:layout_constraintVertical_bias="1.0" />
 
-        <ListView
-            android:id="@+id/groupMenuList"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/member_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/single_message_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupMenuImage">
+
+        <TextView
+            android:id="@+id/memberlist_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="メンバーリスト"
+            android:textColor="@color/md_black_1000"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/member_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/single_message_background" />
-    </LinearLayout>
-</FrameLayout>
+            android:layout_marginTop="8dp"
+            android:background="@drawable/single_message_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/memberlist_label" />
+
+        <Button
+            android:id="@+id/invite"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="+招待"
+            app:layout_constraintBottom_toTopOf="@+id/member_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/memberlist_label"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/dashboard_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/single_message_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/member_list_container" />
+
+</android.support.constraint.ConstraintLayout>

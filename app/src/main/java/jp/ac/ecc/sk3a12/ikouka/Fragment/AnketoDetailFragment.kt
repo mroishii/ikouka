@@ -207,6 +207,7 @@ class AnketoDetailFragment : DialogFragment() {
         } else {
             Glide.with(this.context!!)
                     .load(resources.getDrawable(R.drawable.default_avatar))
+                    .into(userImage)
         }
     }
 

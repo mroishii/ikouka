@@ -14,12 +14,13 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="イベント名"
+        android:textColor="@color/md_black_1000"
         android:textSize="16dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createGroupImage" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/createEventTitle"
@@ -37,27 +38,31 @@
 
     <TextView
         android:id="@+id/createEventDescriptionLabel"
-        android:layout_width="379dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="イベント内容"
+        android:textColor="@color/md_black_1000"
         android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/createEventTitleLabel"
-        app:layout_constraintStart_toStartOf="@+id/createEventTitleLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createEventTitle" />
 
     <EditText
         android:id="@+id/createEventDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="○○同窓会の新年会です..."
         android:inputType="textMultiLine"
         android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="@+id/createEventTitle"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/createEventTitle"
+        app:layout_constraintEnd_toEndOf="@+id/createEventDescriptionLabel"
+        app:layout_constraintStart_toStartOf="@+id/createEventDescriptionLabel"
         app:layout_constraintTop_toBottomOf="@+id/createEventDescriptionLabel" />
 
 </android.support.constraint.ConstraintLayout>

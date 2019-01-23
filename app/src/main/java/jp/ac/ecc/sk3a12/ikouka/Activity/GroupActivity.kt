@@ -107,6 +107,8 @@ open class GroupActivity : AppCompatActivity() {
 
         navigation.selectedItemId = R.id.group_dashboard
 
+        navigation.labelVisibilityMode = 1
+
 //        //--------------ViewPager-------------------
 //        mGroupPager = findViewById(R.id.groupPager)
 //        //initialize PagerAdapter
@@ -118,16 +120,14 @@ open class GroupActivity : AppCompatActivity() {
 //        groupTabBar.setupWithViewPager(mGroupPager)
 //        //-----------------------------------------
 
-        var contentFrame: FrameLayout = findViewById(R.id.content)
-
     }
 
     //up-right corner menu button
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.group_menu, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        super.onCreateOptionsMenu(menu)
+//        menuInflater.inflate(R.menu.group_menu, menu)
+//        return true
+//    }
 
     //up-right corner menu button -> item click event
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -138,22 +138,8 @@ open class GroupActivity : AppCompatActivity() {
             android.R.id.home -> {
                 onBackPressed()
             }
-
-            //owner menu
-            R.id.ownerMenu -> {
-                Toast.makeText(this, "jump to owner menu", Toast.LENGTH_SHORT).show()
-            }
-            //invite
-            R.id.invite -> {
-//
-            }
         }
 
         return true
     }
-
-    open fun getGroupId(): String {
-        return this.groupId
-    }
-
 }

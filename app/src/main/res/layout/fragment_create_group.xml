@@ -78,6 +78,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="グループ名"
+        android:textColor="@color/md_black_1000"
         android:textSize="16dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,27 +102,31 @@
 
     <TextView
         android:id="@+id/createGroupDescriptionLabel"
-        android:layout_width="379dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="説明"
+        android:textColor="@color/md_black_1000"
         android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/createGroupTitleLabel"
-        app:layout_constraintStart_toStartOf="@+id/createGroupTitleLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createGroupTitle" />
 
     <EditText
         android:id="@+id/createGroupDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="○○高3年A組の同窓会です..."
         android:inputType="textMultiLine"
         android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="@+id/createGroupTitle"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/createGroupTitle"
+        app:layout_constraintEnd_toEndOf="@+id/createGroupDescriptionLabel"
+        app:layout_constraintStart_toStartOf="@+id/createGroupDescriptionLabel"
         app:layout_constraintTop_toBottomOf="@+id/createGroupDescriptionLabel" />
 
     <Button

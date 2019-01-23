@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -65,7 +66,7 @@ class UserProfileFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //Set-up header
-        view.findViewById<ImageView>(R.id.header_exit).setOnClickListener {
+        view.findViewById<Button>(R.id.header_exit).setOnClickListener {
             this.dismiss()
         }
 
