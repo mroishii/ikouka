@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import jp.ac.ecc.sk3a12.ikouka.Model.Activity
 import jp.ac.ecc.sk3a12.ikouka.Model.Request
 import jp.ac.ecc.sk3a12.ikouka.R
 import kotlinx.android.synthetic.main.requestlist_item.*
@@ -139,7 +140,25 @@ class RequestFragment : Fragment() {
                                                     .document(model.to)
                                                     .set(userMap)
                                                     .addOnSuccessListener {
-                                                        Toast.makeText(context, "招待を承認しました。", Toast.LENGTH_SHORT)
+                                                        //Write new activity to notify group member
+                                                        var activityMap = HashMap<String, Any>().apply {
+                                                            put("userId", mAuth.currentUser!!.uid)
+                                                            put("action", Activity.JOINED_GROUP)
+                                                            put("timestamp", Timestamp.now())
+                                                            put("reference", Activity.NOREF)
+                                                        }
+
+                                                        mDatabase.collection("Groups/${model.groupId}/Activities")
+                                                                .add(activityMap)
+                                                                .addOnSuccessListener {
+                                                                    Toast.makeText(context, "招待を承認しました。", Toast.LENGTH_SHORT)
+                                                                }
+                                                                .addOnFailureListener{
+                                                                    holder.acceptBtn.isEnabled = true
+                                                                    holder.denyBtn.isEnabled = true
+                                                                    Log.d(TAG, "DATABASE ERROR => ${it.message}")
+                                                                }
+
                                                     }
                                                     .addOnFailureListener{
                                                         holder.acceptBtn.isEnabled = true

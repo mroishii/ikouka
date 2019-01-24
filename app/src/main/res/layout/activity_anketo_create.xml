@@ -2,11 +2,15 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_grey_300"
     tools:context=".Activity.AnketoCreateActivity">
 
-    <include layout="@layout/main_actionbar" android:id="@+id/anketo_create_actionbar"/>
+    <include
+        android:id="@+id/anketo_create_actionbar"
+        layout="@layout/main_actionbar" />
 
     <TextView
         android:id="@+id/createAnketoTitleLabel"
@@ -18,6 +22,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/createAnketoTitleLabel"
         android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -47,6 +52,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/createAnketoDescriptionLabel"
         android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,6 +79,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/createAnketoCreateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +89,8 @@
             android:id="@+id/createAnketoAnswersContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:padding="8dp" />
     </ScrollView>
 
     <Button
@@ -106,6 +114,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/createAnketoAnswersLabel"
         android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,18 +122,16 @@
 
     <Button
         android:id="@+id/createAnketoAddAnswerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="91dp"
+        android:layout_height="41dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/md_green_100"
         android:text="@string/createAnketoAddAnswerButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.28"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/anketo_create_actionbar"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -50,6 +50,7 @@ class UserInviteFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Search result layout
         val resultLayout = view.findViewById<ConstraintLayout>(R.id.searchResult)
         resultLayout.visibility = ConstraintLayout.INVISIBLE
 
@@ -57,13 +58,16 @@ class UserInviteFragment : DialogFragment() {
         userimage = view.findViewById(R.id.userimage)
         username = view.findViewById(R.id.username)
 
+        //Error text
         val notFoundTxt = view.findViewById<TextView>(R.id.notFound)
 
+        //user id of user who is invited
         var inviteId = ""
-
         view.findViewById<Button>(R.id.searchBtn).setOnClickListener {
+            //Hide result layout and not found text and díable invite button until done
             resultLayout.visibility = ConstraintLayout.INVISIBLE
             notFoundTxt.visibility = TextView.INVISIBLE
+
             //Search for user with email
             mDb.collection("Users")
                     .whereEqualTo("email", emailInput.text.toString())
@@ -80,7 +84,7 @@ class UserInviteFragment : DialogFragment() {
                                     .document(groupId!!)
                                     .get()
                                     .addOnSuccessListener {
-                                        //if already member, show warnint
+                                        //if already member, show warning
                                         if ((it.get("usersId") as ArrayList<String>).contains(user.id)) {
                                             notFoundTxt.text = "このユーザはメンバーになりました。"
                                             notFoundTxt.visibility = TextView.VISIBLE
@@ -96,12 +100,22 @@ class UserInviteFragment : DialogFragment() {
                                             resultLayout.visibility = ConstraintLayout.VISIBLE
                                         }
                                     }
+                                    .addOnFailureListener {
+                                        notFoundTxt.text = "データベースエラー：${it.message}"
+                                        notFoundTxt.visibility = TextView.VISIBLE
+                                    }
 
                         }
+                    }
+                    .addOnFailureListener {
+                        notFoundTxt.text = "データベースエラー：${it.message}"
+                        notFoundTxt.visibility = TextView.VISIBLE
                     }
         }
 
         view.findViewById<Button>(R.id.inviteBtn).setOnClickListener {
+            view.findViewById<Button>(R.id.inviteBtn).isEnabled = false
+
             var requestMap = HashMap<String, Any>()
             requestMap.put("from", mAuth.currentUser!!.uid)
             requestMap.put("to", inviteId)
@@ -118,6 +132,7 @@ class UserInviteFragment : DialogFragment() {
                     .addOnFailureListener {
                         Toast.makeText(context, "招待に失敗しました。", Toast.LENGTH_SHORT)
                         Log.d(TAG, "DATABASE ERROR => ${it.message}")
+                        view.findViewById<Button>(R.id.inviteBtn).isEnabled = true
                     }
         }
 

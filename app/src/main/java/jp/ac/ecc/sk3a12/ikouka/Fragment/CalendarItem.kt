@@ -12,8 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.ac.ecc.sk3a12.ikouka.Model.Activity
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 
 import jp.ac.ecc.sk3a12.ikouka.R
@@ -115,6 +117,25 @@ class CalendarItem : DialogFragment() {
                             eventItem.findViewById<TextView>(R.id.eventDescription).text = eventMap.get("description") as String
                             eventList.addView(eventItem)
                             rectIndex = (rectIndex + 1) % 5
+
+                            //write group activity
+                            var activityMap = HashMap<String, Any>().apply {
+                                put("userId", FirebaseAuth.getInstance().currentUser!!.uid)
+                                put("action", Activity.CREATED_EVENT)
+                                put("timestamp", Timestamp.now())
+                                put("reference", it.id)
+                            }
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("Groups/$groupId/Activities")
+                                    .add(activityMap)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(context, "イベント追加に成功しました。", Toast.LENGTH_SHORT)
+                                        dialog.dismiss()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(context, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
+                                    }
                         }
                         .addOnFailureListener {
                             Toast.makeText(this.context!!, "イベントの追加に失敗しました", Toast.LENGTH_SHORT).show()
@@ -122,8 +143,14 @@ class CalendarItem : DialogFragment() {
                         }
 
             }
+
+            alertDialogBuilder.setNeutralButton("キャンセル") { dialog, which ->
+                dialog.dismiss()
+            }
+
             alertDialogBuilder.setCancelable(true)
             val alertDialog = alertDialogBuilder.create()
+            alertDialog.setCanceledOnTouchOutside(false)
             alertDialog.show()
         }
 

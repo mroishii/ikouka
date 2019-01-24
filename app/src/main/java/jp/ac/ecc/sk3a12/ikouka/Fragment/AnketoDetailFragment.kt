@@ -83,7 +83,6 @@ class AnketoDetailFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //header
-        view.findViewById<TextView>(R.id.header_title).text = anketoId
         view.findViewById<Button>(R.id.header_exit).setOnClickListener {
             this.dismiss()
         }

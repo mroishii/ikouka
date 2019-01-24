@@ -14,13 +14,17 @@ import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.ac.ecc.sk3a12.ikouka.Model.Activity
 import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
 import jp.ac.ecc.sk3a12.ikouka.Model.User
 import jp.ac.ecc.sk3a12.ikouka.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -42,6 +46,7 @@ class GroupDashboardFragment : Fragment() {
     private var mDb = FirebaseFirestore.getInstance()
 
     private lateinit var memberListView: RecyclerView
+    private lateinit var activityList: RecyclerView
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -158,12 +163,104 @@ class GroupDashboardFragment : Fragment() {
 
         //--------------MEMBER LIST RECYCLER VIEW END-------------------------------------------------------------------------------------------
 
+        //--------------------------GROUP ACTIVITY RECYCLER VIEW START--------------------------------------------------------------------------
+
+        activityList = view.findViewById(R.id.activity_list)
+        activityList.setHasFixedSize(true)
+        activityList.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, true)
+
+        val path2 = "Groups/$groupId/Activities"
+        val query2 = mDb.collection(path2)
+
+        query2.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                Log.d(TAG, "DATABASE ERROR => ${exception.message}")
+                return@addSnapshotListener
+            }
+        }
+
+        val options2 = FirestoreRecyclerOptions.Builder<Activity>()
+                .setQuery(query2, object: SnapshotParser<Activity> {
+                    override fun parseSnapshot(snapshot: DocumentSnapshot): Activity {
+                        Log.d(TAG, snapshot.toString())
+                        return Activity(snapshot.id,
+                                snapshot.getString("userId"),
+                                snapshot.getString("action"),
+                                snapshot.getString("reference"),
+                                snapshot.get("timestamp") as Timestamp)
+                    }
+                })
+                .build()
+
+        val activityListAdapter: FirestoreRecyclerAdapter<Activity, ActivityViewHolder> = object : FirestoreRecyclerAdapter<Activity, ActivityViewHolder>(options2) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActivityViewHolder {
+                return ActivityViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.group_activity_list_item, parent, false))
+            }
+
+            override fun onBindViewHolder(holder: ActivityViewHolder, position: Int, model: Activity) {
+                mDb.collection("Users").document(model.userId).get()
+                        .addOnSuccessListener {
+                            var activityText = "【${it.getString("userName")}】さんが"
+                            when (model.action) {
+                                Activity.JOINED_GROUP -> {
+                                    activityText += "グループに参加しました。"
+                                    holder.icon.setImageDrawable(resources.getDrawable(R.drawable.ic_members_black_24dp))
+                                }
+
+                                Activity.CREATED_ANKETO -> {
+                                    activityText += "新しいアンケートを作成しました。"
+                                    holder.icon.setImageDrawable(resources.getDrawable(R.drawable.ic_anketo_black_24dp))
+                                }
+
+                                Activity.CREATED_EVENT -> {
+                                    activityText += "新しいイベントを追加しました。"
+                                    holder.icon.setImageDrawable(resources.getDrawable(R.drawable.ic_event_black_24dp))
+                                }
+
+                                Activity.CREATED_TODO -> {
+                                    activityText += "新しいタスクを追加しました。"
+                                    holder.icon.setImageDrawable(resources.getDrawable(R.drawable.ic_task_black_24dp))
+                                }
+
+                                Activity.LEFT_GROUP -> {
+                                    activityText += "退会しました。"
+                                    holder.icon.setImageDrawable(resources.getDrawable(R.drawable.ic_members_black_24dp))
+                                }
+                            }
+
+                            holder.activityTxt.text = activityText
+
+                            if (it.getString("image") != "default" ) {
+                                Glide.with(context!!)
+                                        .load(it.getString("image"))
+                                        .into(holder.image)
+                            }
+                        }
+
+                val date = Date(model.timestamp.seconds * 1000)
+                val fmt = SimpleDateFormat("yyyy年MM月dd日 HH:mm")
+                holder.date.text = fmt.format(date)
+
+            }
+        }
+        activityList.adapter = activityListAdapter
+        activityListAdapter.startListening()
+
+        //--------------------------GROUP ACTIVITY RECYCLER VIEW END--------------------------------------------------------------------------
+
     }
 
     class UserViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val image = view.findViewById<CircleImageView>(R.id.userimage)
         val username = view.findViewById<TextView>(R.id.username)
         val userrole = view.findViewById<TextView>(R.id.userrole)
+    }
+
+    class ActivityViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val image = view.findViewById<CircleImageView>(R.id.activityImage)
+        val icon = view.findViewById<ImageView>(R.id.icon)
+        val activityTxt = view.findViewById<TextView>(R.id.activityText)
+        val date = view.findViewById<TextView>(R.id.activityDate)
     }
 
 

@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import jp.ac.ecc.sk3a12.ikouka.Model.Activity
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class AnketoCreateActivity : AppCompatActivity() {
@@ -131,6 +132,7 @@ class AnketoCreateActivity : AppCompatActivity() {
                     Log.d(TAG, "ANKETO SUCCESSFULLY CREATED")
                     var createdId = it.id
 
+                    //batch write answers
                     var batch = mDb.batch()
                     for((index, value) in answersViews.withIndex()) {
                         var answerMap = HashMap<String, Any>()
@@ -141,14 +143,32 @@ class AnketoCreateActivity : AppCompatActivity() {
                         batch.set(docRef, answerMap)
                     }
 
-
                     batch.commit()
                             .addOnSuccessListener {
-                                Toast.makeText(this, "SUCCESS", Toast.LENGTH_SHORT)
+                                //after writing answers, write new activity
+                                var activityMap = HashMap<String, Any>().apply {
+                                    put("userId", mAuth.currentUser!!.uid)
+                                    put("action", Activity.CREATED_ANKETO)
+                                    put("timestamp", Timestamp.now())
+                                    put("reference", createdId)
+                                }
+
+                                mDb.collection("Groups/$currentGroupId/Activities")
+                                        .add(activityMap)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(this, "アンケート作成に成功しました。", Toast.LENGTH_SHORT)
+                                            onBackPressed()
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
+                                        }
                             }
                             .addOnFailureListener {
                                 Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
                             }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
                 }
 
      }
