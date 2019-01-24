@@ -9,10 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -39,11 +36,13 @@ class GroupDashboardFragment : Fragment() {
     private val TAG = "GroupDashboard"
 
     private var groupId = ""
+    private var currentRoles = "member"
 
     private var mAuth = FirebaseAuth.getInstance()
     private var mDb = FirebaseFirestore.getInstance()
 
     private lateinit var memberListView: RecyclerView
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,8 +52,29 @@ class GroupDashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         groupId = arguments!!.getString("groupId")
 
+        view.findViewById<Button>(R.id.invite).visibility = Button.INVISIBLE
+
+        mDb.collection("Groups/$groupId/Users")
+                .document(mAuth.currentUser!!.uid)
+                .get()
+                .addOnSuccessListener {
+                    currentRoles = (it.get("roles") as ArrayList<String>).get(0)
+                    if (currentRoles == "owner" || currentRoles == "admin") {
+                        //User invite button
+                        view.findViewById<Button>(R.id.invite).visibility = Button.VISIBLE
+                        view.findViewById<Button>(R.id.invite).setOnClickListener {
+                            val fragment = UserInviteFragment.newInstance(groupId)
+                            fragment.showNow(activity!!.supportFragmentManager, "USER_INVITE")
+                        }
+
+                    }
+                }
+
+
+        //Load group image
         val groupImage: ImageView = view.findViewById(R.id.groupMenuImage)
         mDb.collection("Groups")
                 .document(groupId)
@@ -68,6 +88,7 @@ class GroupDashboardFragment : Fragment() {
                     }
                 }
 
+        //--------------MEMBER LIST RECYCLER VIEW------------------------------------------------------------------------------------------
         memberListView = view.findViewById(R.id.member_list)
         memberListView.setHasFixedSize(true)
         memberListView.layoutManager = LinearLayoutManager(context, LinearLayout.HORIZONTAL, false)
@@ -134,6 +155,8 @@ class GroupDashboardFragment : Fragment() {
 
         memberListView.adapter = memberListAdapter
         memberListAdapter.startListening()
+
+        //--------------MEMBER LIST RECYCLER VIEW END-------------------------------------------------------------------------------------------
 
     }
 

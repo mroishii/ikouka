@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -129,6 +130,23 @@ class RequestFragment : Fragment() {
                                 mDatabase.collection("Groups")
                                         .document(model.groupId)
                                         .update("usersId", FieldValue.arrayUnion(model.to))
+                                        .addOnSuccessListener {
+                                            //update Group Users collection
+                                            var userMap = HashMap<String, Any>()
+                                            userMap.put("status", "active")
+                                            userMap.put("roles", listOf("member"))
+                                            mDatabase.collection("Groups/${model.groupId}/Users")
+                                                    .document(model.to)
+                                                    .set(userMap)
+                                                    .addOnSuccessListener {
+                                                        Toast.makeText(context, "招待を承認しました。", Toast.LENGTH_SHORT)
+                                                    }
+                                                    .addOnFailureListener{
+                                                        holder.acceptBtn.isEnabled = true
+                                                        holder.denyBtn.isEnabled = true
+                                                        Log.d(TAG, "DATABASE ERROR => ${it.message}")
+                                                    }
+                                        }
                                         .addOnFailureListener {
                                             holder.acceptBtn.isEnabled = true
                                             holder.denyBtn.isEnabled = true

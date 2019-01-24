@@ -55,6 +55,10 @@ class CalendarItem : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val eventList: LinearLayout = view.findViewById(R.id.eventList)
 
+        val emptyListText: TextView = TextView(view.context)
+        emptyListText.id = R.id.notFound
+        emptyListText.text = "イベントがありません。"
+
         events = arguments!!.getSerializable("events") as ArrayList<Event>
         rect = arguments!!.getSerializable("rect") as Array<Drawable>
         time = Date(arguments!!.getLong("time"))
@@ -66,9 +70,7 @@ class CalendarItem : DialogFragment() {
 
         var rectIndex = 0
         if (events.size == 0) {
-            val textView: TextView = TextView(view.context)
-            textView.text = "イベントがありません。"
-            eventList.addView(textView)
+            eventList.addView(emptyListText)
         } else {
             for (event in events) {
                 val eventItem: View = layoutInflater.inflate(R.layout.calendar_item, null)
@@ -103,6 +105,9 @@ class CalendarItem : DialogFragment() {
                         .add(eventMap)
                         .addOnSuccessListener {
                             Toast.makeText(this.context!!, "イベントが追加されました。", Toast.LENGTH_SHORT).show()
+                            if (eventList.findViewById<TextView>(R.id.notFound) != null) {
+                                eventList.removeView(eventList.findViewById<TextView>(R.id.notFound))
+                            }
 
                             val eventItem: View = layoutInflater.inflate(R.layout.calendar_item, null)
                             eventItem.background = rect[rectIndex]
@@ -112,7 +117,7 @@ class CalendarItem : DialogFragment() {
                             rectIndex = (rectIndex + 1) % 5
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this.context!!, "イベントの追加が失敗しました", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this.context!!, "イベントの追加に失敗しました", Toast.LENGTH_SHORT).show()
                             Log.d("AddEvent", "FAILED WITH => ${it.message}")
                         }
 
