@@ -2,12 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <group>
         <item
-            android:id="@+id/ownerMenu"
-            android:title="@string/ownerMenu"/>
-
-        <item
-            android:id="@+id/invite"
-            android:title="招待"/>
-
+            android:id="@+id/resign"
+            android:title="退会する"/>
     </group>
 </menu>

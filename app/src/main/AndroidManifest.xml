@@ -24,31 +24,15 @@
         <activity
             android:name=".Activity.HomeActivity"
             android:label=".HomeActivity" />
-        <activity
-            android:name=".Activity.LoginActivity"
-            android:parentActivityName=".Activity.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".Activity.RegisterActivity"
             android:label=".RegisterActivity"
             android:parentActivityName=".Activity.HomeActivity" />
         <activity
-            android:name=".Activity.AccountActivity"
-            android:parentActivityName=".Activity.MainActivity" />
-        <activity
-            android:name=".Activity.AllGroupsActivity"
-            android:parentActivityName=".Activity.MainActivity" />
-        <activity
             android:name=".Activity.GroupActivity"
             android:parentActivityName=".Activity.MainActivity" />
-        <activity
-            android:name=".Activity.CreateGroupActivity"
-            android:parentActivityName=".Activity.MainActivity" />
-        <activity
-            android:name=".Activity.GroupChatActivity"
-            android:parentActivityName=".Activity.GroupActivity" />
-        <activity android:name=".Activity.AnketoListActivity" />
-        <activity android:name=".Activity.AnketoActivity" />
+
         <activity android:name=".Activity.AnketoCreateActivity" />
         <activity
             android:name=".Activity.TestActivity"

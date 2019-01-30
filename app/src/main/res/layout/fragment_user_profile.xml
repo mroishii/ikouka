@@ -36,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:text="画像変更"
+            android:visibility="invisible"
             app:layout_constraintBaseline_toBaselineOf="@+id/header_exit"
             app:layout_constraintEnd_toStartOf="@+id/header_exit" />
 
@@ -45,6 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:text="名前変更"
+            android:visibility="invisible"
             app:layout_constraintBaseline_toBaselineOf="@+id/header_editimage"
             app:layout_constraintEnd_toStartOf="@+id/header_editimage"
             app:layout_constraintHorizontal_bias="1.0"

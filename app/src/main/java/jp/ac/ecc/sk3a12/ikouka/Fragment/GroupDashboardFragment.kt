@@ -2,6 +2,7 @@ package jp.ac.ecc.sk3a12.ikouka.Fragment
 
 
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,6 +19,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
 import jp.ac.ecc.sk3a12.ikouka.Model.Activity
 import jp.ac.ecc.sk3a12.ikouka.Model.AnketoAnswer
@@ -67,6 +69,12 @@ class GroupDashboardFragment : Fragment() {
                 .get()
                 .addOnSuccessListener {
                     currentRoles = (it.get("roles") as ArrayList<String>).get(0)
+                    if (currentRoles == "admin") {
+                        view.findViewById<Button>(R.id.groupEdit).visibility = Button.VISIBLE
+                        view.findViewById<Button>(R.id.groupEdit).setOnClickListener {
+
+                        }
+                    }
                     if (currentRoles == "owner" || currentRoles == "admin") {
                         //User invite button
                         view.findViewById<Button>(R.id.invite).visibility = Button.VISIBLE
@@ -130,6 +138,9 @@ class GroupDashboardFragment : Fragment() {
                         .get()
                         .addOnSuccessListener {
                             holder.username.text = it.getString("userName")
+                            if (it.id == FirebaseAuth.getInstance().currentUser!!.uid) {
+                                holder.username.setBackgroundColor(resources.getColor(R.color.md_blue_100))
+                            }
 
                             when (model.roles) {
                                 "member" -> {holder.userrole.text = "メンバー"}
@@ -153,6 +164,8 @@ class GroupDashboardFragment : Fragment() {
                                         .load(resources.getDrawable(R.drawable.default_avatar))
                                         .into(holder.image)
                             }
+
+
                         }
 
             }
@@ -167,10 +180,10 @@ class GroupDashboardFragment : Fragment() {
 
         activityList = view.findViewById(R.id.activity_list)
         activityList.setHasFixedSize(true)
-        activityList.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, true)
+        activityList.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
         val path2 = "Groups/$groupId/Activities"
-        val query2 = mDb.collection(path2)
+        val query2 = mDb.collection(path2).orderBy("timestamp", Query.Direction.DESCENDING)
 
         query2.addSnapshotListener { snapshot, exception ->
             if (exception != null) {
@@ -230,15 +243,10 @@ class GroupDashboardFragment : Fragment() {
 
                             holder.activityTxt.text = activityText
 
-                            if (it.getString("image") != "default" ) {
-                                Glide.with(context!!)
-                                        .load(it.getString("image"))
-                                        .into(holder.image)
-                            }
                         }
 
                 val date = Date(model.timestamp.seconds * 1000)
-                val fmt = SimpleDateFormat("yyyy年MM月dd日 HH:mm")
+                val fmt = SimpleDateFormat("　yyyy年MM月dd日 HH:mm")
                 holder.date.text = fmt.format(date)
 
             }
@@ -257,7 +265,6 @@ class GroupDashboardFragment : Fragment() {
     }
 
     class ActivityViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val image = view.findViewById<CircleImageView>(R.id.activityImage)
         val icon = view.findViewById<ImageView>(R.id.icon)
         val activityTxt = view.findViewById<TextView>(R.id.activityText)
         val date = view.findViewById<TextView>(R.id.activityDate)

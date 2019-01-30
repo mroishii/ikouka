@@ -23,7 +23,7 @@
     <item
         android:id="@+id/group_task"
         android:icon="@drawable/ic_task_black_24dp"
-        android:title="タスク" />
+        android:title="To-do" />
 
 
 </menu>

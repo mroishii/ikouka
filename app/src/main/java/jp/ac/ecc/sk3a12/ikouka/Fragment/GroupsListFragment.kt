@@ -127,6 +127,8 @@ class GroupsListFragment : Fragment() {
 
         mRecyclerView.adapter = adapter
         adapter.startListening()
+
+        
     }
 
 

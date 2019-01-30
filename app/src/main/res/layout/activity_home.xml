@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent">
+    android:background="#299bd1">
 
     <ImageView
         android:id="@+id/imgLogo"
@@ -17,47 +17,89 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/home_screen" />
 
-    <Button
-        android:id="@+id/btnToLogin"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="360dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="96dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/colorPrimary"
-        android:text="@string/btnToLogin"
-        android:textColor="@color/md_black_1000"
-        app:layout_constraintBottom_toTopOf="@+id/btnToRegister"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeTitle"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <Button
-        android:id="@+id/btnToRegister"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="96dp"
-        android:layout_marginBottom="8dp"
-        android:background="@android:color/white"
-        android:text="@string/btnToRegister"
+        android:background="@drawable/single_message_background"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/imgLogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeTitle"
-        app:layout_constraintVertical_bias="0.7" />
+        app:layout_constraintVertical_bias="0.32">
+
+        <EditText
+            android:id="@+id/inputEmail"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:hint="ikoukatarou@email.com"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/inputPassword"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:hint="*********"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnToLogin"
+        android:layout_width="176dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/single_message_self"
+        android:text="ログイン"
+        android:textColor="@color/md_white_1000"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnToRegister"
+        app:layout_constraintStart_toEndOf="@+id/btnToRegister" />
+
+    <Button
+        android:id="@+id/btnToRegister"
+        android:layout_width="176dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/single_message_background"
+        android:text="@string/btnToRegister"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <ProgressBar
+        android:id="@+id/pbLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
         android:id="@+id/homeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="serif-monospace"
@@ -70,5 +112,6 @@
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.24000001" />
+
 </android.support.constraint.ConstraintLayout>

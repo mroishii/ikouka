@@ -9,13 +9,11 @@ import android.provider.MediaStore
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -33,43 +31,42 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [CreateGroupFragment.newInstance] factory method to
- * create an instance of this fragment.
  *
  */
-class CreateGroupFragment : DialogFragment() {
+class EditGroupFragment : DialogFragment() {
     private lateinit var parent: Context
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDb: FirebaseFirestore
     private lateinit var mStore: FirebaseStorage
 
     private var imageUri = "default"
-    private var groupMap: HashMap<String, Any> = HashMap()
-    private var createdGroupId = ""
+    private var groupId = ""
 
     //Layout Element
     private lateinit var groupTitle: EditText
     private lateinit var groupDescription: EditText
     private lateinit var groupImage: ImageView
-    private lateinit var groupCreateButton: Button
+    private lateinit var groupEditButton: Button
     private lateinit var groupImageChangeButton: ImageButton
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAuth = FirebaseAuth.getInstance()
-        mDb = FirebaseFirestore.getInstance()
+        mDb = Magic.getDbInstance()
         mStore = FirebaseStorage.getInstance()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_group, container, false)
+        return inflater.inflate(R.layout.fragment_edit_group, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        groupId = arguments!!.getString("groupId")
 
         //Header Exit Button
         view.findViewById<ImageView>(R.id.header_exit).setOnClickListener {
@@ -77,18 +74,35 @@ class CreateGroupFragment : DialogFragment() {
         }
 
         //Layout Elements
-        groupTitle = view.findViewById(R.id.createGroupTitle)
-        groupDescription = view.findViewById(R.id.createGroupDescription)
-        groupImage = view.findViewById(R.id.createGroupImage)
-        groupCreateButton = view.findViewById(R.id.createGroupCreate)
-        groupImageChangeButton = view.findViewById(R.id.createGroupImageChange)
-        progressBar = view.findViewById(R.id.createGroupProgress)
+        groupTitle = view.findViewById(R.id.editGroupTitle)
+        groupDescription = view.findViewById(R.id.editGroupDescription)
+        groupImage = view.findViewById(R.id.editGroupImage)
+        groupEditButton = view.findViewById(R.id.editGroupEdit)
+        groupImageChangeButton = view.findViewById(R.id.editGroupImageChange)
+        progressBar = view.findViewById(R.id.editGroupProgress)
+
+        //Load group info
+        mDb.collection("Groups")
+                .document(groupId)
+                .get()
+                .addOnSuccessListener {
+                    groupTitle.text.insert(0, it.getString("title"))
+                    groupDescription.text.insert(0, it.getString("description"))
+                    if (it.getString("image") != "default") {
+                        Glide.with(context!!)
+                                .load(it.getString("image"))
+                                .into(groupImage)
+                    }
+                }
+                .addOnFailureListener {
+
+                }
 
         groupImageChangeButton.setOnClickListener {
             selectImageInAlbum()
         }
 
-        groupCreateButton.setOnClickListener {
+        groupEditButton.setOnClickListener {
             switchDisplay(true)
 
             var title = groupTitle.text.toString()
@@ -178,14 +192,14 @@ class CreateGroupFragment : DialogFragment() {
             groupDescription.isEnabled = false
             progressBar.visibility = ProgressBar.VISIBLE
             groupImageChangeButton.visibility = ImageButton.INVISIBLE
-            groupCreateButton.visibility = Button.INVISIBLE
+            groupEditButton.visibility = Button.INVISIBLE
             this.dialog.setCanceledOnTouchOutside(false)
         } else {
             groupTitle.isEnabled = true
             groupDescription.isEnabled = true
             progressBar.visibility = ProgressBar.INVISIBLE
             groupImageChangeButton.visibility = ImageButton.VISIBLE
-            groupCreateButton.visibility = Button.VISIBLE
+            groupEditButton.visibility = Button.VISIBLE
             this.dialog.setCanceledOnTouchOutside(true)
         }
     }
@@ -220,9 +234,12 @@ class CreateGroupFragment : DialogFragment() {
         @JvmStatic
         private val REQUEST_TAKE_PHOTO = 0
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
-        fun newInstance(parent: Context) =
-                CreateGroupFragment().apply {
+        fun newInstance(parent: Context, groupId: String) =
+                EditGroupFragment().apply {
                     this.parent = parent
+                    this.groupId = groupId
                 }
     }
+
+
 }

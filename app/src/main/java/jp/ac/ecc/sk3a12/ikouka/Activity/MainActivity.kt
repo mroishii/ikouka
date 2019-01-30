@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -75,40 +76,45 @@ class MainActivity : AppCompatActivity() {
         //Drawer Header's view
         val drawerHeader: View = layoutInflater.inflate(R.layout.nav_header, null)
 
-        //Profile Edit button
-        drawerHeader.findViewById<ImageButton>(R.id.drawer_header_edit_profile_button).setOnClickListener {
-            //Show userProfile DIalog Fragment
-            var userProfile = UserProfileFragment.newInstance(this, auth.currentUser!!.uid)
-            userProfile.showNow(supportFragmentManager, "USER_PROFILE")
-        }
-
         //Get current user info to show on drawer header
         mDb.collection("Users")
                 .document(auth.currentUser!!.uid)
-                .get()
-                .addOnSuccessListener {
-                    drawerHeader.findViewById<TextView>(R.id.drawer_header_username).text = it.getString("userName")
-                    drawerHeader.findViewById<TextView>(R.id.drawer_header_email).text = it.getString("email")
-                    if (it.getString("image") != "default") {
-                        Glide.with(applicationContext)
-                                .load(it.getString("image"))
-                                .into(drawerHeader.findViewById(R.id.drawer_header_image))
+                .addSnapshotListener { it, e ->
+                    if (e == null) {
+                        drawerHeader.findViewById<TextView>(R.id.drawer_header_username).text = it!!.getString("userName")
+                        drawerHeader.findViewById<TextView>(R.id.drawer_header_email).text = it!!.getString("email")
+                        if (it.getString("image") != "default") {
+                            Glide.with(applicationContext)
+                                    .load(it.getString("image"))
+                                    .into(drawerHeader.findViewById(R.id.drawer_header_image))
+                        }
+                        //Profile Edit button
+                        drawerHeader.findViewById<ImageButton>(R.id.drawer_header_edit_profile_button).setOnClickListener {
+                            //Show userProfile DIalog Fragment
+                            var userProfile = UserProfileFragment.newInstance(this, auth.currentUser!!.uid)
+
+                            userProfile.showNow(supportFragmentManager, "USER_PROFILE")
+                        }
+                    } else {
+                        Toast.makeText(this, "データベースエラー　=> ${e.message}", Toast.LENGTH_SHORT)
                     }
 
-                    //Add header to drawer menu
-                    navigationView.addHeaderView(drawerHeader)
-
-                    //Drawer menu item click listener
-                    navigationView.setNavigationItemSelectedListener { menuItem ->
-                        //Call menu item click event handler
-                        onNavigationDrawerMenuClick(menuItem)
-                        true
-                    }
-
-                    //Perform click on grouplist drawer menu item
-                    onNavigationDrawerMenuClick(navigationView.menu.findItem(R.id.grouplist))
-                    navigationView.setCheckedItem(0)
                 }
+
+        //Add header to drawer menu
+        navigationView.addHeaderView(drawerHeader)
+
+        //Drawer menu item click listener
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            //Call menu item click event handler
+            onNavigationDrawerMenuClick(menuItem)
+            true
+        }
+
+        //Perform click on grouplist drawer menu item
+        onNavigationDrawerMenuClick(navigationView.menu.findItem(R.id.grouplist))
+        navigationView.setCheckedItem(0)
+
 
 
 

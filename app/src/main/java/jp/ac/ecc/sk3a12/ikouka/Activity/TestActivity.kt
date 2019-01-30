@@ -121,15 +121,6 @@ class TestActivity : AppCompatActivity() {
             android.R.id.home -> {
                 onBackPressed()
             }
-
-            //owner menu
-            R.id.ownerMenu -> {
-                Toast.makeText(this, "jump to owner menu", Toast.LENGTH_SHORT).show()
-            }
-            //invite
-            R.id.invite -> {
-//
-            }
         }
 
         return true

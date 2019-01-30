@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".Fragment.CreateGroupFragment">
+    tools:context=".Fragment.EditGroupFragment">
 
     <FrameLayout
         android:id="@+id/header"
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:text="グループ作成"
+            android:text="グループ編集"
             android:textColor="#ffffff"
             android:textSize="18dp"
             android:textStyle="bold" />
@@ -39,7 +39,7 @@
     </FrameLayout>
 
     <ImageView
-        android:id="@+id/createGroupImage"
+        android:id="@+id/editGroupImage"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:orientation="horizontal"
@@ -52,7 +52,7 @@
     </ImageView>
 
     <ImageButton
-        android:id="@+id/createGroupImageChange"
+        android:id="@+id/editGroupImageChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -63,15 +63,15 @@
         android:background="@drawable/button_round"
         android:padding="4dp"
         android:src="@drawable/drawer_profile_edit"
-        app:layout_constraintBottom_toBottomOf="@+id/createGroupImage"
+        app:layout_constraintBottom_toBottomOf="@+id/editGroupImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/createGroupImage"
+        app:layout_constraintTop_toTopOf="@+id/editGroupImage"
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/createGroupTitleLabel"
+        android:id="@+id/editGroupTitleLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -84,24 +84,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createGroupImage" />
+        app:layout_constraintTop_toBottomOf="@+id/editGroupImage" />
 
     <EditText
-        android:id="@+id/createGroupTitle"
+        android:id="@+id/editGroupTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="○○高-3-A"
         android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="@+id/createGroupTitleLabel"
+        app:layout_constraintEnd_toEndOf="@+id/editGroupTitleLabel"
         app:layout_constraintHorizontal_bias="0.05"
-        app:layout_constraintStart_toStartOf="@+id/createGroupTitleLabel"
-        app:layout_constraintTop_toBottomOf="@+id/createGroupTitleLabel" />
+        app:layout_constraintStart_toStartOf="@+id/editGroupTitleLabel"
+        app:layout_constraintTop_toBottomOf="@+id/editGroupTitleLabel" />
 
     <TextView
-        android:id="@+id/createGroupDescriptionLabel"
+        android:id="@+id/editGroupDescriptionLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -113,24 +112,23 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createGroupTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/editGroupTitle" />
 
     <EditText
-        android:id="@+id/createGroupDescription"
+        android:id="@+id/editGroupDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:hint="○○高3年A組の同窓会です..."
         android:inputType="textMultiLine"
         android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="@+id/createGroupDescriptionLabel"
-        app:layout_constraintStart_toStartOf="@+id/createGroupDescriptionLabel"
-        app:layout_constraintTop_toBottomOf="@+id/createGroupDescriptionLabel" />
+        app:layout_constraintEnd_toEndOf="@+id/editGroupDescriptionLabel"
+        app:layout_constraintStart_toStartOf="@+id/editGroupDescriptionLabel"
+        app:layout_constraintTop_toBottomOf="@+id/editGroupDescriptionLabel" />
 
     <Button
-        android:id="@+id/createGroupCreate"
+        android:id="@+id/editGroupEdit"
         style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -138,21 +136,21 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="グループ作成"
+        android:text="編集"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createGroupDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/editGroupDescription" />
 
     <ProgressBar
-        android:id="@+id/createGroupProgress"
+        android:id="@+id/editGroupProgress"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/createGroupCreate"
-        app:layout_constraintEnd_toEndOf="@+id/createGroupCreate"
-        app:layout_constraintStart_toStartOf="@+id/createGroupCreate"
-        app:layout_constraintTop_toTopOf="@+id/createGroupCreate" />
+        app:layout_constraintBottom_toBottomOf="@+id/editGroupEdit"
+        app:layout_constraintEnd_toEndOf="@+id/editGroupEdit"
+        app:layout_constraintStart_toStartOf="@+id/editGroupEdit"
+        app:layout_constraintTop_toTopOf="@+id/editGroupEdit" />
 
 </android.support.constraint.ConstraintLayout>
