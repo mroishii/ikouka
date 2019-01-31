@@ -36,6 +36,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/groupTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="title"
+        android:textAllCaps="true"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/groupDescription"
+        app:layout_constraintStart_toStartOf="@+id/groupDescription" />
+
+    <TextView
         android:id="@+id/groupDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

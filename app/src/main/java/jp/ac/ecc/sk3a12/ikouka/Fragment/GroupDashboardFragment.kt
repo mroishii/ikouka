@@ -63,43 +63,54 @@ class GroupDashboardFragment : Fragment() {
         groupId = arguments!!.getString("groupId")
 
         view.findViewById<Button>(R.id.invite).visibility = Button.INVISIBLE
+        view.findViewById<Button>(R.id.groupEdit).visibility = Button.INVISIBLE
 
-        mDb.collection("Groups/$groupId/Users")
-                .document(mAuth.currentUser!!.uid)
-                .get()
-                .addOnSuccessListener {
-                    currentRoles = (it.get("roles") as ArrayList<String>).get(0)
-                    if (currentRoles == "admin") {
-                        view.findViewById<Button>(R.id.groupEdit).visibility = Button.VISIBLE
-                        view.findViewById<Button>(R.id.groupEdit).setOnClickListener {
-
-                        }
-                    }
-                    if (currentRoles == "owner" || currentRoles == "admin") {
-                        //User invite button
-                        view.findViewById<Button>(R.id.invite).visibility = Button.VISIBLE
-                        view.findViewById<Button>(R.id.invite).setOnClickListener {
-                            val fragment = UserInviteFragment.newInstance(groupId)
-                            fragment.showNow(activity!!.supportFragmentManager, "USER_INVITE")
-                        }
-
-                    }
-                }
-
-
-        //Load group image
-        val groupImage: ImageView = view.findViewById(R.id.groupMenuImage)
+        //Load group info
         mDb.collection("Groups")
                 .document(groupId)
-                .get()
-                .addOnSuccessListener {
+                .addSnapshotListener{it, e ->
+                    view.findViewById<TextView>(R.id.groupTitle).text = it!!.getString("title")
+                    view.findViewById<TextView>(R.id.groupDescription).text = it!!.getString("description")
+
+                    //Load group image
+                    val groupImage: ImageView = view.findViewById(R.id.groupMenuImage)
                     if (it.getString("image") != "default") {
                         Glide.with(context!!)
                                 .load(it.getString("image"))
                                 .into(groupImage)
-                        view.findViewById<TextView>(R.id.groupDescription).text = it.getString("description")
                     }
                 }
+
+        mDb.collection("Groups/$groupId/Users")
+                .document(mAuth.currentUser!!.uid)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val it = task.result
+                        currentRoles = (it!!.get("roles") as ArrayList<String>).get(0)
+                        //show group edit button if owner
+                        if (currentRoles == "owner") {
+                            view.findViewById<Button>(R.id.groupEdit).visibility = Button.VISIBLE
+                            view.findViewById<Button>(R.id.groupEdit).setOnClickListener {
+                                val fragment = EditGroupFragment.newInstance(groupId)
+                                fragment.showNow(activity!!.supportFragmentManager, "GROUP_EDIT")
+                            }
+                        }
+                        //show user invite button if owner or admin
+                        if (currentRoles == "owner" || currentRoles == "admin") {
+                            //User invite button
+                            view.findViewById<Button>(R.id.invite).visibility = Button.VISIBLE
+                            view.findViewById<Button>(R.id.invite).setOnClickListener {
+                                val fragment = UserInviteFragment.newInstance(groupId)
+                                fragment.showNow(activity!!.supportFragmentManager, "USER_INVITE")
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "エラー発生しました。", Toast.LENGTH_SHORT).show()
+                        activity!!.onBackPressed()
+                    }
+                }
+
 
         //--------------MEMBER LIST RECYCLER VIEW------------------------------------------------------------------------------------------
         memberListView = view.findViewById(R.id.member_list)

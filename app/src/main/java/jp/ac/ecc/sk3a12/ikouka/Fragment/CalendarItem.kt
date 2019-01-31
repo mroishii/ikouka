@@ -15,6 +15,7 @@ import android.widget.*
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import jp.ac.ecc.sk3a12.ikouka.Magic
 import jp.ac.ecc.sk3a12.ikouka.Model.Activity
 import jp.ac.ecc.sk3a12.ikouka.Model.Event
 
@@ -42,6 +43,9 @@ class CalendarItem : DialogFragment() {
             return calendarItem
         }
     }
+
+    val mAuth = FirebaseAuth.getInstance()
+    val mDb = Magic.getDbInstance()
 
     var events: ArrayList<Event> = ArrayList()
     lateinit var rect: Array<Drawable>
@@ -79,6 +83,52 @@ class CalendarItem : DialogFragment() {
                 eventItem.background = rect[rectIndex]
                 eventItem.findViewById<TextView>(R.id.eventTitle).text = event.title
                 eventItem.findViewById<TextView>(R.id.eventDescription).text = event.description
+
+                mDb.collection("Groups")
+                        .document(groupId)
+                        .get()
+                        .addOnSuccessListener {group ->
+                            if (mAuth.currentUser!!.uid == event.owner || mAuth.currentUser!!.uid == group.getString("owner")) {
+                                eventItem.setOnClickListener {
+                                    AlertDialog.Builder(context!!).apply {
+                                        setTitle("イベント編集")
+                                        var inputForm = layoutInflater.inflate(R.layout.event_input_form, null)
+                                        inputForm.findViewById<EditText>(R.id.createEventTitle).text.insert(0, event.title)
+                                        inputForm.findViewById<EditText>(R.id.createEventDescription).text.insert(0, event.description)
+                                        setView(inputForm)
+                                        setNeutralButton("キャンセル") { dialog, which ->
+                                            dialog.dismiss()
+                                        }
+                                        setPositiveButton("変更") { dialog, which ->
+                                            var eventTitle = inputForm.findViewById<EditText>(R.id.createEventTitle).text.toString()
+                                            var eventDescription = inputForm.findViewById<EditText>(R.id.createEventDescription).text.toString()
+                                            mDb.document("Groups/$groupId/Events/${event.eventId}")
+                                                    .update("title",  eventTitle,
+                                                            "description", eventDescription)
+                                                    .addOnSuccessListener {
+                                                        event.apply {
+                                                            title = eventTitle
+                                                            description = eventDescription
+                                                        }
+                                                        eventItem.apply {
+                                                            findViewById<TextView>(R.id.eventTitle).text = eventTitle
+                                                            findViewById<TextView>(R.id.eventDescription).text = eventDescription
+                                                        }
+                                                        Toast.makeText(context!!, "イベントが更新されました。", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    .addOnFailureListener {
+                                                        Toast.makeText(context!!, "イベントの更新に失敗しました。", Toast.LENGTH_SHORT).show()
+                                                    }
+                                        }
+                                        create().show()
+                                    }
+                                }
+                            }
+                        }
+
+
+
+                //Add eventItem to view
                 eventList.addView(eventItem)
                 rectIndex = (rectIndex + 1) % 5
             }

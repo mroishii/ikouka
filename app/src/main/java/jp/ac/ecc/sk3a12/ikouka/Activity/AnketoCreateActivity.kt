@@ -4,20 +4,18 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import jp.ac.ecc.sk3a12.ikouka.Model.Activity
+import jp.ac.ecc.sk3a12.ikouka.MyEditTextDatePicker
 import jp.ac.ecc.sk3a12.ikouka.R
 
 class AnketoCreateActivity : AppCompatActivity() {
@@ -28,6 +26,9 @@ class AnketoCreateActivity : AppCompatActivity() {
     //Toolbar
     private var mToolbar: Toolbar? = null
 
+    //Answer count
+    private var answersCount = 0
+
     //Firebase
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDb: FirebaseFirestore
@@ -35,9 +36,12 @@ class AnketoCreateActivity : AppCompatActivity() {
     //Activity elements
     private lateinit var title: EditText
     private lateinit var description: EditText
+    private lateinit var due: EditText
     private lateinit var answersContainer: LinearLayout
+    private lateinit var buttonContainer: LinearLayout
     private lateinit var answerAddButton: Button
     private lateinit var createButton: Button
+    private lateinit var progress: ProgressBar
 
     //Answers view array
     private var answersViews: ArrayList<View> = ArrayList()
@@ -57,21 +61,36 @@ class AnketoCreateActivity : AppCompatActivity() {
         //elements
         title = findViewById(R.id.createAnketoTitle)
         description = findViewById(R.id.createAnketoDescription)
+        due = findViewById(R.id.createAnketoDue)
+        buttonContainer = findViewById(R.id.buttonContainer)
         answersContainer = findViewById(R.id.createAnketoAnswersContainer)
         answerAddButton = findViewById(R.id.createAnketoAddAnswerButton)
         createButton = findViewById(R.id.createAnketoCreateButton)
+        progress = findViewById(R.id.createAnketoProgress)
+
+        val datePicker = MyEditTextDatePicker.newInstance(this, R.id.createAnketoDue)
+        due.setOnClickListener(datePicker)
 
         answerAddButton.setOnClickListener {
             var view = layoutInflater.inflate(R.layout.anketo_create_answer_item, null)
+            if (answersCount < 2) {
+                view.findViewById<ImageButton>(R.id.answer_delete).visibility = ImageButton.INVISIBLE
+            }
+            view.findViewById<ImageButton>(R.id.answer_delete).setOnClickListener {
+                answersViews.remove(view)
+                answersContainer.removeView(view)
+                answersCount--
+            }
             answersViews.add(view)
             answersContainer.addView(view)
+            //increment the count
+            answersCount++
         }
 
         createButton.setOnClickListener {
+            switchDisplay(true)
             if (isInputOk()) {
                 doCreateAnketo()
-            } else {
-
             }
         }
 
@@ -97,13 +116,15 @@ class AnketoCreateActivity : AppCompatActivity() {
         for (view in answersViews) {
             val answerInput: EditText = view.findViewById(R.id.answer_input)
             if (TextUtils.isEmpty(answerInput.text.toString())) {
-                Toast.makeText(this, "全フィールドを入力してください", Toast.LENGTH_LONG)
+                Toast.makeText(this, "全フィールドを入力してください", Toast.LENGTH_SHORT).show()
+                switchDisplay(false)
                 return false
             }
         }
 
-        if (TextUtils.isEmpty(title.text.toString()) || TextUtils.isEmpty(description.text.toString())) {
-            Toast.makeText(this, "全フィールドを入力してください", Toast.LENGTH_LONG)
+        if (TextUtils.isEmpty(title.text.toString()) || TextUtils.isEmpty(description.text.toString()) || TextUtils.isEmpty(due.text.toString())) {
+            Toast.makeText(this, "全フィールドを入力してください", Toast.LENGTH_LONG).show()
+            switchDisplay(false)
             return false
         }
 
@@ -156,22 +177,41 @@ class AnketoCreateActivity : AppCompatActivity() {
                                 mDb.collection("Groups/$currentGroupId/Activities")
                                         .add(activityMap)
                                         .addOnSuccessListener {
-                                            Toast.makeText(this, "アンケート作成に成功しました。", Toast.LENGTH_SHORT)
+                                            Toast.makeText(this, "アンケート作成に成功しました。", Toast.LENGTH_SHORT).show()
                                             onBackPressed()
                                         }
                                         .addOnFailureListener {
-                                            Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
+                                            Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_SHORT).show()
+                                            switchDisplay(false)
                                         }
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
+                                Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_SHORT).show()
+                                switchDisplay(false)
                             }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_LONG)
+                    Toast.makeText(this, "FAILED AT => ${it.message}", Toast.LENGTH_SHORT).show()
+                    switchDisplay(false)
                 }
 
      }
+
+    fun switchDisplay(isLoading: Boolean) {
+        title.isEnabled = !isLoading
+        description.isEnabled = !isLoading
+        due.isEnabled = !isLoading
+        answersContainer.isEnabled = !isLoading
+
+        if (isLoading) {
+            buttonContainer.visibility = LinearLayout.INVISIBLE
+            progress.progress = ProgressBar.VISIBLE
+
+        } else {
+            buttonContainer.visibility = LinearLayout.VISIBLE
+            progress.progress = ProgressBar.INVISIBLE
+        }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {

@@ -68,10 +68,10 @@ class TestActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
 
-            R.id.group_task -> {
-
-                return@OnNavigationItemSelectedListener true
-            }
+//            R.id.group_task -> {
+//
+//                return@OnNavigationItemSelectedListener true
+//            }
 
         }
         false

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -34,13 +35,13 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class EditGroupFragment : DialogFragment() {
-    private lateinit var parent: Context
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDb: FirebaseFirestore
     private lateinit var mStore: FirebaseStorage
 
-    private var imageUri = "default"
+    private var imageUri = ""
     private var groupId = ""
+    private var groupMap = HashMap<String, Any>()
 
     //Layout Element
     private lateinit var groupTitle: EditText
@@ -65,8 +66,6 @@ class EditGroupFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        groupId = arguments!!.getString("groupId")
 
         //Header Exit Button
         view.findViewById<ImageView>(R.id.header_exit).setOnClickListener {
@@ -95,7 +94,8 @@ class EditGroupFragment : DialogFragment() {
                     }
                 }
                 .addOnFailureListener {
-
+                    Toast.makeText(context, "グループデータを取得できません。", Toast.LENGTH_SHORT).show()
+                    this.dismiss()
                 }
 
         groupImageChangeButton.setOnClickListener {
@@ -110,33 +110,32 @@ class EditGroupFragment : DialogFragment() {
 
             if (TextUtils.isEmpty(title) || TextUtils.isEmpty(description)) {
                 switchDisplay(false)
-                Toast.makeText(parent, "入力を確認してください。", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "入力を確認してください。", Toast.LENGTH_LONG).show()
             } else {
-                doCreateGroup(title, description)
+                groupMap.apply {
+                    put("title", title)
+                    put("description", description)
+                }
+
+                if (imageUri != "") {
+                    doUploadImage()
+                } else {
+                    doUpdateGroup()
+                }
             }
         }
     }
 
-    fun doCreateGroup(title: String, description: String) {
-        groupMap.put("title", title)
-        groupMap.put("description", description)
-        groupMap.put("owner", mAuth.currentUser!!.uid)
-        groupMap.put("created", Timestamp.now())
-        groupMap.put("usersId", listOf(mAuth.currentUser!!.uid))
-        groupMap.put("image", "default")
-
+    fun doUpdateGroup() {
         mDb.collection("Groups")
-                .add(groupMap)
+                .document(groupId)
+                .update(groupMap)
                 .addOnSuccessListener {
-                    createdGroupId = it.id
-                    if (imageUri != "default") {
-                        doUploadImage()
-                    } else {
-                        doFinalize()
-                    }
+                    Toast.makeText(context, "グループを更新されました", Toast.LENGTH_SHORT).show()
+                    this.dismiss()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(parent, "グループを作成できません。エラー：${it.message}", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, "グループを更新できません。エラー：${it.message}", Toast.LENGTH_SHORT).show()
                     switchDisplay(false)
                 }
 
@@ -144,7 +143,7 @@ class EditGroupFragment : DialogFragment() {
     }
 
     fun doUploadImage() {
-        var filename = createdGroupId + Magic.getFileExtension(parent, Uri.parse(imageUri))
+        var filename = groupId + "." + Magic.getFileExtension(context!!, Uri.parse(imageUri))
         var fileRef = mStore.reference.child("GroupImage/$filename")
         var uploadTask = fileRef.putFile(Uri.parse(imageUri))
         var urlTask = uploadTask.continueWithTask (Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
@@ -157,33 +156,14 @@ class EditGroupFragment : DialogFragment() {
             return@Continuation fileRef.downloadUrl
         }).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                imageUri = task.result.toString()
-                mDb.collection("Groups")
-                        .document(createdGroupId)
-                        .update("image", imageUri )
-                        .addOnSuccessListener {
-                            doFinalize()
-                        }
+                groupMap.put("image", task.result.toString())
+                doUpdateGroup()
             } else {
                 // Handle failures
-                Toast.makeText(parent, "写真アップロードが失敗しました。デフォルト写真を使います。", Toast.LENGTH_LONG)
-                doFinalize()
+                Toast.makeText(context, "写真アップロードに失敗しました。", Toast.LENGTH_SHORT).show()
+                doUpdateGroup()
             }
         }
-    }
-
-    fun doFinalize() {
-        var userMap = HashMap<String, Any>().apply {
-            put("status", "active")
-            put("roles", listOf("owner"))
-        }
-        mDb.collection("Groups/$createdGroupId/Users")
-                .document(mAuth.currentUser!!.uid)
-                .set(userMap)
-                .addOnSuccessListener {
-                    Toast.makeText(parent, "グループが作成されました。", Toast.LENGTH_SHORT)
-                    this.dismiss()
-                }
     }
 
     fun switchDisplay(isLoading: Boolean) {
@@ -208,14 +188,8 @@ class EditGroupFragment : DialogFragment() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.type = "image/*"
-        if (intent.resolveActivity(parent.packageManager) != null) {
+        if (intent.resolveActivity(context!!.packageManager) != null) {
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
-        }
-    }
-    fun takePhoto() {
-        val intent1 = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent1.resolveActivity(parent.packageManager) != null) {
-            startActivityForResult(intent1, REQUEST_TAKE_PHOTO)
         }
     }
 
@@ -229,14 +203,12 @@ class EditGroupFragment : DialogFragment() {
         }
     }
 
-
     companion object {
         @JvmStatic
         private val REQUEST_TAKE_PHOTO = 0
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
-        fun newInstance(parent: Context, groupId: String) =
+        fun newInstance(groupId: String) =
                 EditGroupFragment().apply {
-                    this.parent = parent
                     this.groupId = groupId
                 }
     }

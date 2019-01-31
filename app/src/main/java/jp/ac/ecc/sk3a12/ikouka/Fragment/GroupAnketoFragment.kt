@@ -53,6 +53,9 @@ class GroupAnketoFragment : Fragment() {
     private lateinit var anketoList: RecyclerView
     private lateinit var createButton: FloatingActionButton
 
+    //today date
+    private val today = Date()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -120,6 +123,12 @@ class GroupAnketoFragment : Fragment() {
                 holder.title.text = model.title
                 holder.description.text = model.description
                 holder.due.text = "締切：" + model.due.toLocaleString()
+
+                if (today.after(model.due)) {
+                    holder.due.setTextColor(context!!.resources.getColor(R.color.md_red_500))
+                } else {
+                    holder.due.setTextColor(context!!.resources.getColor(R.color.md_grey_600))
+                }
 
                 mDb.collection("Users")
                         .document(model.owner)

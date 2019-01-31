@@ -132,7 +132,7 @@ class GroupChatFragment : Fragment() {
 
                                     holder.sender!!.text = it.getString("userName")
                                     if (it.getString("image") != "default") {
-                                        Glide.with(this@GroupChatFragment)
+                                        Glide.with(context!!)
                                                 .load(it.getString("image"))
                                                 .into(holder.avatar as ImageView)
                                     }

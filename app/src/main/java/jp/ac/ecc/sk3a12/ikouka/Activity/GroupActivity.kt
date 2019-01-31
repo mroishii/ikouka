@@ -52,6 +52,7 @@ open class GroupActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.content, fragment)
                         .commit()
+                supportActionBar!!.title = "グループ掲示板"
 
                 return@OnNavigationItemSelectedListener true
             }
@@ -61,6 +62,7 @@ open class GroupActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.content, fragment)
                         .commit()
+                supportActionBar!!.title = "グループカレンダー"
                 return@OnNavigationItemSelectedListener true
             }
             R.id.group_chat -> {
@@ -69,6 +71,7 @@ open class GroupActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.content, fragment)
                         .commit()
+                supportActionBar!!.title = "グループチャット"
                 return@OnNavigationItemSelectedListener true
             }
 
@@ -78,13 +81,14 @@ open class GroupActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.content, fragment)
                         .commit()
+                supportActionBar!!.title = "グループアンケート"
                 return@OnNavigationItemSelectedListener true
             }
 
-            R.id.group_task -> {
-
-                return@OnNavigationItemSelectedListener true
-            }
+//            R.id.group_task -> {
+//
+//                return@OnNavigationItemSelectedListener true
+//            }
 
         }
         false
@@ -104,7 +108,7 @@ open class GroupActivity : AppCompatActivity() {
         // Setup toolbar
         mToolbar = findViewById(R.id.groupToolbar)
         setSupportActionBar(mToolbar)
-        supportActionBar!!.title = intent.getStringExtra("groupTitle")
+        supportActionBar!!.title = "グループ掲示板"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         //Get current group from Db
@@ -112,7 +116,6 @@ open class GroupActivity : AppCompatActivity() {
         args.putString("groupId", groupId)
 
         navigation.selectedItemId = R.id.group_dashboard
-
         navigation.labelVisibilityMode = 1
 
 //        //--------------ViewPager-------------------

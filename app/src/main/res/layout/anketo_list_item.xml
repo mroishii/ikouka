@@ -71,6 +71,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="AnketoDue"
+        android:textColor="@color/md_grey_600"
         app:layout_constraintBottom_toBottomOf="@+id/anketo_list_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

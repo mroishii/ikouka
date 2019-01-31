@@ -20,10 +20,10 @@
         android:id="@+id/group_anketo"
         android:icon="@drawable/ic_anketo_black_24dp"
         android:title="アンケート" />
-    <item
-        android:id="@+id/group_task"
-        android:icon="@drawable/ic_task_black_24dp"
-        android:title="To-do" />
+    <!--<item-->
+        <!--android:id="@+id/group_task"-->
+        <!--android:icon="@drawable/ic_task_black_24dp"-->
+        <!--android:title="To-do" />-->
 
 
 </menu>
